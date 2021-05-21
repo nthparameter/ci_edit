@@ -36,9 +36,9 @@ __c_keywords = __common_keywords + [
 
 __linux_commands = [
     "ag", "basename", "bash", "cd", "chmod", "cp", "dircolors", "dirname",
-    "echo", "egrep", "find", "grep", "ixoff", "ixon", "lesspipe", "ln", "ls",
-    "mkdir", "read", "rm", "rmdir", "rxvt", "sed", "sh", "shell", "sleep",
-    "ssh", "tput", "wc"
+    "echo", "egrep", "find", "grep", "inotify", "inotifywait", "ixoff", "ixon",
+    "lesspipe", "ln", "ls", "mkdir", "read", "rm", "rmdir", "rxvt", "sed", "sh",
+    "shell", "sleep", "ssh", "tput", "uname", "wc", "which", "xargs"
 ]
 
 if sys.version_info[0] == 2:
@@ -97,7 +97,6 @@ __special_string_escapes = [
     r"\\t",
     r"\\v",
     r"\\0[0-7]{0,3}",
-    #r"%#?-?[0-9]*\.?[0-9]*z?.",
     __chrome_extension,
     __sha_1,
 ]
@@ -119,6 +118,7 @@ color8 = {
     "cpp_line_comment": 2,
     "cpp_string_literal": 2,
     "current_line": 1,
+    "dart_nesting_block_comment": 2,
     "debug_window": 1,
     "default": 0,
     "doc_block_comment": 3,
@@ -136,6 +136,8 @@ color8 = {
     "logo": 7,
     "matching_bracket": 1,
     "matching_find": 1,
+    "md_code": 2,
+    "md_heading": 3,
     "md_link": 2,
     "message_line": 3,
     "misspelling": 3,
@@ -152,6 +154,7 @@ color8 = {
     "quoted_string2": 2,
     "regex_string": 2,
     "right_column": 6,
+    "rs_block_comment": 2,
     "rs_byte_string1": 3,
     "rs_byte_string2": 3,
     "rs_label_or_char": 3,
@@ -198,6 +201,7 @@ color16 = {
     "cpp_line_comment": commentColor16Index,
     "cpp_string_literal": stringColor16Index,
     "current_line": 15,
+    "dart_nesting_block_comment": commentColor16Index,
     "debug_window": defaultColor16Index,
     "default": defaultColor16Index,
     "doc_block_comment": commentColor16Index,
@@ -215,6 +219,8 @@ color16 = {
     "logo": borderColor16Index,
     "matching_bracket": 15,
     "matching_find": 9,
+    "md_code": stringColor16Index,
+    "md_heading": specialsColor16Index,
     "md_link": stringColor16Index,
     "message_line": borderColor16Index,
     "misspelling": 9,
@@ -231,6 +237,7 @@ color16 = {
     "quoted_string2": stringColor16Index,
     "regex_string": stringColor16Index,
     "right_column": outsideOfBufferColor16Index,
+    "rs_block_comment": commentColor16Index,
     "rs_byte_string1": stringColor16Index,
     "rs_byte_string2": stringColor16Index,
     "rs_label_or_char": stringColor16Index,
@@ -275,6 +282,7 @@ color256 = {
     "cpp_line_comment": commentColorIndex,
     "cpp_string_literal": stringColorIndex,
     "current_line": 180,
+    "dart_nesting_block_comment": commentColorIndex,
     "debug_window": defaultColorIndex,
     "default": defaultColorIndex,
     "doc_block_comment": commentColorIndex,
@@ -292,6 +300,8 @@ color256 = {
     "logo": 168,
     "matching_bracket": 201,
     "matching_find": 9,
+    "md_code": stringColorIndex,
+    "md_heading": specialsColorIndex,
     "md_link": stringColorIndex,
     "message_line": 3,
     "misspelling": 9,
@@ -308,6 +318,7 @@ color256 = {
     "quoted_string2": stringColorIndex,
     "regex_string": stringColorIndex,
     "right_column": outsideOfBufferColorIndex,
+    "rs_block_comment": commentColorIndex,
     "rs_byte_string1": stringColorIndex,
     "rs_byte_string2": stringColorIndex,
     "rs_label_or_char": stringColorIndex,
@@ -359,6 +370,8 @@ prefs = {
         },
     },
     "editor": {
+        # Whether to automatically indent after pressing carriage return.
+        "autoIndent": True,
         # E.g. When key "(" is pressed, "()" is typed.
         "autoInsertClosingCharacter": False,
         # When opening a path that starts with "//", the value is used to
@@ -470,8 +483,13 @@ prefs = {
             "grammar": "dart",
             "tabToSpaces": True,
         },
+        "fidl": {
+            "ext": [".fidl"],
+            "grammar": "fidl",
+            "tabToSpaces": True,
+        },
         "gn": {
-            "ext": [".gn"],
+            "ext": [".gn", ".gni"],
             "grammar": "gn",
             "tabToSpaces": True,
         },
@@ -584,9 +602,9 @@ prefs = {
             "indent":
             "  ",
             "keywords": [
-                "break", "case", "continue", "do", "done", "echo", "else",
-                "esac", "exit", "fi", "if", "for", "return", "switch", "then",
-                "while"
+                "break", "case", "continue", "declare", "do", "done", "echo",
+                "elif", "else", "esac", "exit", "fi", "if", "for", "return",
+                "switch", "then", "while"
             ],
             # Not really types.
             "types": __linux_commands,
@@ -733,7 +751,10 @@ prefs = {
             "end": "\"",
             "escaped": "\\\\\"",
             "indent": "  ",
-            "special": __special_string_escapes + ["\\\\\""],
+            "special": __special_string_escapes + [
+                "\\\\\"",
+                r"%:#?-?[0-9]*\.?[0-9]*z?\w",
+            ],
             "single_line": True,
         },
         "c_path_bracketed_file": {
@@ -820,8 +841,12 @@ prefs = {
                 "super", "switch", "sync", "this", "throw", "true", "try",
                 "typedef", "var", "void", "while", "with", "yield"
             ],
+            "types": [
+                "bool", "Iterable", "String", "Map", "Int64", "Future", "int",
+                "Timestamp",
+            ],
             "special": [
-                "@override",
+                "@immutable", "@override", "@protected", "@required",
             ],
             "contains": [
                 # This list is carefully ordered. Don"t sort it.
@@ -834,6 +859,23 @@ prefs = {
                 "c_string1",
                 "c_string2",
                 "cpp_line_comment",
+                "dart_nesting_block_comment",
+            ],
+        },
+        "dart_nesting_block_comment": {
+            "begin": r"/\*",
+            "continuation": " * ",
+            "end": r"\*/",
+            "indent": "  ",
+            "keywords": [],
+            "special": [
+                r"\bNOTE:",
+                _todo,
+                __chrome_extension,
+                __sha_1,
+            ],
+            "contains": [
+                "dart_nesting_block_comment",
             ],
         },
         "doc_block_comment": {
@@ -861,6 +903,19 @@ prefs = {
         "error": {
             "indent": "  ",
             "spelling": False,
+        },
+        "fidl": {
+            "indent": "  ",
+            "keywords": ["bits", "compose", "enum", "error", "library",
+                "protocol", "struct", "table", "union", "using"],
+            "special": ["\[Discoverable\]"],
+            "types": ["array", "handle", "int8", "int16", "int32", "int64",
+                "string", "uint8", "uint16", "uint32", "uint64", "vector"],
+            "contains": [
+                "cpp_line_comment",
+                "c_string1",
+                "c_string2",
+            ],
         },
         # Generate Ninja language.
         "gn": {
@@ -1021,10 +1076,29 @@ prefs = {
         "md": {
             "indent": "  ",
             "keywords": [],
+            #"special": [ r"#.*" ],
             #"special": [r"\[[^]]+\]\([^)]+\)"],
             "contains": [
                 "md_link",
+                "md_code",
+                "md_heading",
                 #"quoted_string1", "quoted_string2"
+            ],
+        },
+        "md_code": {
+            "begin": "`",
+            "end": "`",
+            "indent": "  ",
+        },
+        "md_heading": {
+            "begin": "^#",
+            "continuation": "# ",
+            "end": r"\n",
+            "indent": "  ",
+            "keywords": [],
+            "special": [
+                r"\bNOTE:",
+                _todo,
             ],
         },
         "md_link": {
@@ -1198,13 +1272,15 @@ prefs = {
                 "virtual", "where", "while", "yield"
             ],
             "special": [
+                "\\bassert_eq!", "\\bNone\\b", "\\bOption\\b", "\\bResult\\b",
+                "\\bSome\\b", "\\bunimplemented!"
             ],
             "types": [
                 "bool", "char", "i8", "i16", "i32", "i64", "isize", "u8", "u16",
                 "u32", "u64", "usize", "array", "slice", "tuple"
             ],
             "contains": [
-                "cpp_block_comment",
+                "rs_block_comment",
                 "cpp_line_comment",
                 # Using "rs_label_or_char" rather than "c_string1".
                 "c_string2",
@@ -1212,6 +1288,23 @@ prefs = {
                 "rs_byte_string2",
                 "rs_label_or_char",
                 "rs_raw_string",
+            ],
+        },
+        # Rust block comments may be nested (unlike cpp_block_comments).
+        "rs_block_comment": {
+            "begin": r"/\*",
+            "continuation": " * ",
+            "end": r"\*/",
+            "indent": "  ",
+            "keywords": [],
+            "special": [
+                r"\bNOTE:",
+                _todo,
+                __chrome_extension,
+                __sha_1,
+            ],
+            "contains": [
+                "rs_block_comment",
             ],
         },
         "rs_byte_string1": {

@@ -31,6 +31,7 @@ abbr
 abbrev
 abbreviate
 abbreviated
+abbreviating
 abbreviation
 abbreviations
 abed
@@ -421,6 +422,7 @@ affiliation
 affiliations
 affinity
 affirmation
+affirmative
 affirmed
 affirms
 affix
@@ -472,6 +474,8 @@ aggregated
 aggregates
 aggregating
 aggregation
+aggregator
+aggregators
 aggression
 aggressive
 aggressively
@@ -491,6 +495,7 @@ agreement
 agreements
 agrees
 agriculture
+aground
 ah
 aha
 ahead
@@ -744,6 +749,7 @@ analogs
 analogue
 analogy
 analysis
+analyst
 analytics
 analyze
 analyzed
@@ -766,6 +772,8 @@ and
 android
 androids
 anecdotal
+anecdote
+anecdotes
 anesthetize
 anew
 angel
@@ -939,10 +947,14 @@ applique
 apply
 applying
 apportionment
+appose
+apposed
+apposing
 appositeness
 appreciable
 appreciate
 appreciated
+appreciation
 appreciative
 apprehend
 apprentice
@@ -1894,8 +1906,11 @@ birds
 birdsong
 birth
 birthday
+birthed
+birthing
 birthmark
 birthplace
+births
 bis
 biscotti
 biscotto
@@ -2137,6 +2152,7 @@ booster
 boosting
 boosts
 boot
+bootable
 booted
 booth
 booting
@@ -2158,6 +2174,7 @@ boring
 born
 borne
 borough
+borrow
 borrowed
 borrower
 borrowing
@@ -3478,6 +3495,7 @@ colorization
 colorize
 colorized
 colors
+colorway
 cols
 colt
 column
@@ -4832,6 +4850,7 @@ declarative
 declaratory
 declare
 declared
+declarer
 declares
 declaring
 decline
@@ -5380,6 +5399,7 @@ diffusion
 dig
 digest
 digested
+digester
 digestive
 digests
 digger
@@ -6357,6 +6377,7 @@ emotional
 emotionally
 emotionless
 emotions
+empathic
 emperor
 emphasis
 emphasize
@@ -7018,6 +7039,7 @@ extended
 extender
 extending
 extends
+extensibility
 extensible
 extension
 extensions
@@ -10381,6 +10403,8 @@ jilt
 jimmy
 jingle
 jinn
+jitter
+jittering
 jives
 job
 jobber
@@ -10759,6 +10783,7 @@ layman
 layout
 layouts
 lays
+layup
 lazily
 laziness
 lazy
@@ -11096,6 +11121,7 @@ local
 locale
 locales
 locality
+localizable
 localization
 localizations
 localize
@@ -12163,6 +12189,7 @@ morel
 moreover
 mores
 morning
+morningstar
 morocco
 morph
 morphed
@@ -12365,6 +12392,7 @@ name
 named
 nameless
 namely
+namer
 names
 namespace
 naming
@@ -13142,6 +13170,8 @@ outgrown
 outlaw
 outlet
 outlets
+outlier
+outliers
 outline
 outlined
 outlines
@@ -13244,6 +13274,10 @@ overshot
 oversight
 oversize
 overstock
+oversubscribe
+oversubscribed
+oversubscribes
+oversubscribing
 overt
 overthrows
 overtime
@@ -14386,6 +14420,10 @@ prefix
 prefixed
 prefixes
 prefixing
+preflight
+preflighted
+preflighting
+preflights
 preform
 prefs
 prehistoric
@@ -15038,6 +15076,7 @@ quiche
 quick
 quicker
 quickly
+quickstep
 quid
 quiesce
 quiesced
@@ -15326,6 +15365,8 @@ reattempts
 reauthentication
 reauthorize
 rebase
+rebased
+rebasing
 rebate
 rebel
 rebellion
@@ -15762,6 +15803,7 @@ relaying
 relays
 release
 released
+releaser
 releases
 releasing
 relegated
@@ -16008,6 +16050,9 @@ repulse
 repulsed
 repulses
 repulsing
+repurpose
+repurposed
+repurposing
 reputation
 reputations
 request
@@ -16273,6 +16318,7 @@ revers
 reversal
 reverse
 reversed
+reverser
 reverses
 reversible
 reversing
@@ -16541,6 +16587,7 @@ rte
 rub
 rubber
 rubbish
+rubicon
 rubidium
 rubies
 rubles
@@ -17216,6 +17263,7 @@ shaped
 shapes
 shaping
 shard
+sharded
 shards
 share
 shareable
@@ -17907,6 +17955,7 @@ sorrow
 sorry
 sort
 sorta
+sortable
 sorted
 sorter
 sorters
@@ -18088,6 +18137,8 @@ spin
 spinal
 spindly
 spine
+spinel
+spinelle
 spinnaker
 spinner
 spinners
@@ -18267,6 +18318,8 @@ stained
 staircase
 staircases
 stairs
+stakeholder
+stakeholders
 stale
 stalk
 stalked
