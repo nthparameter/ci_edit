@@ -35,45 +35,47 @@ doValues = False
 root = (len(sys.argv) > 1 and sys.argv[1]) or "."
 filePattern = (len(sys.argv) > 2 and sys.argv[2]) or "*.*"
 
-kReWords = re.compile(r'''(\w+)''')
+kReWords = re.compile(r"""(\w+)""")
 # The first group is a hack to allow upper case pluralized, e.g. URLs.
 kReSubwords = re.compile(
-    r'((?:[A-Z]{2,}s\b)|(?:[A-Z][a-z]+)|(?:[A-Z]+(?![a-z]))|(?:[a-z]+))')
+    r"((?:[A-Z]{2,}s\b)|(?:[A-Z][a-z]+)|(?:[A-Z]+(?![a-z]))|(?:[a-z]+))"
+)
 
-
-kReIgnoreDirs = re.compile(r'''/\.git/''')
+kReIgnoreDirs = re.compile(r"""/\.git/""")
 kReIgnoreFiles = re.compile(
-    r'''\.(pyc|pyo|png|a|jpg|tif|mp3|mp4|cpuperf|dylib|avi|so|plist|raw|webm)$''')
-kReIncludeFiles = re.compile(
-    r'''\.(cc)$''')
-assert kReIgnoreDirs.search('/apple/.git/orange')
-assert kReIgnoreFiles.search('/apple.pyc')
+    r"""\.(pyc|pyo|png|a|jpg|tif|mp3|mp4|cpuperf|dylib|avi|so|plist|raw|webm)$"""
+)
+kReIncludeFiles = re.compile(r"""\.(cc)$""")
+assert kReIgnoreDirs.search("/apple/.git/orange")
+assert kReIgnoreFiles.search("/apple.pyc")
 
-dictionaryList = glob.glob(os.path.join(ciEditDir, 'app/dictionary.*.words'))
+dictionaryList = glob.glob(os.path.join(ciEditDir, "app/dictionary.*.words"))
 dictionaryList = [os.path.basename(i)[11:-6] for i in dictionaryList]
 print(pprint.pprint(dictionaryList))
 pathPrefs = []
 dictionary = app.spelling.Dictionary(dictionaryList, pathPrefs)
-assert dictionary.isCorrect(u"has", 'cpp')
+assert dictionary.is_correct(u"has", "cpp")
 
-def handleFile(fileName, unrecognizedWords):
+
+def handle_file(fileName, unrecognizedWords):
     # print(fileName, end="")
     try:
         with io.open(fileName, "r") as f:
             data = f.read()
-            if not data: return
+            if not data:
+                return
             for sre in kReSubwords.finditer(data):
-                #print(repr(sre.groups()))
+                # print(repr(sre.groups()))
                 word = sre.groups()[0].lower()
-                if not dictionary.isCorrect(word, 'cpp'):
+                if not dictionary.is_correct(word, "cpp"):
                     if word not in unrecognizedWords:
-                        print (word, end=",")
+                        print(word, end=",")
                     unrecognizedWords.add(word)
     except UnicodeDecodeError:
         print("Error decoding:", fileName)
 
 
-def walkTree(root):
+def walk_tree(root):
     unrecognizedWords = set()
     for (dirPath, dirNames, fileNames) in os.walk(root):
         if kReIgnoreDirs.search(dirPath):
@@ -82,18 +84,18 @@ def walkTree(root):
             if kReIgnoreFiles.search(fileName):
                 continue
             if kReIncludeFiles.search(fileName):
-                handleFile(os.path.join(dirPath, fileName), unrecognizedWords)
+                handle_file(os.path.join(dirPath, fileName), unrecognizedWords)
     if unrecognizedWords:
-        print('found', fileName)
+        print("found", fileName)
         print(unrecognizedWords)
         print()
     return unrecognizedWords
 
 
 if os.path.isfile(root):
-    print(handleFile(root))
+    print(handle_file(root))
 elif os.path.isdir(root):
-    words = sorted(walkTree(root))
+    words = sorted(walk_tree(root))
     for i in words:
         print(i)
 else:

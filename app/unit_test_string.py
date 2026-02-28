@@ -23,7 +23,6 @@ import app.string
 
 
 class StringTestCases(unittest.TestCase):
-
     def test_path_encode(self):
         tests = [
             (u"abcd", u"abcd"),
@@ -35,5 +34,5 @@ class StringTestCases(unittest.TestCase):
             (u"\\", u"\\\\"),
         ]
         for test in tests:
-            self.assertEqual(app.string.pathEncode(test[0]), test[1])
-            self.assertEqual(app.string.pathDecode(test[1]), test[0])
+            self.assertEqual(app.string.path_encode(test[0]), test[1])
+            self.assertEqual(app.string.path_decode(test[1]), test[0])
