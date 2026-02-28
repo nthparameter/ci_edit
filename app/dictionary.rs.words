@@ -24,6 +24,7 @@ consts
 crossterm
 csprng
 cst
+cst
 deref
 endwin
 envs
@@ -36,6 +37,7 @@ getgid
 getmouse
 getuid
 gid
+glutin
 glutin
 ident
 initscr
