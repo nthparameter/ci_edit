@@ -37,9 +37,11 @@ bsearch
 btowc
 calloc
 cassert
+cbegin
 ccomplex
 cctype
 ceil
+cend
 cerr
 cin
 clearerr
@@ -51,9 +53,12 @@ copyfmt
 countof
 cout
 cplusplus
+crbegin
 creat
+crend
 cstddef
 cstdio
+cstdlib
 cstream
 cstring
 ctime
@@ -266,6 +271,7 @@ putwc
 putwchar
 pword
 qsort
+rapidjson
 rbegin
 rcvtimeo
 rdbuf
@@ -278,6 +284,7 @@ recvfrom
 refcounted
 resetiosflags
 ret
+rfind
 scanf
 seekdir
 seekg
@@ -330,6 +337,7 @@ stddef
 stdint
 stdlib
 stoi
+stoull
 strcat
 strchr
 strcmp

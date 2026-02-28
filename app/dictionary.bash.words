@@ -22,15 +22,21 @@ cp
 dlog
 env
 grep
+ln
 ls
 mkdir
+mktemp
 rf
 rm
 rmdir
 rsync
 sbin
 sed
+shellcheck
+strace
 symlink
+udev
+udevadm
 ulimit
 uname
 usr
@@ -38,4 +44,5 @@ vcs
 vlog
 wc
 xargs
+xattr
 xserver
