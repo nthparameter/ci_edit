@@ -1192,15 +1192,18 @@ prefs = {
                 "break", "const", "continue", "crate", "do", "dyn", "else",
                 "enum", "extern", "false", "final", "fn", "for", "if", "impl",
                 "in", "let", "loop", "macro", "match", "mod", "move", "mut",
+                "None",
                 "offsetof", "override", "priv", "pub", "pure", "ref", "return",
-                "Self", "self", "sizeof", "static", "struct", "super", "trait",
+                "self", "Self", "self", "sizeof", "static", "struct", "super",
+                "trait",
                 "true", "type", "typeof", "try", "unsafe", "unsized", "use",
                 "virtual", "where", "while", "yield"
             ],
             "special": [
             ],
             "types": [
-                "bool", "char", "i8", "i16", "i32", "i64", "isize", "u8", "u16",
+                "bool", "char", "f32", "f64", "i8", "i16", "i32", "i64",
+                "isize", "u8", "u16",
                 "u32", "u64", "usize", "array", "slice", "tuple"
             ],
             "contains": [
