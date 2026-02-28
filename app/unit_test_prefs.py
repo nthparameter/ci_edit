@@ -24,17 +24,18 @@ import app.prefs
 
 
 class PrefsTestCases(app.fake_curses_testing.FakeCursesTestCase):
-
-    def set_up(self):
+    def setUp(self):
         self.longMessage = True
         app.fake_curses_testing.FakeCursesTestCase.set_up(self)
         self.prefs = app.prefs.Prefs()
 
     def test_default_prefs(self):
-        self.run_with_fake_inputs([
-            self.pref_check(u'editor', u'saveUndo', True),
-            CTRL_Q,
-        ])
+        self.run_with_fake_inputs(
+            [
+                self.pref_check(u"editor", u"saveUndo", True),
+                CTRL_Q,
+            ]
+        )
 
     def test_get_file_type(self):
         get_file_type = self.prefs.get_file_type

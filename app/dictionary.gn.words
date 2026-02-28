@@ -13,7 +13,7 @@
 # limitations under the License.
 
 # This is a list of non-English words that are in gn scripts.
-serde
+argh
 browsertests
 buildargs
 cflags
@@ -23,6 +23,7 @@ gn
 gni
 javagen
 ldflags
+mockall
 objcc
 plist
 pytype
@@ -30,4 +31,6 @@ serde
 tempfile
 termion
 testonly
+thiserror
 toplevel
+valico

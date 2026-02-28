@@ -24,16 +24,16 @@ import app.line_buffer
 
 
 class LineBufferTestCases(unittest.TestCase):
-
-    def set_up(self):
+    def setUp(self):
         self.line_buffer = app.line_buffer.LineBuffer(app.ci_program.CiProgram())
         app.log.shouldWritePrintLog = True
 
-    def tear_down(self):
+    def tearDown(self):
         self.line_buffer = None
 
     def test_create(self):
         self.assertTrue(self.line_buffer is not None)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()
