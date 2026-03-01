@@ -18,6 +18,7 @@ import unittest
 import app.log
 import app.ci_program
 import app.selectable
+from app.selectable import SelectionMode
 
 class SelectableTestCases(unittest.TestCase):
     def setUp(self):
@@ -35,7 +36,7 @@ class SelectableTestCases(unittest.TestCase):
         selectable = self.selectable
         selectable.parser.data = "oneTwo\n\nfive"
         selectable.parse_document()
-        selectable.selection_mode = app.selectable.SELECTION_NONE
+        selectable.selection_mode = SelectionMode.NONE
         self.assertEqual(selectable.extend_selection(), (0, 0, 0, 0, 0))
         selectable.pen_col = 3
         self.assertEqual(selectable.extend_selection(), (0, 0, 0, 0, 0))
@@ -44,7 +45,7 @@ class SelectableTestCases(unittest.TestCase):
         selectable = self.selectable
         selectable.parser.data = "oneTwo\n\nfive"
         selectable.parse_document()
-        selectable.selection_mode = app.selectable.SELECTION_ALL
+        selectable.selection_mode = SelectionMode.ALL
         self.assertEqual(selectable.extend_selection(), (2, 4, 0, 0, 0))
         selectable.pen_col = 3
         self.assertEqual(selectable.extend_selection(), (2, 1, 0, 0, 0))
@@ -53,7 +54,7 @@ class SelectableTestCases(unittest.TestCase):
         selectable = self.selectable
         selectable.parser.data = "oneTwo\n\nfive"
         selectable.parse_document()
-        selectable.selection_mode = app.selectable.SELECTION_BLOCK
+        selectable.selection_mode = SelectionMode.BLOCK
         self.assertEqual(selectable.extend_selection(), (0, 0, 0, 0, 0))
         selectable.pen_col = 3
         self.assertEqual(selectable.extend_selection(), (0, 0, 0, 0, 0))
@@ -62,7 +63,7 @@ class SelectableTestCases(unittest.TestCase):
         selectable = self.selectable
         selectable.parser.data = "oneTwo\n\nfive"
         selectable.parse_document()
-        selectable.selection_mode = app.selectable.SELECTION_CHARACTER
+        selectable.selection_mode = SelectionMode.CHARACTER
         self.assertEqual(selectable.extend_selection(), (0, 0, 0, 0, 0))
         selectable.pen_col = 3
         self.assertEqual(selectable.extend_selection(), (0, 0, 0, 0, 0))
@@ -72,7 +73,7 @@ class SelectableTestCases(unittest.TestCase):
         selectable.parser.data = "one two\n\nfive"
         selectable.parse_document()
         selectable.pen_row = 1
-        selectable.selection_mode = app.selectable.SELECTION_LINE
+        selectable.selection_mode = SelectionMode.LINE
         app.log.debug("selectable.extend_selection", selectable.extend_selection())
         self.assertEqual(selectable.extend_selection(), (0, 0, 0, 0, 0))
         selectable.pen_row = 3
@@ -85,7 +86,7 @@ class SelectableTestCases(unittest.TestCase):
         selectable = self.selectable
         selectable.parser.data = "one two\nSeveral test words\nfive"
         selectable.parse_document()
-        selectable.selection_mode = app.selectable.SELECTION_WORD
+        selectable.selection_mode = SelectionMode.WORD
         selectable.pen_row = 1
         selectable.pen_col = 2
         self.assertEqual(selectable.extend_selection(), (0, 5, 0, 0, 0))
@@ -100,7 +101,7 @@ class SelectableTestCases(unittest.TestCase):
         selectable = self.selectable
         selectable.parser.data = "one two\nSeveral test words.\nfive"
         selectable.parse_document()
-        selectable.selection_mode = app.selectable.SELECTION_NONE
+        selectable.selection_mode = SelectionMode.NONE
         selectable.pen_col = 1
         selectable.do_delete_selection()
         self.assertEqual(selectable.parser.data, "one two\nSeveral test words.\nfive")
@@ -119,7 +120,7 @@ class SelectableTestCases(unittest.TestCase):
         selectable.parser.data = "oneTwo\n\nfive"
         selectable.parse_document()
         self.assertEqual(selectable.selection(), (0, 0, 0, 0))
-        selectable.selection_mode = app.selectable.SELECTION_ALL
+        selectable.selection_mode = SelectionMode.ALL
         self.assertEqual(selectable.extend_selection(), (2, 4, 0, 0, 0))
         selectable.pen_col = 3
         self.assertEqual(selectable.extend_selection(), (2, 1, 0, 0, 0))
@@ -130,7 +131,7 @@ class SelectableTestCases(unittest.TestCase):
         self.assertEqual(selectable.parser.data, "")
 
         selectable.insert_lines_at(
-            0, 0, ("wx", "", "yz"), app.selectable.SELECTION_ALL
+            0, 0, ("wx", "", "yz"), SelectionMode.ALL
         )
         self.assertEqual(selectable.parser.data, "wx\n\nyz")
 
@@ -138,7 +139,7 @@ class SelectableTestCases(unittest.TestCase):
         selectable = self.selectable
         selectable.parser.data = "oneTwo\n\nfive"
         selectable.parse_document()
-        selectable.selection_mode = app.selectable.SELECTION_BLOCK
+        selectable.selection_mode = SelectionMode.BLOCK
         self.assertEqual(selectable.extend_selection(), (0, 0, 0, 0, 0))
         selectable.marker_row = 0
         selectable.marker_col = 1
@@ -149,7 +150,7 @@ class SelectableTestCases(unittest.TestCase):
         selectable.do_delete_selection()
         self.assertEqual(selectable.parser.data, "oTwo\n\nfe")
         selectable.insert_lines_at(
-            0, 1, ("wx", "", "yz"), app.selectable.SELECTION_BLOCK
+            0, 1, ("wx", "", "yz"), SelectionMode.BLOCK
         )
         self.assertEqual(selectable.parser.data, "owxTwo\n\nfyze")
 
@@ -157,7 +158,7 @@ class SelectableTestCases(unittest.TestCase):
         selectable = self.selectable
         selectable.parser.data = "one two\nSeveral test words.\nfive"
         selectable.parse_document()
-        selectable.selection_mode = app.selectable.SELECTION_CHARACTER
+        selectable.selection_mode = SelectionMode.CHARACTER
         selectable.pen_col = 1
         selectable.do_delete_selection()
         self.assertEqual(selectable.parser.data, "ne two\nSeveral test words.\nfive")
@@ -174,7 +175,7 @@ class SelectableTestCases(unittest.TestCase):
         selectable.parser.data = "one two\n\nfive"
         selectable.parse_document()
         selectable.pen_row = 1
-        selectable.selection_mode = app.selectable.SELECTION_LINE
+        selectable.selection_mode = SelectionMode.LINE
         app.log.debug("selectable.extend_selection", selectable.extend_selection())
         self.assertEqual(selectable.extend_selection(), (0, 0, 0, 0, 0))
         selectable.pen_row = 3
@@ -187,7 +188,7 @@ class SelectableTestCases(unittest.TestCase):
         selectable = self.selectable
         selectable.parser.data = "one two\nSeveral test words.\nfive"
         selectable.parse_document()
-        selectable.selection_mode = app.selectable.SELECTION_WORD
+        selectable.selection_mode = SelectionMode.WORD
         selectable.pen_row = 1
         selectable.pen_col = 2
         self.assertEqual(selectable.extend_selection(), (0, 5, 0, 0, 0))
@@ -200,7 +201,7 @@ class SelectableTestCases(unittest.TestCase):
         selectable = self.selectable
         selectable.parser.data = "one two\n😀Several test words.\nfive"
         selectable.parse_document()
-        selectable.selection_mode = app.selectable.SELECTION_CHARACTER
+        selectable.selection_mode = SelectionMode.CHARACTER
         selectable.pen_row = 1
         selectable.pen_col = 0
         self.assertEqual(selectable.marker_col, 0)

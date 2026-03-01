@@ -22,6 +22,7 @@ import app.regex
 import app.log
 import app.parser
 import app.selectable
+from app.selectable import SelectionMode
 
 class TextBuffer(app.actions.Actions):
     """The TextBuffer adds the drawing/rendering to the BackingTextBuffer."""
@@ -319,7 +320,7 @@ class TextBuffer(app.actions.Actions):
                         line[reg[0] : reg[1]],
                         color_pref("found_find", color_delta),
                     )
-        if row_limit and self.selection_mode != app.selectable.SELECTION_NONE:
+        if row_limit and self.selection_mode != SelectionMode.NONE:
             # Highlight selected text.
             color_selected = color_pref("selected")
             upper_row, upper_col, lower_row, lower_col = self.start_and_end()
@@ -328,7 +329,7 @@ class TextBuffer(app.actions.Actions):
                 sel_end_col = min(lower_col, end_col)
                 start = max(0, min(upper_row - start_row, max_row))
                 end = max(0, min(lower_row - start_row, max_row))
-                if self.selection_mode == app.selectable.SELECTION_BLOCK:
+                if self.selection_mode == SelectionMode.BLOCK:
                     if not (
                         lower_row < start_row
                         or upper_row >= end_row
@@ -342,10 +343,10 @@ class TextBuffer(app.actions.Actions):
                             ]
                             window.add_str(top + i, sel_start_col, line, color_selected)
                 elif (
-                    self.selection_mode == app.selectable.SELECTION_ALL
-                    or self.selection_mode == app.selectable.SELECTION_CHARACTER
-                    or self.selection_mode == app.selectable.SELECTION_LINE
-                    or self.selection_mode == app.selectable.SELECTION_WORD
+                    self.selection_mode == SelectionMode.ALL
+                    or self.selection_mode == SelectionMode.CHARACTER
+                    or self.selection_mode == SelectionMode.LINE
+                    or self.selection_mode == SelectionMode.WORD
                 ):
                     if not (lower_row < start_row or upper_row >= end_row):
                         # There is an overlap.

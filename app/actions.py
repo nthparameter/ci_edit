@@ -40,6 +40,7 @@ import app.log
 import app.mutator
 import app.parser
 import app.selectable
+from app.selectable import SelectionMode
 
 class Actions(app.mutator.Mutator):
     """This base class to TextBuffer handles the text manipulation (without
@@ -135,10 +136,10 @@ class Actions(app.mutator.Mutator):
             self.pen_col = matching_bracket_row_col[1]
 
     def perform_delete(self):
-        if self.selection_mode != app.selectable.SELECTION_NONE:
+        if self.selection_mode != SelectionMode.NONE:
             text = self.get_selected_text()
             if text:
-                if self.selection_mode == app.selectable.SELECTION_BLOCK:
+                if self.selection_mode == SelectionMode.BLOCK:
                     upper = min(self.pen_row, self.marker_row)
                     left = min(self.pen_col, self.marker_col)
                     lower = max(self.pen_row, self.marker_row)
@@ -329,7 +330,7 @@ class Actions(app.mutator.Mutator):
 
     def backspace(self):
         # app.log.info('backspace', self.pen_row > self.marker_row)
-        if self.selection_mode != app.selectable.SELECTION_NONE:
+        if self.selection_mode != SelectionMode.NONE:
             self.perform_delete()
         elif self.pen_col == 0:
             if self.pen_row > 0:
@@ -345,7 +346,7 @@ class Actions(app.mutator.Mutator):
             self.redo()
 
     def backspace_word(self):
-        if self.selection_mode != app.selectable.SELECTION_NONE:
+        if self.selection_mode != SelectionMode.NONE:
             self.perform_delete()
         elif self.pen_col == 0:
             if self.pen_row > 0:
@@ -601,7 +602,7 @@ class Actions(app.mutator.Mutator):
         self.cursor_move_right()
 
     def cursor_select_down(self):
-        if self.selection_mode == app.selectable.SELECTION_NONE:
+        if self.selection_mode == SelectionMode.NONE:
             self.selection_character()
         self.cursor_move_down_or_end()
 
@@ -617,41 +618,41 @@ class Actions(app.mutator.Mutator):
         self.redo()
 
     def cursor_select_left(self):
-        if self.selection_mode == app.selectable.SELECTION_NONE:
+        if self.selection_mode == SelectionMode.NONE:
             self.selection_character()
         self.cursor_move_left()
 
     def cursor_select_right(self):
-        if self.selection_mode == app.selectable.SELECTION_NONE:
+        if self.selection_mode == SelectionMode.NONE:
             self.selection_character()
         self.cursor_move_right()
 
     def cursor_select_subword_left(self):
-        if self.selection_mode == app.selectable.SELECTION_NONE:
+        if self.selection_mode == SelectionMode.NONE:
             self.selection_character()
         self.cursor_move_subword_left()
         self.cursor_move_and_mark(*self.extend_selection())
 
     def cursor_select_subword_right(self):
-        if self.selection_mode == app.selectable.SELECTION_NONE:
+        if self.selection_mode == SelectionMode.NONE:
             self.selection_character()
         self.cursor_move_subword_right()
         self.cursor_move_and_mark(*self.extend_selection())
 
     def cursor_select_word_left(self):
-        if self.selection_mode == app.selectable.SELECTION_NONE:
+        if self.selection_mode == SelectionMode.NONE:
             self.selection_character()
         self.do_cursor_move_left_to(app.regex.RE_WORD_BOUNDARY)
         self.cursor_move_and_mark(*self.extend_selection())
 
     def cursor_select_word_right(self):
-        if self.selection_mode == app.selectable.SELECTION_NONE:
+        if self.selection_mode == SelectionMode.NONE:
             self.selection_character()
         self.do_cursor_move_right_to(app.regex.RE_WORD_BOUNDARY)
         self.cursor_move_and_mark(*self.extend_selection())
 
     def cursor_select_up(self):
-        if self.selection_mode == app.selectable.SELECTION_NONE:
+        if self.selection_mode == SelectionMode.NONE:
             self.selection_character()
         self.cursor_move_up_or_begin()
 
@@ -841,7 +842,7 @@ class Actions(app.mutator.Mutator):
 
     def delete(self):
         """Delete character to right of pen i.e. Del key."""
-        if self.selection_mode != app.selectable.SELECTION_NONE:
+        if self.selection_mode != SelectionMode.NONE:
             self.perform_delete()
         elif self.pen_col == self.parser.row_width(self.pen_row):
             if self.pen_row + 1 < self.parser.row_count():
@@ -886,7 +887,7 @@ class Actions(app.mutator.Mutator):
         self.edit_paste_lines(tuple(data.split("\n")))
 
     def edit_paste_lines(self, clip):
-        if self.selection_mode != app.selectable.SELECTION_NONE:
+        if self.selection_mode != SelectionMode.NONE:
             self.perform_delete()
         self.redo_add_change(("v", clip))
         self.redo()
@@ -1022,7 +1023,7 @@ class Actions(app.mutator.Mutator):
         #     self.file_history.setdefault(
         #     'scroll', (0, 0))
         self.do_selection_mode(
-            self.file_history.setdefault("selection_mode", app.selectable.SELECTION_NONE)
+            self.file_history.setdefault("selection_mode", SelectionMode.NONE)
         )
         self.marker_row, self.marker_col = self.file_history.setdefault("marker", (0, 0))
         if self.program.prefs.editor["save_undo"]:
@@ -1240,7 +1241,7 @@ class Actions(app.mutator.Mutator):
         col = max(0, min(col, row_width))
         end_col = col + length
         in_view = self.is_in_view(row, end_col, row, end_col)
-        self.do_selection_mode(app.selectable.SELECTION_NONE)
+        self.do_selection_mode(SelectionMode.NONE)
         self.cursor_move(row - self.pen_row, end_col - self.pen_col)
         self.do_selection_mode(mode)
         self.cursor_move(0, -length)
@@ -1255,7 +1256,7 @@ class Actions(app.mutator.Mutator):
         app.log.info(search_for, direction)
         if not len(search_for):
             self.find_re = None
-            self.do_selection_mode(app.selectable.SELECTION_NONE)
+            self.do_selection_mode(SelectionMode.NONE)
             return
         editor_prefs = self.program.prefs.editor
         flags = 0
@@ -1445,11 +1446,11 @@ class Actions(app.mutator.Mutator):
                 row_found,
                 offset + start,
                 end - start,
-                app.selectable.SELECTION_CHARACTER,
+                SelectionMode.CHARACTER,
             )
             return
         app.log.info("find not found")
-        self.do_selection_mode(app.selectable.SELECTION_NONE)
+        self.do_selection_mode(SelectionMode.NONE)
 
     def find_again(self):
         """Find the current pattern, searching down the document."""
@@ -1473,7 +1474,7 @@ class Actions(app.mutator.Mutator):
             grammar.get("indent") or self.program.prefs.editor["indentation"]
         )
         indentation_length = len(indentation)
-        if self.selection_mode == app.selectable.SELECTION_NONE:
+        if self.selection_mode == SelectionMode.NONE:
             self.vertical_insert(self.pen_row, self.pen_row, self.pen_col, indentation)
         else:
             self.indent_lines()
@@ -1482,7 +1483,7 @@ class Actions(app.mutator.Mutator):
     def indent_lines(self):
         """Indents all selected lines.
 
-        Do not use for when the selection mode is SELECTION_NONE since
+        Do not use for when the selection mode is SelectionMode.NONE since
         marker_row/marker_col currently do not get updated alongside
         pen_row/pen_col.
         """
@@ -1589,7 +1590,7 @@ class Actions(app.mutator.Mutator):
         app.log.info(" mouse_moved", pane_row, pane_col, shift, ctrl, alt)
         if alt:
             self.selection_block()
-        elif self.selection_mode == app.selectable.SELECTION_NONE:
+        elif self.selection_mode == SelectionMode.NONE:
             self.selection_character()
         self.mouse_release(pane_row, pane_col, shift, ctrl, alt)
 
@@ -1608,7 +1609,7 @@ class Actions(app.mutator.Mutator):
             return
         row = max(0, min(virtual_row, row_count))
         col = max(0, self.view.scroll_col + pane_col)
-        if self.selection_mode == app.selectable.SELECTION_BLOCK:
+        if self.selection_mode == SelectionMode.BLOCK:
             self.cursor_move_and_mark(
                 0, 0, row - self.marker_row, col - self.marker_col, 0
             )
@@ -1620,12 +1621,12 @@ class Actions(app.mutator.Mutator):
         # Adjust the marker column delta when the pen and marker positions
         # cross over each other.
         marker_col = 0
-        if self.selection_mode == app.selectable.SELECTION_LINE:
+        if self.selection_mode == SelectionMode.LINE:
             if self.pen_row + 1 == self.marker_row and row > self.pen_row:
                 marker_row = -1
             elif self.pen_row == self.marker_row + 1 and row < self.pen_row:
                 marker_row = 1
-        elif self.selection_mode == app.selectable.SELECTION_WORD:
+        elif self.selection_mode == SelectionMode.WORD:
             if self.pen_row == self.marker_row:
                 if row == self.pen_row:
                     if self.pen_col > self.marker_col and col < self.marker_col:
@@ -1645,9 +1646,9 @@ class Actions(app.mutator.Mutator):
         self.cursor_move_and_mark(
             row - self.pen_row, col - self.pen_col, marker_row, marker_col, 0
         )
-        if self.selection_mode == app.selectable.SELECTION_LINE:
+        if self.selection_mode == SelectionMode.LINE:
             self.cursor_move_and_mark(*self.extend_selection())
-        elif self.selection_mode == app.selectable.SELECTION_WORD:
+        elif self.selection_mode == SelectionMode.WORD:
             if self.pen_row < self.marker_row or (
                 self.pen_row == self.marker_row and self.pen_col < self.marker_col
             ):
@@ -1743,7 +1744,7 @@ class Actions(app.mutator.Mutator):
 
     def next_selection_mode(self):
         next_mode = self.selection_mode + 1
-        next_mode %= app.selectable.SELECTION_MODE_COUNT
+        next_mode %= len(SelectionMode)
         self.do_selection_mode(next_mode)
         app.log.info("next_selection_mode", self.selection_mode)
 
@@ -1797,28 +1798,28 @@ class Actions(app.mutator.Mutator):
 
         Consecutive calls to this function will select subsequent lines.
         """
-        if self.selection_mode != app.selectable.SELECTION_LINE:
+        if self.selection_mode != SelectionMode.LINE:
             self.selection_line()
         self.select_line_at(self.pen_row)
 
     def selection_all(self):
-        self.do_selection_mode(app.selectable.SELECTION_ALL)
+        self.do_selection_mode(SelectionMode.ALL)
         self.cursor_move_and_mark(*self.extend_selection())
 
     def selection_block(self):
-        self.do_selection_mode(app.selectable.SELECTION_BLOCK)
+        self.do_selection_mode(SelectionMode.BLOCK)
 
     def selection_character(self):
-        self.do_selection_mode(app.selectable.SELECTION_CHARACTER)
+        self.do_selection_mode(SelectionMode.CHARACTER)
 
     def selection_line(self):
-        self.do_selection_mode(app.selectable.SELECTION_LINE)
+        self.do_selection_mode(SelectionMode.LINE)
 
     def selection_none(self):
-        self.do_selection_mode(app.selectable.SELECTION_NONE)
+        self.do_selection_mode(SelectionMode.NONE)
 
     def selection_word(self):
-        self.do_selection_mode(app.selectable.SELECTION_WORD)
+        self.do_selection_mode(SelectionMode.WORD)
 
     def select_line_at(self, row):
         """Adds the line with the specified row to the current selection.
@@ -1839,7 +1840,7 @@ class Actions(app.mutator.Mutator):
                 -self.pen_col,
                 0,
                 -self.marker_col,
-                app.selectable.SELECTION_LINE - self.selection_mode,
+                SelectionMode.LINE - self.selection_mode,
             )
         else:
             self.cursor_move_and_mark(
@@ -1847,13 +1848,13 @@ class Actions(app.mutator.Mutator):
                 self.parser.row_width(row) - self.pen_col,
                 0,
                 -self.marker_col,
-                app.selectable.SELECTION_LINE - self.selection_mode,
+                SelectionMode.LINE - self.selection_mode,
             )
 
     def select_word_at(self, row, col):
         """row and col may be from a mouse click and may not actually land in
         the document text."""
-        self.select_text(row, col, 0, app.selectable.SELECTION_WORD)
+        self.select_text(row, col, 0, SelectionMode.WORD)
         row_width = self.parser.row_width(row)
         if col < row_width:
             self.cursor_select_word_right()
@@ -1888,7 +1889,7 @@ class Actions(app.mutator.Mutator):
                 self._perform_delete_range(i, found.regs[0][0], i, found.regs[0][1])
 
     def unindent(self):
-        if self.selection_mode != app.selectable.SELECTION_NONE:
+        if self.selection_mode != SelectionMode.NONE:
             self.unindent_lines()
         else:
             indentation = self.program.prefs.editor["indentation"]

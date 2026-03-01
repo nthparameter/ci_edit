@@ -17,6 +17,7 @@ import unittest
 
 import app.log
 import app.text_buffer
+from app.selectable import SelectionMode
 
 class FakeCursorWindow:
     def getmaxyx(self):
@@ -475,7 +476,7 @@ class TextIndentTestCases(ActionsTestCase):
             self.text_buffer.pen_col = pen_col
             self.text_buffer.marker_row = marker_row
             self.text_buffer.marker_col = marker_col
-            self.text_buffer.selection_mode = app.selectable.SELECTION_CHARACTER
+            self.text_buffer.selection_mode = SelectionMode.CHARACTER
 
         tb = self.text_buffer
         self.assertEqual(tb.parser.row_count(), 1)

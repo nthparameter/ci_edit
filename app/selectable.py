@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import enum
 import re
 
 import app.config
@@ -19,20 +20,15 @@ import app.line_buffer
 import app.log
 import app.regex
 
-# No selection.
-SELECTION_NONE = 0
-# Entire document selected.
-SELECTION_ALL = 1
-# A rectangular block selection.
-SELECTION_BLOCK = 2
-# Character by character selection.
-SELECTION_CHARACTER = 3
-# Select whole lines.
-SELECTION_LINE = 4
-# Select whole words.
-SELECTION_WORD = 5
-# How many selection modes are there.
-SELECTION_MODE_COUNT = 6
+
+class SelectionMode(enum.IntEnum):
+    NONE = 0
+    ALL = 1
+    BLOCK = 2
+    CHARACTER = 3
+    LINE = 4
+    WORD = 5
+
 
 SELECTION_MODE_NAMES = [
     "None",
@@ -64,7 +60,7 @@ class Selectable(app.line_buffer.LineBuffer):
         self.pen_col = 0
         self.marker_row = 0
         self.marker_col = 0
-        self.selection_mode = SELECTION_NONE
+        self.selection_mode = SelectionMode.NONE
 
     def count_selected(self):
         lines = self.get_selected_text()
@@ -84,7 +80,7 @@ class Selectable(app.line_buffer.LineBuffer):
         return self.get_text(upper_row, upper_col, lower_row, lower_col, self.selection_mode)
 
     def get_text(
-        self, upper_row, upper_col, lower_row, lower_col, selection_mode=SELECTION_CHARACTER
+        self, upper_row, upper_col, lower_row, lower_col, selection_mode=SelectionMode.CHARACTER
     ):
         if app.config.strict_debug:
             assert isinstance(upper_row, int)
@@ -94,18 +90,18 @@ class Selectable(app.line_buffer.LineBuffer):
             assert isinstance(selection_mode, int)
             assert upper_row <= lower_row
             assert upper_row != lower_row or upper_col <= lower_col
-            assert SELECTION_NONE <= selection_mode < SELECTION_MODE_COUNT
+            assert SelectionMode.NONE <= selection_mode < len(SelectionMode)
         lines = []
-        if selection_mode == SELECTION_BLOCK:
+        if selection_mode == SelectionMode.BLOCK:
             if lower_row + 1 < self.parser.row_count():
                 lower_row += 1
             for i in range(upper_row, lower_row):
                 lines.append(self.parser.row_text(i, upper_col, lower_col))
         elif (
-            selection_mode == SELECTION_ALL
-            or selection_mode == SELECTION_CHARACTER
-            or selection_mode == SELECTION_LINE
-            or selection_mode == SELECTION_WORD
+            selection_mode == SelectionMode.ALL
+            or selection_mode == SelectionMode.CHARACTER
+            or selection_mode == SelectionMode.LINE
+            or selection_mode == SelectionMode.WORD
         ):
             if upper_row == lower_row:
                 lines.append(self.parser.row_text(upper_row, upper_col, lower_col))
@@ -134,14 +130,14 @@ class Selectable(app.line_buffer.LineBuffer):
             assert isinstance(lower_col, int)
             assert upper_row <= lower_row
             assert upper_row != lower_row or upper_col <= lower_col
-        if self.selection_mode == SELECTION_BLOCK:
+        if self.selection_mode == SelectionMode.BLOCK:
             self.parser.delete_block(upper_row, upper_col, lower_row, lower_col)
         elif (
-            self.selection_mode == SELECTION_NONE
-            or self.selection_mode == SELECTION_ALL
-            or self.selection_mode == SELECTION_CHARACTER
-            or self.selection_mode == SELECTION_LINE
-            or self.selection_mode == SELECTION_WORD
+            self.selection_mode == SelectionMode.NONE
+            or self.selection_mode == SelectionMode.ALL
+            or self.selection_mode == SelectionMode.CHARACTER
+            or self.selection_mode == SelectionMode.LINE
+            or self.selection_mode == SelectionMode.WORD
         ):
             self.parser.delete_range(upper_row, upper_col, lower_row, lower_col)
 
@@ -161,14 +157,14 @@ class Selectable(app.line_buffer.LineBuffer):
                 # Optimization. There's nothing to insert.
                 return
         lines = list(lines)
-        if selection_mode == SELECTION_BLOCK:
+        if selection_mode == SelectionMode.BLOCK:
             self.parser.insert_block(row, col, lines)
         elif (
-            selection_mode == SELECTION_NONE
-            or selection_mode == SELECTION_ALL
-            or selection_mode == SELECTION_CHARACTER
-            or selection_mode == SELECTION_LINE
-            or selection_mode == SELECTION_WORD
+            selection_mode == SelectionMode.NONE
+            or selection_mode == SelectionMode.ALL
+            or selection_mode == SelectionMode.CHARACTER
+            or selection_mode == SelectionMode.LINE
+            or selection_mode == SelectionMode.WORD
         ):
             if len(lines) == 1:
                 self.parser.insert(row, col, lines[0])
@@ -204,9 +200,9 @@ class Selectable(app.line_buffer.LineBuffer):
         Returns: tuple of (pen_row, pen_col, marker_row, marker_col, selection_mode)
             which are the delta values to accomplish the selection mode.
         """
-        if self.selection_mode == SELECTION_NONE:
+        if self.selection_mode == SelectionMode.NONE:
             return (0, 0, -self.marker_row, -self.marker_col, 0)
-        elif self.selection_mode == SELECTION_ALL:
+        elif self.selection_mode == SelectionMode.ALL:
             lower_row = self.parser.row_count() - 1
             lower_col = self.parser.row_width(-1)
             return (
@@ -216,9 +212,9 @@ class Selectable(app.line_buffer.LineBuffer):
                 -self.marker_col,
                 0,
             )
-        elif self.selection_mode == SELECTION_LINE:
+        elif self.selection_mode == SelectionMode.LINE:
             return (0, -self.pen_col, 0, -self.marker_col, 0)
-        elif self.selection_mode == SELECTION_WORD:
+        elif self.selection_mode == SelectionMode.WORD:
             if self.pen_row > self.marker_row or (
                 self.pen_row == self.marker_row and self.pen_col > self.marker_col
             ):
@@ -240,25 +236,25 @@ class Selectable(app.line_buffer.LineBuffer):
         upper_col = 0
         lower_row = 0
         lower_col = 0
-        if self.selection_mode == SELECTION_NONE:
+        if self.selection_mode == SelectionMode.NONE:
             upper_row = self.pen_row
             upper_col = self.pen_col
             lower_row = self.pen_row
             lower_col = self.pen_col
-        elif self.selection_mode == SELECTION_ALL:
+        elif self.selection_mode == SelectionMode.ALL:
             upper_row = 0
             upper_col = 0
             lower_row = self.parser.row_count() - 1
             lower_col = self.parser.row_width(-1)
-        elif self.selection_mode == SELECTION_BLOCK:
+        elif self.selection_mode == SelectionMode.BLOCK:
             upper_row = min(self.marker_row, self.pen_row)
             upper_col = min(self.marker_col, self.pen_col)
             lower_row = max(self.marker_row, self.pen_row)
             lower_col = max(self.marker_col, self.pen_col)
         elif (
-            self.selection_mode == SELECTION_CHARACTER
-            or self.selection_mode == SELECTION_LINE
-            or self.selection_mode == SELECTION_WORD
+            self.selection_mode == SelectionMode.CHARACTER
+            or self.selection_mode == SelectionMode.LINE
+            or self.selection_mode == SelectionMode.WORD
         ):
             upper_row = self.marker_row
             upper_col = self.marker_col

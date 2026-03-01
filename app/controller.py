@@ -20,6 +20,7 @@ import app.config
 import app.curses_util
 import app.log
 import app.selectable
+from app.selectable import SelectionMode
 
 # import app.window
 
@@ -352,7 +353,7 @@ class MainController:
 
     def on_change(self):
         tb = self.view.text_buffer
-        if tb.message is None and tb.selection_mode != app.selectable.SELECTION_NONE:
+        if tb.message is None and tb.selection_mode != SelectionMode.NONE:
             char_count, line_count = tb.count_selected()
             tb.set_message(
                 f"{char_count} characters ({line_count} lines) selected"

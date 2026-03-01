@@ -19,6 +19,7 @@ import app.buffer_file
 from app.curses_util import column_width
 import app.log
 import app.selectable
+from app.selectable import SelectionMode
 
 # If a change is in |no_op_instructions| then it has no real effect.
 no_op_instructions = set(
@@ -193,7 +194,7 @@ class Mutator(app.selectable.Selectable):
             assert self.pen_row < to
             to -= count
             self.pen_row -= count
-            if self.selection_mode != app.selectable.SELECTION_NONE:
+            if self.selection_mode != SelectionMode.NONE:
                 assert self.marker_row < to + count
                 assert self.marker_row >= count
                 self.marker_row -= count
@@ -201,7 +202,7 @@ class Mutator(app.selectable.Selectable):
             assert end > to
             assert self.pen_row >= to
             self.pen_row += count
-            if self.selection_mode != app.selectable.SELECTION_NONE:
+            if self.selection_mode != SelectionMode.NONE:
                 assert self.marker_row >= to
                 self.marker_row += count
         self.parser.insert_lines(to, 0, lines.split("\n"))
@@ -454,7 +455,7 @@ class Mutator(app.selectable.Selectable):
                 change[1][0],
                 change[1][1],
                 change[2],
-                app.selectable.SELECTION_CHARACTER,
+                SelectionMode.CHARACTER,
             )
         elif change[0] == "ds":  # Undo delete selection.
             self.insert_lines(change[1])

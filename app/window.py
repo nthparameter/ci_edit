@@ -31,6 +31,7 @@ import app.em_editor
 import app.string
 import app.text_buffer
 import app.vi_editor
+from app.selectable import SelectionMode
 
 # The terminal area that the curses can draw to.
 main_curses_window = None
@@ -685,7 +686,7 @@ class LineNumbers(ViewWindow):
             tb.selection_none()
             return
         if shift:
-            if tb.selection_mode == app.selectable.SELECTION_NONE:
+            if tb.selection_mode == SelectionMode.NONE:
                 tb.selection_line()
             self.mouse_release(pane_row, pane_col, shift, ctrl, alt)
         else:
@@ -694,7 +695,7 @@ class LineNumbers(ViewWindow):
                 0,
                 self.host.scroll_row + pane_row - tb.marker_row,
                 0,
-                app.selectable.SELECTION_NONE - tb.selection_mode,
+                SelectionMode.NONE - tb.selection_mode,
             )
             self.mouse_release(pane_row, pane_col, shift, ctrl, alt)
 
@@ -1302,9 +1303,9 @@ class InputWindow(Window):
             tb.parse_document()
             if f["row"] is not None:
                 if f["col"] is not None:
-                    tb.select_text(f["row"], f["col"], 0, app.selectable.SELECTION_NONE)
+                    tb.select_text(f["row"], f["col"], 0, SelectionMode.NONE)
                 else:
-                    tb.select_text(f["row"], 0, 0, app.selectable.SELECTION_NONE)
+                    tb.select_text(f["row"], 0, 0, SelectionMode.NONE)
         if self.program.prefs.startup.get("read_stdin"):
             buffer_manager.read_stdin()
         buffer_manager.buffers.reverse()
@@ -1317,7 +1318,7 @@ class InputWindow(Window):
         open_to_line = self.program.prefs.startup.get("open_to_line")
         if open_to_line is not None:
             self.text_buffer.select_text(
-                open_to_line - 1, 0, 0, app.selectable.SELECTION_NONE
+                open_to_line - 1, 0, 0, SelectionMode.NONE
             )
 
     def toggle_show_tips(self):
