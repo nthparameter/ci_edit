@@ -89,8 +89,8 @@ class CiProgram:
         # frame (similar to, but not exactly like double buffering video).
         self.backgroundFrame = app.render.Frame()
         self.frontFrame = None
-        self.history = app.history.History(self.prefs.userData.get("historyPath"))
-        self.bufferManager = app.buffer_manager.BufferManager(self, self.prefs)
+        self.history = app.history.History(self.prefs.user_data.get("historyPath"))
+        self.buffer_manager = app.buffer_manager.BufferManager(self, self.prefs)
         self.cursesScreen = None
         self.debugMouseEvent = (0, 0, 0, 0, 0)
         self.exiting = False
@@ -328,7 +328,7 @@ class CiProgram:
     def parse_args(self):
         """Interpret the command line arguments."""
         app.log.startup("isatty", sys.stdin.isatty())
-        debugRedo = False
+        debug_redo = False
         showLogWindow = False
         cliFiles = []
         openToLine = None
@@ -344,8 +344,8 @@ class CiProgram:
                 openToLine = int(i[1:])
                 continue
             if not takeAll and i[:2] == "--":
-                if i == "--debugRedo":
-                    debugRedo = True
+                if i == "--debug_redo":
+                    debug_redo = True
                 elif i == "--profile":
                     profile = True
                 elif i == "--log":
@@ -404,7 +404,7 @@ class CiProgram:
                 )
             cliFiles = decodedPaths
         self.prefs.startup = {
-            "debugRedo": debugRedo,
+            "debug_redo": debug_redo,
             "showLogWindow": showLogWindow,
             "cliFiles": cliFiles,
             "openToLine": openToLine,
@@ -469,7 +469,7 @@ class CiProgram:
     def run(self):
         self.parse_args()
         self.set_up_palette()
-        homePath = self.prefs.userData.get("homePath")
+        homePath = self.prefs.user_data.get("homePath")
         self.make_home_dirs(homePath)
         self.history.load_user_history()
         app.curses_util.hack_curses_fixes()
@@ -535,12 +535,12 @@ class CiProgram:
         def get_document_selection(self):
             """This is primarily for testing."""
             tb = self.programWindow.inputWindow.textBuffer
-            return (tb.penRow, tb.penCol, tb.markerRow, tb.markerCol, tb.selectionMode)
+            return (tb.pen_row, tb.pen_col, tb.marker_row, tb.marker_col, tb.selectionMode)
 
         def get_selection(self):
             """This is primarily for testing."""
             tb = self.programWindow.focusedWindow.textBuffer
-            return (tb.penRow, tb.penCol, tb.markerRow, tb.markerCol, tb.selectionMode)
+            return (tb.pen_row, tb.pen_col, tb.marker_row, tb.marker_col, tb.selectionMode)
 
 def wrapped_ci(cursesScreen):
     try:
@@ -572,8 +572,8 @@ def run_ci():
         sys.stdout.write("\033[?1002;l")
         sys.stdout.flush()
     if userConsoleMessage:
-        fullPath = app.buffer_file.expand_full_path("~/.ci_edit/userConsoleMessage")
-        with open(fullPath, "w+") as f:
+        full_path = app.buffer_file.expand_full_path("~/.ci_edit/userConsoleMessage")
+        with open(full_path, "w+") as f:
             f.write(userConsoleMessage)
         sys.stdout.write(userConsoleMessage + "\n")
         sys.stdout.flush()

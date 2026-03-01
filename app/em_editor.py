@@ -56,7 +56,7 @@ class EditText(app.controller.Controller):
 
     def set_text_buffer(self, textBuffer):
         textBuffer.lines = [""]
-        self.commandSet = {
+        self.command_set = {
             KEY_F1: self.info,
             CTRL_A: textBuffer.selection_all,
             CTRL_C: textBuffer.edit_copy,
@@ -78,8 +78,8 @@ class EditText(app.controller.Controller):
 
     def focus(self):
         app.log.info("EditText.focus", repr(self))
-        self.commandDefault = self.textBuffer.insert_printable
-        self.commandSet = self.commandSet
+        self.command_default = self.textBuffer.insert_printable
+        self.command_set = self.command_set
 
     def info(self):
         app.log.info("EditText command set")
@@ -99,8 +99,8 @@ class InteractiveOpener(EditText):
         EditText.__init__(self, prg, view, textBuffer)
         self.document = view.host
         app.log.info("xxxxx", self.document)
-        commandSet = self.commandSet.copy()
-        commandSet.update(
+        command_set = self.command_set.copy()
+        command_set.update(
             {
                 KEY_ESCAPE: self.change_to_input_window,
                 KEY_F1: self.info,
@@ -111,7 +111,7 @@ class InteractiveOpener(EditText):
                 CTRL_Q: self.prg.quit,
             }
         )
-        self.commandSet = commandSet
+        self.command_set = command_set
 
     def focus(self):
         app.log.info("InteractiveOpener.focus")
@@ -127,7 +127,7 @@ class InteractiveOpener(EditText):
         expandedPath = os.path.abspath(os.path.expanduser(self.textBuffer.lines[0]))
         if not os.path.isdir(expandedPath):
             self.view.host.set_text_buffer(
-                self.prg.bufferManager.load_text_buffer(expandedPath), self.view.host
+                self.prg.buffer_manager.load_text_buffer(expandedPath), self.view.host
             )
         self.change_to_input_window()
 
@@ -197,8 +197,8 @@ class InteractiveOpener(EditText):
 
     def set_file_name(self, path):
         self.textBuffer.lines = [path]
-        self.textBuffer.penCol = len(path)
-        self.textBuffer.goalCol = self.textBuffer.penCol
+        self.textBuffer.pen_col = len(path)
+        self.textBuffer.goal_col = self.textBuffer.pen_col
 
     def on_change(self):
         path = os.path.expanduser(os.path.expandvars(self.textBuffer.lines[0]))
@@ -212,7 +212,7 @@ class InteractiveOpener(EditText):
                     lines.append(i)
             if len(lines) == 1 and os.path.isfile(os.path.join(dirPath, fileName)):
                 self.view.host.set_text_buffer(
-                    self.view.program.bufferManager.load_text_buffer(
+                    self.view.program.buffer_manager.load_text_buffer(
                         os.path.join(dirPath, fileName), self.view.host
                     )
                 )
@@ -231,7 +231,7 @@ class InteractiveFind(EditText):
     def __init__(self, prg, view, textBuffer):
         EditText.__init__(self, prg, view, textBuffer)
         self.document = view.host
-        self.commandSet.update(
+        self.command_set.update(
             {
                 KEY_ESCAPE: self.change_to_input_window,
                 KEY_F1: self.info,
@@ -264,7 +264,7 @@ class InteractiveFind(EditText):
             self.textBuffer.selection_all()
             self.textBuffer.insert_lines(selection)
         self.textBuffer.selection_all()
-        app.log.info("find tb", self.textBuffer.penCol)
+        app.log.info("find tb", self.textBuffer.pen_col)
 
     def info(self):
         app.log.info("InteractiveFind command set")
@@ -291,8 +291,8 @@ class InteractiveGoto(EditText):
     def __init__(self, prg, view, textBuffer):
         EditText.__init__(self, prg, view, textBuffer)
         self.document = view.host
-        commandSet = self.commandSet.copy()
-        commandSet.update(
+        command_set = self.command_set.copy()
+        command_set.update(
             {
                 KEY_ESCAPE: self.change_to_input_window,
                 KEY_F1: self.info,
@@ -303,12 +303,12 @@ class InteractiveGoto(EditText):
                 ord("t"): self.goto_top,
             }
         )
-        self.commandSet = commandSet
+        self.command_set = command_set
 
     def focus(self):
         app.log.info("InteractiveGoto.focus")
         self.textBuffer.selection_all()
-        self.textBuffer.insert(str(self.document.textBuffer.penRow + 1))
+        self.textBuffer.insert(str(self.document.textBuffer.pen_row + 1))
         self.textBuffer.selection_all()
         EditText.focus(self)
 
@@ -329,12 +329,12 @@ class InteractiveGoto(EditText):
 
     def cursor_move_to(self, row, col):
         textBuffer = self.document.textBuffer
-        penRow = min(max(row - 1, 0), len(textBuffer.lines) - 1)
-        app.log.info("cursor_move_to row", row, penRow)
+        pen_row = min(max(row - 1, 0), len(textBuffer.lines) - 1)
+        app.log.info("cursor_move_to row", row, pen_row)
         textBuffer.cursor_move(
-            penRow - textBuffer.penRow,
-            col - textBuffer.penCol,
-            col - textBuffer.goalCol,
+            pen_row - textBuffer.pen_row,
+            col - textBuffer.pen_col,
+            col - textBuffer.goal_col,
         )
 
     def on_change(self):
@@ -353,7 +353,7 @@ class CiEdit(app.controller.Controller):
         app.controller.Controller.__init__(self, prg, None, "CiEdit")
         app.log.info("CiEdit.__init__")
         self.textBuffer = textBuffer
-        self.commandSet_Main = {
+        self.command_set_main = {
             CTRL_SPACE: self.switch_to_command_set_cmd,
             CTRL_A: textBuffer.cursor_start_of_line,
             CTRL_B: textBuffer.cursor_left,
@@ -379,11 +379,11 @@ class CiEdit(app.controller.Controller):
             CTRL_X: self.edit_cut,
             CTRL_Y: self.redo,
             CTRL_Z: self.undo,
-            CTRL_BACKSLASH: self.changeToCmdMode,
+            CTRL_BACKSLASH: self.change_to_cmd_mode,
             # ord('/'): self.switch_to_command_set_cmd,
         }
 
-        self.commandSet_Cmd = {
+        self.command_set_cmd = {
             ord("a"): self.switch_to_command_set_application,
             ord("f"): self.switch_to_command_set_file,
             ord("s"): self.switch_to_command_set_select,
@@ -391,24 +391,24 @@ class CiEdit(app.controller.Controller):
             ord("'"): self.marker_place,
         }
 
-        self.commandSet_Application = {
+        self.command_set_application = {
             ord("q"): self.prg.quit,
             ord("t"): self.test,
             ord("w"): self.file_write,
             ord(";"): self.switch_to_command_set_main,
         }
 
-        self.commandSet_File = {
+        self.command_set_file = {
             ord("o"): self.switch_to_command_set_file_open,
             ord("w"): self.file_write,
             ord(";"): self.switch_to_command_set_main,
         }
 
-        self.commandSet_FileOpen = {
+        self.command_set_file_open = {
             ord(";"): self.switch_to_command_set_main,
         }
 
-        self.commandSet_Select = {
+        self.command_set_select = {
             ord("a"): self.selection_all,
             ord("b"): self.selection_block,
             ord("c"): self.selection_character,
@@ -417,32 +417,32 @@ class CiEdit(app.controller.Controller):
             ord(";"): self.switch_to_command_set_main,
         }
 
-        self.commandDefault = self.insert_printable
-        self.commandSet = self.commandSet_Main
+        self.command_default = self.insert_printable
+        self.command_set = self.command_set_main
 
     def switch_to_command_set_main(self, ignored=1):
         self.log("ci main", repr(self.prg))
-        self.commandDefault = self.insert_printable
-        self.commandSet = self.commandSet_Main
+        self.command_default = self.insert_printable
+        self.command_set = self.command_set_main
 
     def switch_to_command_set_cmd(self):
         self.log("ci cmd")
-        self.commandDefault = self.textBuffer.no_op
-        self.commandSet = self.commandSet_Cmd
+        self.command_default = self.textBuffer.no_op
+        self.command_set = self.command_set_cmd
 
     def switch_to_command_set_application(self):
         self.log("ci application")
-        self.commandDefault = self.textBuffer.no_op
-        self.commandSet = self.commandSet_Application
+        self.command_default = self.textBuffer.no_op
+        self.command_set = self.command_set_application
 
     def switch_to_command_set_file(self):
-        self.commandDefault = self.textBuffer.no_op
-        self.commandSet = self.commandSet_File
+        self.command_default = self.textBuffer.no_op
+        self.command_set = self.command_set_file
 
     def switch_to_command_set_file_open(self):
         self.log("switch_to_command_set_file_open")
-        self.commandDefault = self.pathInsertPrintable
-        self.commandSet = self.commandSet_FileOpen
+        self.command_default = self.path_insert_printable
+        self.command_set = self.command_set_file_open
 
     def switch_to_main_and_do_command(self, ch):
         self.log("switch_to_main_and_do_command")
@@ -451,8 +451,8 @@ class CiEdit(app.controller.Controller):
 
     def switch_to_command_set_select(self):
         self.log("ci select")
-        self.commandDefault = self.SwitchToMainAndDoCommand
-        self.commandSet = self.commandSet_Select
+        self.command_default = self.SwitchToMainAndDoCommand
+        self.command_set = self.command_set_select
         self.selection_character()
 
 class EmacsEdit(app.controller.Controller):
@@ -464,8 +464,8 @@ class EmacsEdit(app.controller.Controller):
 
     def focus(self):
         app.log.info("EmacsEdit.focus")
-        self.commandDefault = self.textBuffer.insert_printable
-        self.commandSet = self.commandSet_Main
+        self.command_default = self.textBuffer.insert_printable
+        self.command_set = self.command_set_main
 
     def on_change(self):
         pass
@@ -473,7 +473,7 @@ class EmacsEdit(app.controller.Controller):
     def set_text_buffer(self, textBuffer):
         app.log.info("EmacsEdit.set_text_buffer")
         self.textBuffer = textBuffer
-        self.commandSet_Main = {
+        self.command_set_main = {
             KEY_F1: self.info,
             CTRL_A: textBuffer.cursor_start_of_line,
             CTRL_B: textBuffer.cursor_left,
@@ -498,7 +498,7 @@ class EmacsEdit(app.controller.Controller):
             CTRL_Y: textBuffer.redo,
             CTRL_Z: textBuffer.undo,
         }
-        self.commandSet = self.commandSet_Main
+        self.command_set = self.command_set_main
 
         self.commandSet_X = {
             CTRL_C: self.prg.quit,
@@ -510,4 +510,4 @@ class EmacsEdit(app.controller.Controller):
 
     def switch_to_command_set_x(self):
         self.log("emacs x")
-        self.commandSet = self.commandSet_X
+        self.command_set = self.commandSet_X

@@ -28,30 +28,30 @@ class TextBuffer(app.actions.Actions):
 
     def __init__(self, program):
         app.actions.Actions.__init__(self, program)
-        self.lineLimitIndicator = 0
-        self.highlightRe = None
-        self.highlightCursorLine = False
-        self.highlightTrailingWhitespace = True
-        self.shouldReparse = False
+        self.line_limit_indicator = 0
+        self.highlight_re = None
+        self.highlight_cursor_line = False
+        self.highlight_trailing_whitespace = True
+        self.should_reparse = False
 
     def check_scroll_to_cursor(self, window):
         """Move the selected view rectangle so that the cursor is visible."""
         maxRow, maxCol = window.rows, window.cols
-        #     self.penRow >= self.view.scrollRow + maxRow 1 0
+        #     self.pen_row >= self.view.scrollRow + maxRow 1 0
         rows = 0
-        if self.view.scrollRow > self.penRow:
-            rows = self.penRow - self.view.scrollRow
+        if self.view.scrollRow > self.pen_row:
+            rows = self.pen_row - self.view.scrollRow
             app.log.error(
-                "AAA self.view.scrollRow > self.penRow",
+                "AAA self.view.scrollRow > self.pen_row",
                 self.view.scrollRow,
-                self.penRow,
+                self.pen_row,
                 self,
             )
-        elif self.penRow >= self.view.scrollRow + maxRow:
-            rows = self.penRow - (self.view.scrollRow + maxRow - 1)
+        elif self.pen_row >= self.view.scrollRow + maxRow:
+            rows = self.pen_row - (self.view.scrollRow + maxRow - 1)
             app.log.error(
-                "BBB self.penRow >= self.view.scrollRow + maxRow cRow",
-                self.penRow,
+                "BBB self.pen_row >= self.view.scrollRow + maxRow cRow",
+                self.pen_row,
                 "sRow",
                 self.view.scrollRow,
                 "maxRow",
@@ -59,19 +59,19 @@ class TextBuffer(app.actions.Actions):
                 self,
             )
         cols = 0
-        if self.view.scrollCol > self.penCol:
-            cols = self.penCol - self.view.scrollCol
+        if self.view.scrollCol > self.pen_col:
+            cols = self.pen_col - self.view.scrollCol
             app.log.error(
-                "CCC self.view.scrollCol > self.penCol",
+                "CCC self.view.scrollCol > self.pen_col",
                 self.view.scrollCol,
-                self.penCol,
+                self.pen_col,
                 self,
             )
-        elif self.penCol >= self.view.scrollCol + maxCol:
-            cols = self.penCol - (self.view.scrollCol + maxCol - 1)
+        elif self.pen_col >= self.view.scrollCol + maxCol:
+            cols = self.pen_col - (self.view.scrollCol + maxCol - 1)
             app.log.error(
-                "DDD self.penCol >= self.scrollCol + maxCol",
-                self.penCol,
+                "DDD self.pen_col >= self.scrollCol + maxCol",
+                self.pen_col,
                 self.view.scrollCol,
                 maxCol,
                 self,
@@ -84,9 +84,9 @@ class TextBuffer(app.actions.Actions):
         if self.view.rows <= 0 or self.view.cols <= 0:
             return
         if not self.view.program.prefs.editor["useBgThread"]:
-            if self.shouldReparse:
+            if self.should_reparse:
                 self.parse_grammars()
-                self.shouldReparse = False
+                self.should_reparse = False
         if self.view.hasCaptiveCursor:
             self.check_scroll_to_cursor(window)
         rows, cols = window.rows, window.cols
@@ -101,8 +101,8 @@ class TextBuffer(app.actions.Actions):
             self.draw_text_area(window, 0, 0, rows, cols, 0)
         elif 1:
             splitRow = rows
-            splitCol = max(0, self.lineLimitIndicator - self.view.scrollCol)
-            if self.lineLimitIndicator <= 0 or splitCol >= cols:
+            splitCol = max(0, self.line_limit_indicator - self.view.scrollCol)
+            if self.line_limit_indicator <= 0 or splitCol >= cols:
                 # Draw only left side.
                 self.draw_text_area(window, 0, 0, splitRow, cols, 0)
             elif 0 < splitCol < cols:
@@ -142,12 +142,12 @@ class TextBuffer(app.actions.Actions):
         endRow = startRow + rows
         startCol = self.view.scrollCol + left
         endCol = startCol + cols
-        appPrefs = self.view.program.prefs
-        defaultColor = appPrefs.color["default"]
-        spellChecking = appPrefs.editor.get("spellChecking", True)
+        app_prefs = self.view.program.prefs
+        defaultColor = app_prefs.color["default"]
+        spellChecking = app_prefs.editor.get("spellChecking", True)
         color_pref = self.view.color_pref
         spelling = self.program.dictionary
-        spelling.set_up_words_for_path(self.fullPath)
+        spelling.set_up_words_for_path(self.full_path)
         if self.parser:
             # Highlight grammar.
             rowLimit = min(max(self.parser.row_count() - startRow, 0), rows)
@@ -193,7 +193,7 @@ class TextBuffer(app.actions.Actions):
                         # Highlight spelling errors
                         grammarName = node.grammar.get("name", "unknown")
                         misspellingColor = color_pref("misspelling", colorDelta)
-                        for found in re.finditer(app.regex.kReSubwords, subLine):
+                        for found in re.finditer(app.regex.RE_SUBWORDS, subLine):
                             reg = found.regs[0]  # Mispelllled word
                             offsetStart = subStart + reg[0]
                             offsetEnd = subStart + reg[1]
@@ -225,9 +225,9 @@ class TextBuffer(app.actions.Actions):
                 )
         self.draw_overlays(window, top, left, rows, cols, colorDelta)
         if 0:  # Experiment: draw our own cursor.
-            if startRow <= self.penRow < endRow and startCol <= self.penCol < endCol:
+            if startRow <= self.pen_row < endRow and startCol <= self.pen_col < endCol:
                 window.add_str(
-                    self.penRow - startRow, self.penCol - startCol, "X", 200
+                    self.pen_row - startRow, self.pen_col - startCol, "X", 200
                 )
 
     def draw_overlays(self, window, top, left, maxRow, maxCol, colorDelta):
@@ -248,8 +248,8 @@ class TextBuffer(app.actions.Actions):
             )
             for i in range(rowLimit):
                 line = self.parser.row_text(startRow + i)
-                highlightTrailingWhitespace = self.highlightTrailingWhitespace and not (
-                    startRow + i == self.penRow and self.penCol == len(line)
+                highlight_trailing_whitespace = self.highlight_trailing_whitespace and not (
+                    startRow + i == self.pen_row and self.pen_col == len(line)
                 )
                 for s, column, _, index in app.curses_util.rendered_find_iter(
                     line,
@@ -257,7 +257,7 @@ class TextBuffer(app.actions.Actions):
                     endCol,
                     ("[]{}()",),
                     True,
-                    highlightTrailingWhitespace,
+                    highlight_trailing_whitespace,
                 ):
                     window.add_str(
                         top + i, column - self.view.scrollCol, s, colors[index]
@@ -265,19 +265,19 @@ class TextBuffer(app.actions.Actions):
         if 1:
             # Match brackets.
             if (
-                self.parser.row_count() > self.penRow
-                and len(self.parser.row_text(self.penRow)) > self.penCol
+                self.parser.row_count() > self.pen_row
+                and len(self.parser.row_text(self.pen_row)) > self.pen_col
             ):
                 ch = app.curses_util.char_at_column(
-                    self.penCol, self.parser.row_text(self.penRow)
+                    self.pen_col, self.parser.row_text(self.pen_row)
                 )
                 matchingBracketRowCol = self.get_matching_bracket_row_col()
                 if matchingBracketRowCol is not None:
                     matchingBracketRow = matchingBracketRowCol[0]
                     matchingBracketCol = matchingBracketRowCol[1]
                     window.add_str(
-                        top + self.penRow - startRow,
-                        self.penCol - self.view.scrollCol,
+                        top + self.pen_row - startRow,
+                        self.pen_col - self.view.scrollCol,
                         ch,
                         color_pref("matching_bracket", colorDelta),
                     )
@@ -296,21 +296,21 @@ class TextBuffer(app.actions.Actions):
                         oppCharacter,
                         color_pref("matching_bracket", colorDelta),
                     )
-        if self.highlightCursorLine:
+        if self.highlight_cursor_line:
             # Highlight the whole line at the cursor location.
-            if self.view.hasFocus and startRow <= self.penRow < startRow + rowLimit:
-                line = self.parser.row_text(self.penRow)[startCol:endCol]
+            if self.view.hasFocus and startRow <= self.pen_row < startRow + rowLimit:
+                line = self.parser.row_text(self.pen_row)[startCol:endCol]
                 window.add_str(
-                    top + self.penRow - startRow,
+                    top + self.pen_row - startRow,
                     left,
                     line,
                     color_pref("current_line", colorDelta),
                 )
-        if self.findRe is not None:
+        if self.find_re is not None:
             # Highlight find.
             for i in range(rowLimit):
                 line = self.parser.row_text(startRow + i)[startCol:endCol]
-                for k in self.findRe.finditer(line):
+                for k in self.find_re.finditer(line):
                     reg = k.regs[0]
                     # for ref in k.regs[1:]:
                     window.add_str(
@@ -319,7 +319,7 @@ class TextBuffer(app.actions.Actions):
                         line[reg[0] : reg[1]],
                         color_pref("found_find", colorDelta),
                     )
-        if rowLimit and self.selectionMode != app.selectable.kSelectionNone:
+        if rowLimit and self.selectionMode != app.selectable.SELECTION_NONE:
             # Highlight selected text.
             colorSelected = color_pref("selected")
             upperRow, upperCol, lowerRow, lowerCol = self.start_and_end()
@@ -328,7 +328,7 @@ class TextBuffer(app.actions.Actions):
                 selEndCol = min(lowerCol, endCol)
                 start = max(0, min(upperRow - startRow, maxRow))
                 end = max(0, min(lowerRow - startRow, maxRow))
-                if self.selectionMode == app.selectable.kSelectionBlock:
+                if self.selectionMode == app.selectable.SELECTION_BLOCK:
                     if not (
                         lowerRow < startRow
                         or upperRow >= endRow
@@ -342,10 +342,10 @@ class TextBuffer(app.actions.Actions):
                             ]
                             window.add_str(top + i, selStartCol, line, colorSelected)
                 elif (
-                    self.selectionMode == app.selectable.kSelectionAll
-                    or self.selectionMode == app.selectable.kSelectionCharacter
-                    or self.selectionMode == app.selectable.kSelectionLine
-                    or self.selectionMode == app.selectable.kSelectionWord
+                    self.selectionMode == app.selectable.SELECTION_ALL
+                    or self.selectionMode == app.selectable.SELECTION_CHARACTER
+                    or self.selectionMode == app.selectable.SELECTION_LINE
+                    or self.selectionMode == app.selectable.SELECTION_WORD
                 ):
                     if not (lowerRow < startRow or upperRow >= endRow):
                         # There is an overlap.

@@ -29,15 +29,15 @@ import app.parser
 class LineBuffer:
     def __init__(self, program):
         self.program = program
-        self.isBinary = False
+        self.is_binary = False
         self.parser = app.parser.Parser(program.prefs)
-        self.parserTime = 0.0
+        self.parser_time = 0.0
         self.message = ("New buffer", None)
         self.set_file_type("words")
 
-    def set_file_type(self, fileType):
-        self.fileType = fileType
-        self.rootGrammar = self.program.prefs.get_grammar(self.fileType)
+    def set_file_type(self, file_type):
+        self.file_type = file_type
+        self.root_grammar = self.program.prefs.get_grammar(self.file_type)
         # Parse from the beginning.
         self.parser.resumeAtRow = 0
 
@@ -48,12 +48,12 @@ class LineBuffer:
         # .replace() calls to minimize the number of calls to parse().
         data = data.replace("\r\n", "\n")
         data = data.replace("\r", "\n")
-        if self.program.prefs.tabs_to_spaces(self.fileType):
+        if self.program.prefs.tabs_to_spaces(self.file_type):
             tabSize = self.program.prefs.editor.get("tabSize", 8)
             data = data.expandtabs(tabSize)
 
         def parse(sre):
-            return "\x01%02x" % ord(sre.groups()[0])
+            return f"\x01{ord(sre.groups()[0]):02x}"
 
         # data = re.sub('([\0-\x09\x0b-\x1f\x7f-\xff])', parse, data)
         data = re.sub("([\0-\x09\x0b-\x1f])", parse, data)
@@ -71,10 +71,10 @@ class LineBuffer:
     def do_parse(self, begin, end):
         start = time.time()
         self.parser.parse(
-            self.program.bg, self.parser.data, self.rootGrammar, begin, end
+            self.program.bg, self.parser.data, self.root_grammar, begin, end
         )
-        self.debugUpperChangedRow = self.parser.resumeAtRow
-        self.parserTime = time.time() - start
+        self.debug_upper_changed_row = self.parser.resumeAtRow
+        self.parser_time = time.time() - start
 
     def is_empty(self):
         return len(self.parser.data) == 0

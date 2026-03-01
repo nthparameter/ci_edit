@@ -35,7 +35,7 @@ class DirectoryListController(app.controller.Controller):
             assert self is not view
         app.controller.Controller.__init__(self, view, "DirectoryListController")
         self.filter = None
-        self.shownDirectory = None
+        self.shown_directory = None
 
     def focus(self):
         self.on_change()
@@ -46,30 +46,30 @@ class DirectoryListController(app.controller.Controller):
 
     def on_change(self):
         pathInput = self.view.parent.pathWindow.controller.decoded_path()
-        if self.shownDirectory == pathInput:
+        if self.shown_directory == pathInput:
             return
-        self.shownDirectory = pathInput
-        appPrefs = self.view.program.prefs
-        fullPath, openToRow, openToColumn = app.buffer_file.path_row_column(
-            pathInput, appPrefs.editor["baseDirEnv"]
+        self.shown_directory = pathInput
+        app_prefs = self.view.program.prefs
+        full_path, openToRow, openToColumn = app.buffer_file.path_row_column(
+            pathInput, app_prefs.editor["baseDirEnv"]
         )
-        fullPath = app.buffer_file.expand_full_path(fullPath)
-        dirPath = fullPath
+        full_path = app.buffer_file.expand_full_path(full_path)
+        dirPath = full_path
         fileName = ""
         if len(pathInput) > 0 and pathInput[-1] != os.sep:
-            dirPath, fileName = os.path.split(fullPath)
-            self.view.textBuffer.findRe = re.compile("()^" + re.escape(fileName))
+            dirPath, fileName = os.path.split(full_path)
+            self.view.textBuffer.find_re = re.compile("()^" + re.escape(fileName))
         else:
-            self.view.textBuffer.findRe = None
+            self.view.textBuffer.find_re = None
         dirPath = dirPath or "."
         if os.path.isdir(dirPath):
-            showDotFiles = appPrefs.editor["filesShowDotFiles"]
-            showSizes = appPrefs.editor["filesShowSizes"]
-            showModified = appPrefs.editor["filesShowModifiedDates"]
+            showDotFiles = app_prefs.editor["filesShowDotFiles"]
+            showSizes = app_prefs.editor["filesShowSizes"]
+            showModified = app_prefs.editor["filesShowModifiedDates"]
 
-            sortByName = appPrefs.editor["filesSortAscendingByName"]
-            sortBySize = appPrefs.editor["filesSortAscendingBySize"]
-            sortByModifiedDate = appPrefs.editor["filesSortAscendingByModifiedDate"]
+            sortByName = app_prefs.editor["filesSortAscendingByName"]
+            sortBySize = app_prefs.editor["filesSortAscendingBySize"]
+            sortByModifiedDate = app_prefs.editor["filesSortAscendingByModifiedDate"]
 
             lines = []
             try:
@@ -80,15 +80,15 @@ class DirectoryListController(app.controller.Controller):
                         continue
                     if self.filter is not None and not dirItem.startswith(self.filter):
                         continue
-                    fullPath = os.path.join(dirPath, dirItem)
-                    if os.path.isdir(fullPath):
+                    full_path = os.path.join(dirPath, dirItem)
+                    if os.path.isdir(full_path):
                         dirItem += os.path.sep
                     iSize = None
                     iModified = 0
-                    if showSizes and os.path.isfile(fullPath):
-                        iSize = os.path.getsize(fullPath)
+                    if showSizes and os.path.isfile(full_path):
+                        iSize = os.path.getsize(full_path)
                     if showModified:
-                        iModified = os.path.getmtime(fullPath)
+                        iModified = os.path.getmtime(full_path)
                     # Handle \r and similar characters in file paths.
                     encodedPath = app.string.path_encode(dirItem)
                     fileLines.append([encodedPath, iSize, iModified, dirItem])
@@ -123,22 +123,22 @@ class DirectoryListController(app.controller.Controller):
             clip = [dirPath + ": not found"]
         self.view.textBuffer.replace_lines(tuple(clip))
         self.view.textBuffer.parse_screen_maybe()
-        self.view.textBuffer.penRow = 0
-        self.view.textBuffer.penCol = 0
-        self.view.textBuffer.goalCol = 0
+        self.view.textBuffer.pen_row = 0
+        self.view.textBuffer.pen_col = 0
+        self.view.textBuffer.goal_col = 0
         self.view.scrollRow = 0
         self.view.scrollCol = 0
         self.filter = None
 
     def perform_open(self):
-        self.open_file_or_dir(self.textBuffer.penRow)
+        self.open_file_or_dir(self.textBuffer.pen_row)
 
     def open_file_or_dir(self, row):
         if app.config.strict_debug:
             assert isinstance(row, int)
         path = self.path_for_row(row)
         # Clear the shown directory to trigger a refresh.
-        self.shownDirectory = None
+        self.shown_directory = None
         self.view.parent.pathWindow.controller.set_encoded_path(path)
         self.view.host.controller.perform_primary_action()
 
@@ -170,12 +170,12 @@ class DirectoryListController(app.controller.Controller):
         return path + self.view.contents[row - 2]
 
     def option_changed(self, name, value):
-        self.shownDirectory = None
+        self.shown_directory = None
         self.on_change()
 
     def set_filter(self, listFilter):
         self.filter = listFilter
-        self.shownDirectory = None  # Cause a refresh.
+        self.shown_directory = None  # Cause a refresh.
 
 class FileManagerController(app.controller.Controller):
     """Create or open files."""
@@ -190,21 +190,21 @@ class FileManagerController(app.controller.Controller):
         app.log.info("FileManagerController command set")
 
     def on_change(self):
-        self.view.directoryList.controller.on_change()
+        self.view.directory_list.controller.on_change()
         app.controller.Controller.on_change(self)
 
     def option_changed(self, name, value):
-        self.view.directoryList.controller.shownDirectory = None
+        self.view.directory_list.controller.shown_directory = None
 
     def pass_event_to_directory_list(self):
-        self.view.directoryList.controller.do_command(self.savedCh, None)
+        self.view.directory_list.controller.do_command(self.savedCh, None)
 
 class FilePathInputController(app.controller.Controller):
     """Manipulate path string."""
 
     def __init__(self, view):
         app.controller.Controller.__init__(self, view, "FilePathInputController")
-        self.primaryActions = {
+        self.primary_actions = {
             "open": self.do_create_or_open,
             "saveAs": self.do_save_as,
             "selectDir": self.do_select_dir,
@@ -216,7 +216,7 @@ class FilePathInputController(app.controller.Controller):
             app.log.info("path is empty")
             return
         if path.endswith("/./"):
-            # self.shownDirectory = None
+            # self.shown_directory = None
             self.set_encoded_path(path[:-2])
             return
         if path.endswith("/../"):
@@ -226,30 +226,30 @@ class FilePathInputController(app.controller.Controller):
             self.set_encoded_path(path)
             return
 
-        self.primaryActions[self.view.parent.mode]()
+        self.primary_actions[self.view.parent.mode]()
 
     def do_create_or_open(self):
         decoded_path = self.decoded_path()
         if os.path.isdir(decoded_path):
             app.log.info("is dir", repr(decoded_path))
             return
-        appPrefs = self.view.program.prefs
+        app_prefs = self.view.program.prefs
         path, openToRow, openToColumn = app.buffer_file.path_row_column(
-            decoded_path, appPrefs.editor["baseDirEnv"]
+            decoded_path, app_prefs.editor["baseDirEnv"]
         )
         if not os.access(path, os.R_OK):
             if os.path.isfile(path):
                 app.log.info("File not readable.")
                 return
         self.set_encoded_path("")
-        textBuffer = self.view.program.bufferManager.load_text_buffer(path)
+        textBuffer = self.view.program.buffer_manager.load_text_buffer(path)
         if textBuffer is None:
             return
         if openToRow is not None:
-            textBuffer.penRow = openToRow if openToRow > 0 else 0
+            textBuffer.pen_row = openToRow if openToRow > 0 else 0
         if openToColumn is not None:
-            textBuffer.penCol = openToColumn if openToColumn > 0 else 0
-            textBuffer.goalCol = textBuffer.penCol
+            textBuffer.pen_col = openToColumn if openToColumn > 0 else 0
+            textBuffer.goal_col = textBuffer.pen_col
         # assert textBuffer.parser
         inputWindow = self.current_input_window()
         inputWindow.set_text_buffer(textBuffer)
@@ -300,15 +300,15 @@ class FilePathInputController(app.controller.Controller):
             self.textBuffer.insert("/")
 
     def on_change(self):
-        self.get_named_window("directoryList").controller.on_change()
+        self.get_named_window("directory_list").controller.on_change()
         app.controller.Controller.on_change(self)
 
     def option_changed(self, name, value):
-        self.get_named_window("directoryList").controller.shownDirectory = None
+        self.get_named_window("directory_list").controller.shown_directory = None
 
     def pass_event_to_directory_list(self):
-        directoryList = self.find_and_change_to("directoryList")
-        directoryList.controller.do_command(self.savedCh, None)
+        directory_list = self.find_and_change_to("directory_list")
+        directory_list.controller.do_command(self.savedCh, None)
 
     def tab_complete_extend(self):
         """Extend the selection to match characters in common."""
@@ -350,5 +350,5 @@ class FilePathInputController(app.controller.Controller):
         self.set_encoded_path(decoded_path + matches[0][len(fileName) : prefixLen])
         if expandedPath == os.path.expandvars(os.path.expanduser(self.decoded_path())):
             # No further expansion found.
-            self.get_named_window("directoryList").controller.set_filter(fileName)
+            self.get_named_window("directory_list").controller.set_filter(fileName)
         self.on_change()

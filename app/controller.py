@@ -32,8 +32,8 @@ class Controller:
             assert issubclass(self.__class__, Controller)
             assert issubclass(view.__class__, app.window.Window)
         self.view = view
-        self.commandDefault = None
-        self.commandSet = None
+        self.command_default = None
+        self.command_set = None
         self.textBuffer = None
         self.name = name
 
@@ -83,7 +83,7 @@ class Controller:
         self.find_and_change_to("popupWindow")
 
     def change_to_prediction(self):
-        self.find_and_change_to("predictionWindow")
+        self.find_and_change_to("prediction_window")
         # self.find_and_change_to('interactivePrediction')
 
     def change_to_prompt(self):
@@ -99,22 +99,22 @@ class Controller:
         view.change_focus_to(view)
 
     def create_new_text_buffer(self):
-        bufferManager = self.view.program.bufferManager
-        self.view.set_text_buffer(bufferManager.new_text_buffer())
+        buffer_manager = self.view.program.buffer_manager
+        self.view.set_text_buffer(buffer_manager.new_text_buffer())
 
     def do_command(self, ch, meta):
-        # Check the commandSet for the input with both its string and integer
+        # Check the command_set for the input with both its string and integer
         # representation.
         self.savedCh = ch
 
-        cmd = self.commandSet.get(ch) or self.commandSet.get(
+        cmd = self.command_set.get(ch) or self.command_set.get(
             app.curses_util.curses_key_name(ch)
         )
 
         if cmd:
             cmd()
         else:
-            self.commandDefault(ch, meta)
+            self.command_default(ch, meta)
         self.textBuffer.compound_change_push()
 
     def get_named_window(self, windowName):
@@ -151,14 +151,14 @@ class Controller:
     def __close_host_file(self, host):
         """Close the current file and switch to another or create an empty
         file."""
-        bufferManager = host.program.bufferManager
-        bufferManager.close_text_buffer(host.textBuffer)
+        buffer_manager = host.program.buffer_manager
+        buffer_manager.close_text_buffer(host.textBuffer)
         host.userIntent = "edit"
-        tb = bufferManager.get_unsaved_buffer()
+        tb = buffer_manager.get_unsaved_buffer()
         if not tb:
-            tb = bufferManager.next_buffer()
+            tb = buffer_manager.next_buffer()
             if not tb:
-                tb = bufferManager.new_text_buffer()
+                tb = buffer_manager.new_text_buffer()
         host.set_text_buffer(tb)
 
     def close_file(self):
@@ -195,20 +195,20 @@ class Controller:
         if tb.is_dirty():
             self.view.change_focus_to(self.view.interactiveQuit)
             return
-        bufferManager = self.view.program.bufferManager
-        tb = bufferManager.get_unsaved_buffer()
+        buffer_manager = self.view.program.buffer_manager
+        tb = buffer_manager.get_unsaved_buffer()
         if tb:
             self.view.set_text_buffer(tb)
             self.view.change_focus_to(self.view.interactiveQuit)
             return
-        bufferManager.debug_log()
+        buffer_manager.debug_log()
         self.view.quit_now()
 
     def initiate_save(self):
         """Called from input window controller."""
         self.view.userIntent = "edit"
         tb = self.view.textBuffer
-        if tb.fullPath:
+        if tb.full_path:
             if not tb.is_safe_to_write():
                 self.view.change_focus_to(self.view.confirmOverwrite)
                 return
@@ -270,13 +270,13 @@ class Controller:
         if tb.is_dirty():
             self.change_to_confirm_quit()
             return
-        bufferManager = self.view.program.bufferManager
-        tb = bufferManager.get_unsaved_buffer()
+        buffer_manager = self.view.program.buffer_manager
+        tb = buffer_manager.get_unsaved_buffer()
         if tb:
             host.set_text_buffer(tb)
             self.change_to_confirm_quit()
             return
-        bufferManager.debug_log()
+        buffer_manager.debug_log()
         host.quit_now()
 
     def save_or_change_to_save_as(self):
@@ -288,7 +288,7 @@ class Controller:
             assert issubclass(host.__class__, app.window.Window), self
             assert self.view.textBuffer is self.textBuffer
             assert self.view.textBuffer is not host.textBuffer
-        if host.textBuffer.fullPath:
+        if host.textBuffer.full_path:
             self.write_or_confirm_overwrite()
             return
         self.change_to_save_as()
@@ -322,8 +322,8 @@ class MainController:
         if app.config.strict_debug:
             assert issubclass(view.__class__, app.window.Window)
         self.view = view
-        self.commandDefault = None
-        self.commandSet = None
+        self.command_default = None
+        self.command_set = None
         self.controllers = {}
         self.controller = None
 
@@ -341,18 +341,18 @@ class MainController:
         app.log.info("MainController.focus")
         self.controller.focus()
         if 0:
-            self.commandDefault = self.controller.commandDefault
-            commandSet = self.controller.commandSet.copy()
-            commandSet.update(
+            self.command_default = self.controller.command_default
+            command_set = self.controller.command_set.copy()
+            command_set.update(
                 {
                     app.curses_util.KEY_F2: self.next_controller,
                 }
             )
-            self.controller.commandSet = commandSet
+            self.controller.command_set = command_set
 
     def on_change(self):
         tb = self.view.textBuffer
-        if tb.message is None and tb.selectionMode != app.selectable.kSelectionNone:
+        if tb.message is None and tb.selectionMode != app.selectable.SELECTION_NONE:
             charCount, lineCount = tb.count_selected()
             tb.set_message(
                 "%d characters (%d lines) selected" % (charCount, lineCount)

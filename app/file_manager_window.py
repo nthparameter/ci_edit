@@ -40,7 +40,7 @@ class PathRow(app.window.ViewWindow):
         col = self.scrollCol + paneCol
         line = self.path
         col = self.scrollCol + paneCol
-        self.host.controller.shownDirectory = None
+        self.host.controller.shown_directory = None
         if col >= len(line):
             return
         slash = line[col:].find("/")
@@ -102,9 +102,9 @@ class DirectoryList(app.window.Window):
     def set_text_buffer(self, textBuffer):
         if app.config.strict_debug:
             assert textBuffer is not self.host.textBuffer
-        textBuffer.lineLimitIndicator = 0
-        textBuffer.highlightCursorLine = True
-        textBuffer.highlightTrailingWhitespace = False
+        textBuffer.line_limit_indicator = 0
+        textBuffer.highlight_cursor_line = True
+        textBuffer.highlight_trailing_whitespace = False
         app.window.Window.set_text_buffer(self, textBuffer)
         textBuffer.view.showCursor = False
         self.controller.set_text_buffer(textBuffer)
@@ -127,15 +127,15 @@ class PathWindow(app.window.Window):
         col = self.scrollCol + paneCol
         line = self.controller.decoded_path()
         col = self.scrollCol + paneCol
-        self.parent.directoryList.controller.shownDirectory = None
+        self.parent.directory_list.controller.shown_directory = None
         if col >= len(line):
             return
         slash = line[col:].find("/")
         self.controller.set_encoded_path(line[: col + slash + 1])
 
     def set_text_buffer(self, textBuffer):
-        textBuffer.lineLimitIndicator = 0
-        textBuffer.highlightTrailingWhitespace = False
+        textBuffer.line_limit_indicator = 0
+        textBuffer.highlight_trailing_whitespace = False
         app.window.Window.set_text_buffer(self, textBuffer)
         self.controller.set_text_buffer(textBuffer)
 
@@ -150,55 +150,55 @@ class FileManagerWindow(app.window.Window):
         self.controller = app.cu_editor.FileOpener(self)
         self.set_text_buffer(app.text_buffer.TextBuffer(self.program))
 
-        self.titleRow = app.window.OptionsRow(self.program, self)
-        self.titleRow.add_label(" ci   ")
-        self.modeTitle = self.titleRow.add_label("x")
+        self.title_row = app.window.OptionsRow(self.program, self)
+        self.title_row.add_label(" ci   ")
+        self.mode_title = self.title_row.add_label("x")
         self.set_mode("open")
-        self.titleRow.set_parent(self)
+        self.title_row.set_parent(self)
 
         self.pathWindow = PathWindow(self.program, self)
         self.pathWindow.set_parent(self)
 
         # Set up table headers.
         color = self.program.color.get("top_info")
-        self.tableHeaders = app.window.OptionsSelectionWindow(self.program, self)
-        self.tableHeaders.set_parent(self)
+        self.table_headers = app.window.OptionsSelectionWindow(self.program, self)
+        self.table_headers.set_parent(self)
         app.window.SortableHeaderWindow(
             self.program,
-            self.tableHeaders,
+            self.table_headers,
             "Name",
             "editor",
             "filesSortAscendingByName",
             -41,
         )
-        label = app.window.LabelWindow(self.program, self.tableHeaders, "|")
-        label.set_parent(self.tableHeaders)
+        label = app.window.LabelWindow(self.program, self.table_headers, "|")
+        label.set_parent(self.table_headers)
         label.color = color
         app.window.SortableHeaderWindow(
             self.program,
-            self.tableHeaders,
+            self.table_headers,
             "Size ",
             "editor",
             "filesSortAscendingBySize",
             16,
         )
-        label = app.window.LabelWindow(self.program, self.tableHeaders, "|")
-        label.set_parent(self.tableHeaders)
+        label = app.window.LabelWindow(self.program, self.table_headers, "|")
+        label.set_parent(self.table_headers)
         label.color = color
         app.window.SortableHeaderWindow(
             self.program,
-            self.tableHeaders,
+            self.table_headers,
             "Modified ",
             "editor",
             "filesSortAscendingByModifiedDate",
             25,
         )
-        label = app.window.LabelWindow(self.program, self.tableHeaders, "|")
-        label.set_parent(self.tableHeaders)
+        label = app.window.LabelWindow(self.program, self.table_headers, "|")
+        label.set_parent(self.table_headers)
         label.color = color
 
-        self.directoryList = DirectoryList(self.program, self, inputWindow)
-        self.directoryList.set_parent(self)
+        self.directory_list = DirectoryList(self.program, self, inputWindow)
+        self.directory_list.set_parent(self)
 
         if 1:
             self.optionsRow = app.window.RowWindow(self.program, self, 2)
@@ -243,17 +243,17 @@ class FileManagerWindow(app.window.Window):
         # Set the initial path each time the window is focused.
         if not self.pathWindow.controller.decoded_path():
             inputWindow = self.parent.inputWindow
-            if len(inputWindow.textBuffer.fullPath) == 0:
+            if len(inputWindow.textBuffer.full_path) == 0:
                 path = os.getcwd()
             else:
-                path = os.path.dirname(inputWindow.textBuffer.fullPath)
+                path = os.path.dirname(inputWindow.textBuffer.full_path)
             if len(path) != 0:
                 path += os.path.sep
             self.pathWindow.controller.set_encoded_path(unicode(path))
         self.change_focus_to(self.pathWindow)
 
     def on_pref_changed(self, category, name):
-        self.directoryList.controller.option_changed(category, name)
+        self.directory_list.controller.option_changed(category, name)
         app.window.Window.on_pref_changed(self, category, name)
 
     def next_focusable_window(self, start, reverse=False):
@@ -265,20 +265,20 @@ class FileManagerWindow(app.window.Window):
         """Change self and sub-windows to fit within the given rectangle."""
         app.log.detail("reshape", top, left, rows, cols)
         app.window.Window.reshape(self, top, left, rows, cols)
-        self.titleRow.reshape(top, left, 1, cols)
+        self.title_row.reshape(top, left, 1, cols)
         top += 1
         rows -= 1
         self.pathWindow.reshape(top, left, 1, cols)
         top += 1
         rows -= 1
-        self.tableHeaders.reshape(top, left, 1, cols)
+        self.table_headers.reshape(top, left, 1, cols)
         top += 1
         rows -= 1
         self.messageLine.reshape(top + rows - 1, left, 1, cols)
         rows -= 1
         self.optionsRow.reshape(top + rows - 1, left, 1, cols)
         rows -= 1
-        self.directoryList.reshape(top, left, rows, cols)
+        self.directory_list.reshape(top, left, rows, cols)
 
     def set_mode(self, mode):
         self.mode = mode
@@ -287,7 +287,7 @@ class FileManagerWindow(app.window.Window):
             "saveAs": "Save File As",
             "selectDir": "Select a Directory",
         }
-        self.modeTitle["name"] = modeTitles[mode]
+        self.mode_title["name"] = modeTitles[mode]
 
     def unfocus(self):
         # Clear the path.

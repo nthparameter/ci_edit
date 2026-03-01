@@ -54,11 +54,7 @@ class FakeCursesTestCase(unittest.TestCase):
 
     def find_text_and_click(self, timeStamp, screenText, bState):
         caller = inspect.stack()[1]
-        callerText = "\n  %s:%s:%s(): " % (
-            os.path.split(caller[1])[1],
-            caller[2],
-            caller[3],
-        )
+        callerText = f"\n  {os.path.split(caller[1])[1]}:{caller[2]}:{caller[3]}(): "
 
         def create_event(display, cmdIndex):
             row, col = self.find_text(screenText)
@@ -128,11 +124,7 @@ class FakeCursesTestCase(unittest.TestCase):
     def call(self, *args):
         """Call arbitrary function as a 'fake input'."""
         caller = inspect.stack()[1]
-        callerText = "\n  %s:%s:%s(): " % (
-            os.path.split(caller[1])[1],
-            caller[2],
-            caller[3],
-        )
+        callerText = f"\n  {os.path.split(caller[1])[1]}:{caller[2]}:{caller[3]}(): "
 
         def caller(display, cmdIndex):
             try:
@@ -150,11 +142,7 @@ class FakeCursesTestCase(unittest.TestCase):
         assert isinstance(args[1], int)
         assert isinstance(args[2], list)
         caller = inspect.stack()[1]
-        callerText = "\n  %s:%s:%s(): " % (
-            os.path.split(caller[1])[1],
-            caller[2],
-            caller[3],
-        )
+        callerText = f"\n  {os.path.split(caller[1])[1]}:{caller[2]}:{caller[3]}(): "
 
         def display_checker(display, cmdIndex):
             result = display.check_text(*args)
@@ -178,11 +166,7 @@ class FakeCursesTestCase(unittest.TestCase):
         assert isinstance(args[0], unicode)
         assert isinstance(args[1], unicode)
         caller = inspect.stack()[1]
-        callerText = "\n  %s:%s:%s(): " % (
-            os.path.split(caller[1])[1],
-            caller[2],
-            caller[3],
-        )
+        callerText = f"\n  {os.path.split(caller[1])[1]}:{caller[2]}:{caller[3]}(): "
 
         def display_find_checker(display, cmdIndex):
             find_string, check_string = args
@@ -204,11 +188,7 @@ class FakeCursesTestCase(unittest.TestCase):
         """
         assert isinstance(args[0], int)
         caller = inspect.stack()[1]
-        callerText = "\n  %s:%s:%s(): " % (
-            os.path.split(caller[1])[1],
-            caller[2],
-            caller[3],
-        )
+        callerText = f"\n  {os.path.split(caller[1])[1]}:{caller[2]}:{caller[3]}(): "
 
         def display_checker_not(display, cmdIndex):
             result = display.check_text(*args)
@@ -229,11 +209,7 @@ class FakeCursesTestCase(unittest.TestCase):
         assert width != 0
         assert colorPair is not None
         caller = inspect.stack()[1]
-        callerText = "\n  %s:%s:%s(): " % (
-            os.path.split(caller[1])[1],
-            caller[2],
-            caller[3],
-        )
+        callerText = f"\n  {os.path.split(caller[1])[1]}:{caller[2]}:{caller[3]}(): "
 
         def display_style_checker(display, cmdIndex):
             result = display.check_style(*args)
@@ -255,11 +231,7 @@ class FakeCursesTestCase(unittest.TestCase):
         assert isinstance(expectedRow, int)
         assert isinstance(expectedCol, int)
         caller = inspect.stack()[1]
-        callerText = "in %s:%s:%s(): " % (
-            os.path.split(caller[1])[1],
-            caller[2],
-            caller[3],
-        )
+        callerText = f"in {os.path.split(caller[1])[1]}:{caller[2]}:{caller[3]}(): "
 
         def cursor_checker(display, cmdIndex):
             if self.cursesScreen.movie:
@@ -269,8 +241,8 @@ class FakeCursesTestCase(unittest.TestCase):
             screenRow, screenCol = self.cursesScreen.getyx()
             self.assertEqual(
                 (
-                    win.top + tb.penRow - win.scrollRow,
-                    win.left + tb.penCol - win.scrollCol,
+                    win.top + tb.pen_row - win.scrollRow,
+                    win.left + tb.pen_col - win.scrollCol,
                 ),
                 (screenRow, screenCol),
                 callerText + "internal mismatch",
@@ -291,11 +263,7 @@ class FakeCursesTestCase(unittest.TestCase):
         assert isinstance(args[1], unicode)
         assert isinstance(args[2], (int, bool))
         caller = inspect.stack()[1]
-        callerText = "\n  %s:%s:%s(): " % (
-            os.path.split(caller[1])[1],
-            caller[2],
-            caller[3],
-        )
+        callerText = f"\n  {os.path.split(caller[1])[1]}:{caller[2]}:{caller[3]}(): "
 
         def pref_checker(display, cmdIndex):
             result = self.prg.prefs.category(args[0])[args[1]]
@@ -316,11 +284,7 @@ class FakeCursesTestCase(unittest.TestCase):
 
     def print_parser_state(self):
         caller = inspect.stack()[1]
-        callerText = "in %s:%s:%s(): " % (
-            os.path.split(caller[1])[1],
-            caller[2],
-            caller[3],
-        )
+        callerText = f"in {os.path.split(caller[1])[1]}:{caller[2]}:{caller[3]}(): "
 
         def redo_chain(display, cmdIndex):
             print("Parser state", callerText)
@@ -332,11 +296,7 @@ class FakeCursesTestCase(unittest.TestCase):
 
     def print_redo_state(self):
         caller = inspect.stack()[1]
-        callerText = "in %s:%s:%s(): " % (
-            os.path.split(caller[1])[1],
-            caller[2],
-            caller[3],
-        )
+        callerText = f"in {os.path.split(caller[1])[1]}:{caller[2]}:{caller[3]}(): "
 
         def redo_state(display, cmdIndex):
             print("Redo state", callerText)
@@ -359,11 +319,7 @@ class FakeCursesTestCase(unittest.TestCase):
     def set_clipboard(self, text):
         assert isinstance(text, str)
         caller = inspect.stack()[1]
-        callerText = "in %s:%s:%s(): " % (
-            os.path.split(caller[1])[1],
-            caller[2],
-            caller[3],
-        )
+        callerText = f"in {os.path.split(caller[1])[1]}:{caller[2]}:{caller[3]}(): "
 
         def copy_to_clipboard(display, cmdIndex):
             self.assertTrue(self.prg.clipboard.copy, callerText)
@@ -379,11 +335,7 @@ class FakeCursesTestCase(unittest.TestCase):
     def write_text(self, text):
         assert isinstance(text, unicode), type(text)
         caller = inspect.stack()[1]
-        callerText = "in %s:%s:%s(): " % (
-            os.path.split(caller[1])[1],
-            caller[2],
-            caller[3],
-        )
+        callerText = f"in {os.path.split(caller[1])[1]}:{caller[2]}:{caller[3]}(): "
 
         def copy_to_clipboard(display, cmdIndex):
             self.assertTrue(self.prg.clipboard.copy, callerText)
@@ -399,11 +351,7 @@ class FakeCursesTestCase(unittest.TestCase):
           depth (int): how many stack frames up to report as the error location.
         """
         caller = inspect.stack()[depth]
-        callerText = "\n  %s:%s:%s(): " % (
-            os.path.split(caller[1])[1],
-            caller[2],
-            caller[3],
-        )
+        callerText = f"\n  {os.path.split(caller[1])[1]}:{caller[2]}:{caller[3]}(): "
 
         def check_end_of_inputs(display, cmdIndex):
             self.fail(
@@ -440,11 +388,7 @@ class FakeCursesTestCase(unittest.TestCase):
         # Handy for debugging.
         if 0:
             caller = inspect.stack()[1]
-            callerText = "  %s:%s:%s(): " % (
-                os.path.split(caller[1])[1],
-                caller[2],
-                caller[3],
-            )
+            callerText = f"  {os.path.split(caller[1])[1]}:{caller[2]}:{caller[3]}(): "
             print("\n-------- finished", callerText)
 
     def run_with_test_file(self, kTestFile, fakeInputs):
@@ -462,11 +406,7 @@ class FakeCursesTestCase(unittest.TestCase):
         expectedMode,
     ):
         caller = inspect.stack()[1]
-        callerText = "in %s:%s:%s(): " % (
-            os.path.split(caller[1])[1],
-            caller[2],
-            caller[3],
-        )
+        callerText = f"in {os.path.split(caller[1])[1]}:{caller[2]}:{caller[3]}(): "
 
         def checker(display, cmdIndex):
             selection = self.prg.get_document_selection()
@@ -493,11 +433,7 @@ class FakeCursesTestCase(unittest.TestCase):
         expectedMode,
     ):
         caller = inspect.stack()[1]
-        callerText = "in %s:%s:%s(): " % (
-            os.path.split(caller[1])[1],
-            caller[2],
-            caller[3],
-        )
+        callerText = f"in {os.path.split(caller[1])[1]}:{caller[2]}:{caller[3]}(): "
 
         def checker(display, cmdIndex):
             selection = self.prg.get_selection()

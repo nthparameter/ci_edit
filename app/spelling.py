@@ -25,13 +25,13 @@ class OsDictionary:
         try:
             self.file = open(path, "r")
             self.fileLength = self.file.seek(0, 2)  # Seek to end of file.
-            self.pageSize = 1024 * 8  # Arbitrary.
+            self.page_size = 1024 * 8  # Arbitrary.
             # Add one to pick up any partial page at the end.
-            self.filePages = self.fileLength // self.pageSize + 1
+            self.file_pages = self.fileLength // self.page_size + 1
         except IOError:
             self.file = None
         self.cache = {}
-        self.knownOffsets = []
+        self.known_offsets = []
 
     def check(self, word):
         if self.file is None:
@@ -40,7 +40,7 @@ class OsDictionary:
         r = self.cache.get(word)
         if r is not None:
             return r
-        high = self.filePages
+        high = self.file_pages
         low = 0
         leash = 20  # Way more than should be necessary.
         try:
@@ -51,9 +51,9 @@ class OsDictionary:
                     return False
                 leash -= 1
                 page = low + (high - low) // 2
-                self.file.seek(page * self.pageSize)
+                self.file.seek(page * self.page_size)
                 # Add 100 to catch any words that straddle a page.
-                size = min(self.pageSize + 100, self.fileLength - page * self.pageSize)
+                size = min(self.page_size + 100, self.fileLength - page * self.page_size)
                 if not size:
                     self.cache[word] = False
                     return False
@@ -80,27 +80,27 @@ class OsDictionary:
             return False
 
 class Dictionary:
-    def __init__(self, dictionaryList, pathPrefs):
-        self.osDictionary = OsDictionary()
-        self.pathPrefs = pathPrefs
+    def __init__(self, dictionaryList, path_prefs):
+        self.os_dictionary = OsDictionary()
+        self.path_prefs = path_prefs
 
-        self.grammarWords = {}
+        self.grammar_words = {}
         self.load_words(os.path.dirname(__file__))
         self.load_words(os.path.expanduser("~/.ci_edit/dictionaries"))
 
         words = set()
         for i in dictionaryList:
-            words.update(self.grammarWords.get(i, set()))
-        self.baseWords = words
-        self.pathWords = set()
+            words.update(self.grammar_words.get(i, set()))
+        self.base_words = words
+        self.path_words = set()
 
     def set_up_words_for_path(self, path):
-        self.pathWords = set()
-        # app.log.info(repr(self.pathPrefs))
-        for k, v in self.pathPrefs.items():
+        self.path_words = set()
+        # app.log.info(repr(self.path_prefs))
+        for k, v in self.path_prefs.items():
             if k in path:
                 for i in v:
-                    self.pathWords.update(self.grammarWords.get(i, set()))
+                    self.path_words.update(self.grammar_words.get(i, set()))
 
     def load_words(self, dirPath):
         dirPath = os.path.join(dirPath, "dictionary.")
@@ -116,7 +116,7 @@ class Dictionary:
                     # TODO(dschuyler): Word contractions are hacked by storing
                     # the components of the contraction. So didn, doesn, and isn
                     # are considered 'words'.
-                    self.grammarWords[grammarName] = set(
+                    self.grammar_words[grammarName] = set(
                         [
                             p
                             for l in lines[index:]
@@ -128,17 +128,17 @@ class Dictionary:
     def is_correct(self, word, grammarName):
         if len(word) <= 1:
             return True
-        words = self.baseWords
+        words = self.base_words
         lowerWord = word.lower()
         if word in words or lowerWord in words:
             return True
-        if lowerWord in self.grammarWords.get(grammarName, set()):
+        if lowerWord in self.grammar_words.get(grammarName, set()):
             return True
         if lowerWord.startswith("sub") and lowerWord[3:] in words:
             return True
         if lowerWord.startswith("un") and lowerWord[2:] in words:
             return True
-        if lowerWord in self.pathWords:
+        if lowerWord in self.path_words:
             return True
         if 1:
             if len(word) == 2 and word[1] == "s" and word[0].isupper():
@@ -159,6 +159,6 @@ class Dictionary:
                             return True
         if 1:  # Experimental.
             # Fallback to the OS dictionary.
-            return self.osDictionary.check(word)
+            return self.os_dictionary.check(word)
         # app.log.info(grammarName, word)
         return False

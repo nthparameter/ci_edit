@@ -301,7 +301,7 @@ def rendered_find_iter(string, beginCol, endCol, charGroups, numbers, eolSpaces)
         c = string[index]
         if column >= beginCol:
             if numbers and c in "0123456789":
-                sre = app.regex.kReNumbers.match(string[index:])
+                sre = app.regex.RE_NUMBERS.match(string[index:])
                 begin = index
                 length = min(sre.regs[0][1], endCol - column)
                 index += length

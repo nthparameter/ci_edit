@@ -38,13 +38,7 @@ def parse_lines(frame, logChannel, *args):
         args = [""]
     msg = str(args[0])
     if 1:
-        msg = "%s %s %s %s: %s" % (
-            logChannel,
-            os.path.split(frame[1])[1],
-            frame[2],
-            frame[3],
-            msg,
-        )
+        msg = f"{logChannel} {os.path.split(frame[1])[1]} {frame[2]} {frame[3]}: {msg}"
     prior = msg
     for i in args[1:]:
         if not len(prior) or prior[-1] != "\n":
@@ -75,8 +69,7 @@ def caller(*args):
     global fullLog, screenLog
     priorCaller = inspect.stack()[2]
     msg = (
-        "%s %s %s"
-        % (os.path.split(priorCaller[1])[1], priorCaller[2], priorCaller[3]),
+        f"{os.path.split(priorCaller[1])[1]} {priorCaller[2]} {priorCaller[3]}",
     ) + args
     lines = parse_lines(inspect.stack()[1], "caller", *msg)
     screenLog += lines
@@ -92,7 +85,7 @@ def exception(e, *args):
         error(i[:-1])
 
 def check_failed(prefix, a, op, b):
-    stack("failed %s %r %s %r" % (prefix, a, op, b))
+    stack(f"failed {prefix} {a!r} {op} {b!r}")
     raise Exception("fatal error")
 
 def check_ge(a, b):
@@ -199,8 +192,8 @@ def wrapper(function, shouldWrite=True):
     return r
 
 def write_to_file(path):
-    fullPath = app.buffer_file.expand_full_path(path)
-    with open(fullPath, "w+", encoding="UTF-8") as out:
+    full_path = app.buffer_file.expand_full_path(path)
+    with open(full_path, "w+", encoding="UTF-8") as out:
         out.write("\n".join(fullLog) + "\n")
 
 def flush():

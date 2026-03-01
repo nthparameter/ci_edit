@@ -150,7 +150,7 @@ class PerformanceTestCases(unittest.TestCase):
                     number=10000,
                 )
                 b = timeit(
-                    'data1 = data1[:%s] + "x" + data1[%s:]' % (half, half),
+                    f'data1 = data1[:{half}] + "x" + data1[{half}:]',
                     setup=r"""data1 = ("a" * 100 + '\n') * %s""" % (lineCount,),
                     number=10000,
                 )
@@ -179,7 +179,7 @@ class PerformanceTestCases(unittest.TestCase):
                     number=10000,
                 )
                 b = timeit(
-                    ('data1 = data1[:%s] + "x" + data1[%s:]; ' % (half, half)) * 5,
+                    f'data1 = data1[:{half}] + "x" + data1[{half}:]; ' * 5,
                     setup=r"""data1 = ("a" * 100 + '\n') * %s""" % (lineCount,),
                     number=10000,
                 )

@@ -252,7 +252,7 @@ class ApplicationTestCases(app.fake_curses_testing.FakeCursesTestCase):
                 KEY_UP,
                 self.cursor_check(2, 7),
                 self.selection_check(0, 0, 0, 0, 0),
-                # The goalCol should track the desired goal column.
+                # The goal_col should track the desired goal column.
                 KEY_DOWN,
                 self.cursor_check(3, 12),
                 self.selection_check(1, 5, 0, 0, 0),
@@ -295,7 +295,7 @@ class ApplicationTestCases(app.fake_curses_testing.FakeCursesTestCase):
                 KEY_DOWN,
                 self.cursor_check(4, 13),
                 self.selection_check(2, 6, 2, 6, 0),
-                # The goalCol should track the desired goal column.
+                # The goal_col should track the desired goal column.
                 KEY_UP,
                 self.cursor_check(3, 7),
                 self.selection_check(1, 0, 2, 6, 0),

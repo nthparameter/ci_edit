@@ -27,68 +27,68 @@ import app.controller
 import app.formatter
 
 def function_test_eq(a, b):
-    assert a == b, "%r != %r" % (a, b)
+    assert a == b, f"{a!r} != {b!r}"
 
 if 1:
     # Break up a command line, separate by |.
-    kRePipeChain = re.compile(
+    RE_PIPE_CHAIN = re.compile(
         # r'''\|\|?|&&|((?:"(?:\\"|[^"])*"|'(?:\\'|[^'])*'|[^\s|&]+)+)''')
         r"""((?:"(?:\\"|[^"])*"|'(?:\\'|[^'])*'|\|\||[^|]+)+)"""
     )
     function_test_eq(
-        kRePipeChain.findall(""" date "a b" 'c d ' | sort """),
+        RE_PIPE_CHAIN.findall(""" date "a b" 'c d ' | sort """),
         [""" date "a b" 'c d ' """, " sort "],
     )
-    function_test_eq(kRePipeChain.findall("date"), ["date"])
-    function_test_eq(kRePipeChain.findall("d-a.te"), ["d-a.te"])
-    function_test_eq(kRePipeChain.findall("date | wc"), ["date ", " wc"])
-    function_test_eq(kRePipeChain.findall("date|wc"), ["date", "wc"])
-    function_test_eq(kRePipeChain.findall("date && sort"), ["date && sort"])
-    function_test_eq(kRePipeChain.findall("date || sort"), ["date || sort"])
+    function_test_eq(RE_PIPE_CHAIN.findall("date"), ["date"])
+    function_test_eq(RE_PIPE_CHAIN.findall("d-a.te"), ["d-a.te"])
+    function_test_eq(RE_PIPE_CHAIN.findall("date | wc"), ["date ", " wc"])
+    function_test_eq(RE_PIPE_CHAIN.findall("date|wc"), ["date", "wc"])
+    function_test_eq(RE_PIPE_CHAIN.findall("date && sort"), ["date && sort"])
+    function_test_eq(RE_PIPE_CHAIN.findall("date || sort"), ["date || sort"])
     function_test_eq(
-        kRePipeChain.findall("""date "a b" 'c d ' || sort"""),
+        RE_PIPE_CHAIN.findall("""date "a b" 'c d ' || sort"""),
         ["""date "a b" 'c d ' || sort"""],
     )
 
 # Break up a command line, separate by &&.
-kReLogicChain = re.compile(
+RE_LOGIC_CHAIN = re.compile(
     r"""\s*(\|\|?|&&|"(?:\\"|[^"])*"|'(?:\\'|[^'])*'|[^\s|&]+)"""
 )
-function_test_eq(kReLogicChain.findall("date"), ["date"])
-function_test_eq(kReLogicChain.findall("d-a.te"), ["d-a.te"])
-function_test_eq(kReLogicChain.findall("date | wc"), ["date", "|", "wc"])
-function_test_eq(kReLogicChain.findall("date|wc"), ["date", "|", "wc"])
-function_test_eq(kReLogicChain.findall("date && sort"), ["date", "&&", "sort"])
-function_test_eq(kReLogicChain.findall("date || sort"), ["date", "||", "sort"])
+function_test_eq(RE_LOGIC_CHAIN.findall("date"), ["date"])
+function_test_eq(RE_LOGIC_CHAIN.findall("d-a.te"), ["d-a.te"])
+function_test_eq(RE_LOGIC_CHAIN.findall("date | wc"), ["date", "|", "wc"])
+function_test_eq(RE_LOGIC_CHAIN.findall("date|wc"), ["date", "|", "wc"])
+function_test_eq(RE_LOGIC_CHAIN.findall("date && sort"), ["date", "&&", "sort"])
+function_test_eq(RE_LOGIC_CHAIN.findall("date || sort"), ["date", "||", "sort"])
 function_test_eq(
-    kReLogicChain.findall(""" date "a\\" b" 'c d ' || sort """),
+    RE_LOGIC_CHAIN.findall(""" date "a\\" b" 'c d ' || sort """),
     ["date", '"a\\" b"', "'c d '", "||", "sort"],
 )
 
 # Break up a command line, separate by \\s.
-kReArgChain = re.compile(r"""\s*("(?:\\"|[^"])*"|'(?:\\'|[^'])*'|[^\s]+)""")
-function_test_eq(kReArgChain.findall("date"), ["date"])
-function_test_eq(kReArgChain.findall("d-a.te"), ["d-a.te"])
+RE_ARG_CHAIN = re.compile(r"""\s*("(?:\\"|[^"])*"|'(?:\\'|[^'])*'|[^\s]+)""")
+function_test_eq(RE_ARG_CHAIN.findall("date"), ["date"])
+function_test_eq(RE_ARG_CHAIN.findall("d-a.te"), ["d-a.te"])
 function_test_eq(
-    kReArgChain.findall(""" date "a b" 'c d ' "a\\" b" 'c\\' d ' """),
+    RE_ARG_CHAIN.findall(""" date "a b" 'c d ' "a\\" b" 'c\\' d ' """),
     ["date", '"a b"', "'c d '", '"a\\" b"', "'c\\' d '"],
 )
-function_test_eq(kReArgChain.findall("""bm +"""), ["bm", "+"])
+function_test_eq(RE_ARG_CHAIN.findall("""bm +"""), ["bm", "+"])
 
 # Break up a command line, separate by \w (non-word chars will be separated).
-kReSplitCmdLine = re.compile(r"""\s*("(?:\\"|[^"])*"|'(?:\\'|[^'])*'|\w+|[^\s]+)\s*""")
-function_test_eq(kReSplitCmdLine.findall("""bm ab"""), ["bm", "ab"])
-function_test_eq(kReSplitCmdLine.findall("""bm+"""), ["bm", "+"])
-function_test_eq(kReSplitCmdLine.findall('''bm "one two"'''), ["bm", '"one two"'])
-function_test_eq(kReSplitCmdLine.findall('''bm "o\\"ne two"'''), ["bm", '"o\\"ne two"'])
+RE_SPLIT_CMD_LINE = re.compile(r"""\s*("(?:\\"|[^"])*"|'(?:\\'|[^'])*'|\w+|[^\s]+)\s*""")
+function_test_eq(RE_SPLIT_CMD_LINE.findall("""bm ab"""), ["bm", "ab"])
+function_test_eq(RE_SPLIT_CMD_LINE.findall("""bm+"""), ["bm", "+"])
+function_test_eq(RE_SPLIT_CMD_LINE.findall('''bm "one two"'''), ["bm", '"one two"'])
+function_test_eq(RE_SPLIT_CMD_LINE.findall('''bm "o\\"ne two"'''), ["bm", '"o\\"ne two"'])
 
 # Unquote text.
-kReUnquote = re.compile(r"""(["'])([^\1]*)\1""")
-function_test_eq(kReUnquote.sub("\\2", "date"), "date")
-function_test_eq(kReUnquote.sub("\\2", '"date"'), "date")
-function_test_eq(kReUnquote.sub("\\2", "'date'"), "date")
-function_test_eq(kReUnquote.sub("\\2", "'da\\'te'"), "da\\'te")
-function_test_eq(kReUnquote.sub("\\2", '"da\\"te"'), 'da\\"te')
+RE_UNQUOTE = re.compile(r"""(["'])([^\1]*)\1""")
+function_test_eq(RE_UNQUOTE.sub("\\2", "date"), "date")
+function_test_eq(RE_UNQUOTE.sub("\\2", '"date"'), "date")
+function_test_eq(RE_UNQUOTE.sub("\\2", "'date'"), "date")
+function_test_eq(RE_UNQUOTE.sub("\\2", "'da\\'te'"), "da\\'te")
+function_test_eq(RE_UNQUOTE.sub("\\2", '"da\\"te"'), 'da\\"te')
 
 class InteractivePrompt(app.controller.Controller):
     """Extended commands prompt."""
@@ -119,13 +119,13 @@ class InteractivePrompt(app.controller.Controller):
             "upper": self.upper_selected_lines,
             "wrap": self.wrap_selected_lines,
         }
-        self.subExecute = {
+        self.sub_execute = {
             "!": self.shell_execute,
             "|": self.pipe_execute,
         }
 
     def bookmark_command(self, cmdLine, view):
-        args = kReSplitCmdLine.findall(cmdLine)
+        args = RE_SPLIT_CMD_LINE.findall(cmdLine)
         if len(args) > 1 and args[1][0] == "-":
             if self.view.host.textBuffer.bookmark_remove():
                 return {}, "Removed bookmark"
@@ -158,13 +158,13 @@ class InteractivePrompt(app.controller.Controller):
             ".py": app.formatter.format_python
         }
 
-        fileName, ext = os.path.splitext(self.view.host.textBuffer.fullPath)
+        fileName, ext = os.path.splitext(self.view.host.textBuffer.full_path)
 
         app.log.info(fileName, ext)
         formatter = formatters.get(ext)
 
         if not formatter:
-            return lines, "No formatter for extension {}".format(ext)
+            return lines, f"No formatter for extension {ext}"
 
         try:
             formattedText = formatter(self.view.host.textBuffer.parser.data)
@@ -172,7 +172,7 @@ class InteractivePrompt(app.controller.Controller):
             return lines, str(err)
 
         lines = formattedText.split("\n")
-        return lines, "Changed %d lines" % (len(lines),)
+        return lines, f"Changed {len(lines)} lines"
 
     def make_command(self, cmdLine, view):
         return {}, "making stuff"
@@ -181,7 +181,7 @@ class InteractivePrompt(app.controller.Controller):
         """
         Opens the file under cursor.
         """
-        args = kReArgChain.findall(cmdLine)
+        args = RE_ARG_CHAIN.findall(cmdLine)
         app.log.info(args)
         if len(args) == 1:
             # If no args are provided, look for a path at the cursor position.
@@ -192,17 +192,17 @@ class InteractivePrompt(app.controller.Controller):
         if os.access(path, os.R_OK):
             return self.open_file(path, view)
         # Look in the same directory as the current file.
-        path = os.path.join(os.path.dirname(view.textBuffer.fullPath), args[1])
+        path = os.path.join(os.path.dirname(view.textBuffer.full_path), args[1])
         if os.access(path, os.R_OK):
             return self.open_file(path, view)
         return {}, "Unable to open " + args[1]
 
     def open_file(self, path, view):
-        textBuffer = view.program.bufferManager.load_text_buffer(path)
+        textBuffer = view.program.buffer_manager.load_text_buffer(path)
         inputWindow = self.current_input_window()
         inputWindow.set_text_buffer(textBuffer)
         self.change_to(inputWindow)
-        inputWindow.set_message("Opened file {}".format(path))
+        inputWindow.set_message(f"Opened file {path}")
 
     def split_command(self, cmdLine, view):
         view.split_window()
@@ -216,9 +216,9 @@ class InteractivePrompt(app.controller.Controller):
                 return
             tb = self.view.host.textBuffer
             lines = list(tb.get_selected_text())
-            if cmdLine[0] in self.subExecute:
+            if cmdLine[0] in self.sub_execute:
                 data = "\n".join(lines).encode("utf-8")
-                output, message = self.subExecute.get(cmdLine[0])(cmdLine[1:], data)
+                output, message = self.sub_execute.get(cmdLine[0])(cmdLine[1:], data)
                 if app.config.strict_debug:
                     assert isinstance(output, bytes)
                     assert isinstance(message, unicode)
@@ -229,7 +229,7 @@ class InteractivePrompt(app.controller.Controller):
                 dataFilter = self.filters.get(cmd)
                 if dataFilter:
                     if not len(lines):
-                        tb.set_message("The %s filter needs a selection." % (cmd,))
+                        tb.set_message(f"The {cmd} filter needs a selection.")
                     else:
                         lines, message = dataFilter(cmdLine, lines)
                         tb.set_message(message)
@@ -273,10 +273,10 @@ class InteractivePrompt(app.controller.Controller):
         if app.config.strict_debug:
             assert isinstance(commands, unicode), type(commands)
             assert isinstance(cmdInput, bytes), type(cmdInput)
-        chain = kRePipeChain.findall(commands)
+        chain = RE_PIPE_CHAIN.findall(commands)
         try:
             process = subprocess.Popen(
-                kReArgChain.findall(chain[-1]),
+                RE_ARG_CHAIN.findall(chain[-1]),
                 stdin=subprocess.PIPE,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
@@ -288,7 +288,7 @@ class InteractivePrompt(app.controller.Controller):
                 prior = process
                 for i in chain[1:]:
                     prior = subprocess.Popen(
-                        kReArgChain.findall(i),
+                        RE_ARG_CHAIN.findall(i),
                         stdin=subprocess.PIPE,
                         stdout=prior.stdin,
                         stderr=subprocess.STDOUT,
@@ -304,23 +304,23 @@ class InteractivePrompt(app.controller.Controller):
 
     def lower_selected_lines(self, cmdLine, lines):
         lines = [line.lower() for line in lines]
-        return lines, "Changed %d lines" % (len(lines),)
+        return lines, f"Changed {len(lines)} lines"
 
     def assign_index_to_selected_lines(self, cmdLine, lines):
         output = []
         for i, line in enumerate(lines):
             output.append("%s = %d" % (line, i))
-        return output, "Changed %d lines" % (len(output),)
+        return output, f"Changed {len(output)} lines"
 
     def sort_selected_lines(self, cmdLine, lines):
         lines.sort()
-        return lines, "Changed %d lines" % (len(lines),)
+        return lines, f"Changed {len(lines)} lines"
 
     def substitute_text(self, cmdLine, lines):
         if len(cmdLine) < 2:
             return (
                 lines,
-                """tip: %s/foo/bar/ to replace 'foo' with 'bar'.""" % (cmdLine,),
+                f"""tip: {cmdLine}/foo/bar/ to replace 'foo' with 'bar'.""",
             )
         if not lines:
             return lines, "No text was selected."
@@ -328,8 +328,7 @@ class InteractivePrompt(app.controller.Controller):
         if not sre:
             return (
                 lines,
-                """Separator punctuation missing, example:"""
-                """ %s/foo/bar/""" % (cmdLine,),
+                f"""Separator punctuation missing, example: {cmdLine}/foo/bar/""",
             )
         separator = sre.groups()[0]
         try:
@@ -343,15 +342,15 @@ class InteractivePrompt(app.controller.Controller):
         data = self.view.host.textBuffer.parser.data
         output = self.view.host.textBuffer.find_replace_text(find, replace, flags, data)
         lines = output.split("\n")
-        return lines, "Changed %d lines" % (len(lines),)
+        return lines, f"Changed {len(lines)} lines"
 
     def upper_selected_lines(self, cmdLine, lines):
         lines = [line.upper() for line in lines]
-        return lines, "Changed %d lines" % (len(lines),)
+        return lines, f"Changed {len(lines)} lines"
 
     def unknown_command(self, cmdLine, view):
         self.view.host.textBuffer.set_message("Unknown command")
-        return {}, "Unknown command %s" % (cmdLine,)
+        return {}, f"Unknown command {cmdLine}"
 
     def wrap_selected_lines(self, cmdLine, lines):
         tokens = cmdLine.split()
@@ -360,4 +359,4 @@ class InteractivePrompt(app.controller.Controller):
         indent = len(lines[0]) - len(lines[0].lstrip())
         width -= indent
         lines = app.curses_util.wrap_lines(lines, " " * indent, width)
-        return lines, "Changed %d lines" % (len(lines),)
+        return lines, f"Changed {len(lines)} lines"

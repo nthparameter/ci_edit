@@ -20,7 +20,7 @@ import app.regex
 class RegexTestCases(unittest.TestCase):
     def test_common_numbers(self):
         def test_number(strInput, reg):
-            sre = app.regex.kReNumbers.search(strInput)
+            sre = app.regex.RE_NUMBERS.search(strInput)
             if sre is None:
                 self.assertEqual(sre, reg)
                 return

@@ -34,7 +34,7 @@ filePattern = (len(sys.argv) > 2 and sys.argv[2]) or "*.*"
 
 kReWords = re.compile(r"""(\w+)""")
 # The first group is a hack to allow upper case pluralized, e.g. URLs.
-kReSubwords = re.compile(
+RE_SUBWORDS = re.compile(
     r"((?:[A-Z]{2,}s\b)|(?:[A-Z][a-z]+)|(?:[A-Z]+(?![a-z]))|(?:[a-z]+))"
 )
 
@@ -49,8 +49,8 @@ assert kReIgnoreFiles.search("/apple.pyc")
 dictionaryList = glob.glob(os.path.join(ciEditDir, "app/dictionary.*.words"))
 dictionaryList = [os.path.basename(i)[11:-6] for i in dictionaryList]
 print(pprint.pprint(dictionaryList))
-pathPrefs = []
-dictionary = app.spelling.Dictionary(dictionaryList, pathPrefs)
+path_prefs = []
+dictionary = app.spelling.Dictionary(dictionaryList, path_prefs)
 assert dictionary.is_correct("has", "cpp")
 
 def handle_file(fileName, unrecognizedWords):
@@ -60,7 +60,7 @@ def handle_file(fileName, unrecognizedWords):
             data = f.read()
             if not data:
                 return
-            for sre in kReSubwords.finditer(data):
+            for sre in RE_SUBWORDS.finditer(data):
                 # print(repr(sre.groups()))
                 word = sre.groups()[0].lower()
                 if not dictionary.is_correct(word, "cpp"):

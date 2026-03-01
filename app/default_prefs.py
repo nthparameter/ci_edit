@@ -588,7 +588,7 @@ prefs = {
         # An example indentation. If the grammar has its own indent that can
         # override this value.
         "indentation": "  ",
-        "lineLimitIndicator": 80,
+        "line_limit_indicator": 80,
         # When the mouse wheel is moved, which way should the window scroll.
         "naturalScrollDirection": True,
         "onSaveStripTrailingSpaces": True,
@@ -619,7 +619,7 @@ prefs = {
         # Use a background thread to process changes and parse grammars.
         "useBgThread": True,
     },
-    "fileType": {
+    "file_type": {
         "bash": {
             "ext": [".bash", ".sh"],
             "grammar": "bash",
@@ -1291,7 +1291,7 @@ prefs = {
         },
         "html": {
             "begin": "<html>",
-            "end": app.regex.kNonMatchingRegex,
+            "end": app.regex.RE_NON_MATCHING,
             "errors": [
                 "</br>",
                 "</hr>",
@@ -2000,7 +2000,7 @@ prefs = {
     "status": {
         "showTips": False,
     },
-    "userData": {
+    "user_data": {
         "homePath": os.path.expanduser("~/.ci_edit"),
         "historyPath": os.path.join(os.path.expanduser("~/.ci_edit"), "history.dat"),
     },

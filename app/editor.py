@@ -60,7 +60,7 @@ class InteractivePrediction(app.controller.Controller):
         app.controller.Controller.__init__(self, view, "prediction")
 
     def cancel(self):
-        self.items = [(self.priorTextBuffer, self.priorTextBuffer.fullPath, "")]
+        self.items = [(self.prior_text_buffer, self.prior_text_buffer.full_path, "")]
         self.index = 0
         self.change_to_host_window()
 
@@ -76,12 +76,12 @@ class InteractivePrediction(app.controller.Controller):
     def focus(self):
         app.log.info("InteractivePrediction.focus")
         app.controller.Controller.focus(self)
-        self.priorTextBuffer = self.view.host.textBuffer
-        self.index = self.build_file_list(self.view.host.textBuffer.fullPath)
+        self.prior_text_buffer = self.view.host.textBuffer
+        self.index = self.build_file_list(self.view.host.textBuffer.full_path)
         self.view.host.set_text_buffer(text_buffer.TextBuffer())
-        self.commandDefault = self.view.textBuffer.insert_printable
-        self.view.host.textBuffer.lineLimitIndicator = 0
-        self.view.host.textBuffer.rootGrammar = self.view.program.prefs.get_grammar(
+        self.command_default = self.view.textBuffer.insert_printable
+        self.view.host.textBuffer.line_limit_indicator = 0
+        self.view.host.textBuffer.root_grammar = self.view.program.prefs.get_grammar(
             "_pre"
         )
 
@@ -92,14 +92,14 @@ class InteractivePrediction(app.controller.Controller):
         if app.config.strict_debug:
             assert isinstance(currentFile, str)
         self.items = []
-        bufferManager = self.view.program.bufferManager
-        for i in bufferManager.buffers:
+        buffer_manager = self.view.program.buffer_manager
+        for i in buffer_manager.buffers:
             dirty = "*" if i.is_dirty() else "."
-            if i.fullPath:
-                self.items.append((i, i.fullPath, dirty))
+            if i.full_path:
+                self.items.append((i, i.full_path, dirty))
             else:
                 self.items.append(
-                    (i, "<new file> %s" % (i.parser.row_text(0)[:20]), dirty)
+                    (i, f"<new file> {i.parser.row_text(0)[:20]}", dirty)
                 )
         dirPath, fileName = os.path.split(currentFile)
         fileName, ext = os.path.splitext(fileName)
@@ -142,7 +142,7 @@ class InteractivePrediction(app.controller.Controller):
                     app.log.info()
                     self.items.append((None, chromiumPath, "="))
         # Suggest item.
-        return (len(bufferManager.buffers) - 2) % len(self.items)
+        return (len(buffer_manager.buffers) - 2) % len(self.items)
 
     def on_change(self):
         assert False
@@ -151,7 +151,7 @@ class InteractivePrediction(app.controller.Controller):
         for i, item in enumerate(self.items):
             prefix = "-->" if i == self.index else "   "
             suffix = " <--" if i == self.index else ""
-            clip.append("%s %s %s%s" % (prefix, item[1][-limit:], item[2], suffix))
+            clip.append(f"{prefix} {item[1][-limit:]} {item[2]}{suffix}")
         self.view.host.textBuffer.selection_all()
         self.view.host.textBuffer.edit_paste_lines(tuple(clip))
         self.cursor_move_to(self.index, 0)
@@ -169,15 +169,15 @@ class InteractivePrediction(app.controller.Controller):
         app.controller.Controller.unfocus(self)
         if self.items is None:
             return
-        bufferManager = self.view.program.bufferManager
-        textBuffer, fullPath = self.items[self.index][:2]
+        buffer_manager = self.view.program.buffer_manager
+        textBuffer, full_path = self.items[self.index][:2]
         if textBuffer is not None:
             self.view.host.set_text_buffer(
-                bufferManager.get_valid_text_buffer(textBuffer)
+                buffer_manager.get_valid_text_buffer(textBuffer)
             )
         else:
-            expandedPath = os.path.abspath(os.path.expanduser(fullPath))
-            textBuffer = bufferManager.load_text_buffer(expandedPath)
+            expandedPath = os.path.abspath(os.path.expanduser(full_path))
+            textBuffer = buffer_manager.load_text_buffer(expandedPath)
             self.view.host.set_text_buffer(textBuffer)
         self.items = None
 
@@ -278,7 +278,7 @@ class InteractiveGoto(app.controller.Controller):
     def focus(self):
         app.log.info("InteractiveGoto.focus")
         self.textBuffer.selection_all()
-        self.textBuffer.insert(unicode(self.view.host.textBuffer.penRow + 1))
+        self.textBuffer.insert(unicode(self.view.host.textBuffer.pen_row + 1))
         self.textBuffer.selection_all()
 
     def info(self):

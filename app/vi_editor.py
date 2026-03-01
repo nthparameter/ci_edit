@@ -29,7 +29,7 @@ class ViEdit(app.controller.Controller):
 
     def __init__(self, view):
         app.controller.Controller.__init__(self, view, "ViEdit")
-        self.commandDefault = None
+        self.command_default = None
 
     def set_text_buffer(self, textBuffer):
         app.controller.Controller.set_text_buffer(self, textBuffer)
@@ -42,12 +42,12 @@ class ViEdit(app.controller.Controller):
             ord("k"): textBuffer.cursor_up,
             ord("l"): textBuffer.cursor_right,
         }
-        self.commandSet = normalCommandSet
+        self.command_set = normalCommandSet
         self.commandSet_Normal = normalCommandSet
         self.commandSet_Insert = {
             curses.ascii.ESC: self.switch_to_command_set_normal,
         }
-        self.commandDefault = self.textBuffer.insert_printable
+        self.command_default = self.textBuffer.insert_printable
 
     def info(self):
         app.log.info("ViEdit Command set main")
@@ -55,19 +55,19 @@ class ViEdit(app.controller.Controller):
 
     def focus(self):
         app.log.info("VimEdit.focus")
-        if not self.commandDefault:
-            self.commandDefault = self.textBuffer.no_op
-            self.commandSet = self.commandSet_Normal
+        if not self.command_default:
+            self.command_default = self.textBuffer.no_op
+            self.command_set = self.commandSet_Normal
 
     def on_change(self):
         pass
 
     def switch_to_command_set_insert(self, ignored=1):
         app.log.info("insert mode")
-        self.commandDefault = self.textBuffer.insert_printable
-        self.commandSet = self.commandSet_Insert
+        self.command_default = self.textBuffer.insert_printable
+        self.command_set = self.commandSet_Insert
 
     def switch_to_command_set_normal(self, ignored=1):
         app.log.info("normal mode")
-        self.commandDefault = self.textBuffer.no_op_default
-        self.commandSet = self.commandSet_Normal
+        self.command_default = self.textBuffer.no_op_default
+        self.command_set = self.commandSet_Normal

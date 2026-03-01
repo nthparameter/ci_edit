@@ -59,10 +59,10 @@ class ProgramWindow(app.window.ActiveWindow):
         )
         self.fileManagerWindow.parent = self
         # Set up prediction.
-        self.predictionWindow = app.prediction_window.PredictionWindow(
+        self.prediction_window = app.prediction_window.PredictionWindow(
             self.program, self
         )
-        self.predictionWindow.parent = self
+        self.prediction_window.parent = self
         # Put the input window in front on startup.
         self.inputWindow.reattach()
 
@@ -381,17 +381,17 @@ class ProgramWindow(app.window.ActiveWindow):
         app.window.ActiveWindow.render(self)
         window = self.focusedWindow
         self.debug_draw(window)
-        penRow = window.textBuffer.penRow
-        penCol = window.textBuffer.penCol
+        pen_row = window.textBuffer.pen_row
+        pen_col = window.textBuffer.pen_col
         if (
             window.showCursor
-            and penRow >= window.scrollRow
-            and penRow < window.scrollRow + window.rows
+            and pen_row >= window.scrollRow
+            and pen_row < window.scrollRow + window.rows
         ):
             self.program.backgroundFrame.set_cursor(
                 (
-                    window.top + penRow - window.scrollRow,
-                    window.left + penCol - window.scrollCol,
+                    window.top + pen_row - window.scrollRow,
+                    window.left + pen_col - window.scrollCol,
                 )
             )
         else:

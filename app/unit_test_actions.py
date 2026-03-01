@@ -24,7 +24,7 @@ class FakeCursorWindow:
 
 class FakeView:
     def __init__(self):
-        self.cursorWindow = FakeCursorWindow()
+        self.cursor_window = FakeCursorWindow()
         self.top = 0
         self.left = 0
         self.rows = 10
@@ -44,30 +44,30 @@ def check_row(test, text_buffer, row, expected):
 
 class ActionsTestCase(unittest.TestCase):
     def current_row_text(self):
-        return self.textBuffer.parser.row_text(self.textBuffer.penRow)
+        return self.textBuffer.parser.row_text(self.textBuffer.pen_row)
 
     def set_marker_pen_row_col(self, mRow, mCol, row, col):
         self.assertTrue(isinstance(mRow, int))
         self.assertTrue(isinstance(mCol, int))
         self.assertTrue(isinstance(row, int))
         self.assertTrue(isinstance(col, int))
-        self.assertTrue(hasattr(self.textBuffer, "markerRow"))
-        self.assertTrue(hasattr(self.textBuffer, "markerCol"))
-        self.assertTrue(hasattr(self.textBuffer, "penRow"))
-        self.assertTrue(hasattr(self.textBuffer, "penCol"))
-        self.assertTrue(hasattr(self.textBuffer, "goalCol"))
-        self.textBuffer.markerRow = mRow
-        self.textBuffer.markerCol = mCol
-        self.textBuffer.penRow = row
-        self.textBuffer.penCol = col
-        self.textBuffer.goalCol = col
+        self.assertTrue(hasattr(self.textBuffer, "marker_row"))
+        self.assertTrue(hasattr(self.textBuffer, "marker_col"))
+        self.assertTrue(hasattr(self.textBuffer, "pen_row"))
+        self.assertTrue(hasattr(self.textBuffer, "pen_col"))
+        self.assertTrue(hasattr(self.textBuffer, "goal_col"))
+        self.textBuffer.marker_row = mRow
+        self.textBuffer.marker_col = mCol
+        self.textBuffer.pen_row = row
+        self.textBuffer.pen_col = col
+        self.textBuffer.goal_col = col
 
     def marker_pen_row_col(self):
         return (
-            self.textBuffer.markerRow,
-            self.textBuffer.markerCol,
-            self.textBuffer.penRow,
-            self.textBuffer.penCol,
+            self.textBuffer.marker_row,
+            self.textBuffer.marker_col,
+            self.textBuffer.pen_row,
+            self.textBuffer.pen_col,
         )
 
 class MouseTestCases(ActionsTestCase):
@@ -94,8 +94,8 @@ void blah();
 
     def test_mouse_selection(self):
         self.textBuffer.mouse_click(3, 9, False, False, False)
-        self.assertEqual(self.textBuffer.penRow, 3)
-        self.assertEqual(self.textBuffer.penCol, 9)
+        self.assertEqual(self.textBuffer.pen_row, 3)
+        self.assertEqual(self.textBuffer.pen_col, 9)
 
         self.textBuffer.mouse_click(3, 8, True, False, False)
         self.assertEqual(self.marker_pen_row_col(), (3, 9, 3, 8))
@@ -125,51 +125,51 @@ void blah();
         wordBegin = 6
         wordEnd = 12
         self.textBuffer.mouse_click(row, col, False, False, False)
-        self.assertEqual(self.textBuffer.penRow, row)
-        self.assertEqual(self.textBuffer.penCol, col)
+        self.assertEqual(self.textBuffer.pen_row, row)
+        self.assertEqual(self.textBuffer.pen_col, col)
 
         self.textBuffer.mouse_double_click(row, col - 1, False, False, False)
-        self.assertEqual(self.textBuffer.markerRow, row)
-        self.assertEqual(self.textBuffer.markerCol, wordBegin)
-        self.assertEqual(self.textBuffer.penRow, row)
-        self.assertEqual(self.textBuffer.penCol, wordEnd)
+        self.assertEqual(self.textBuffer.marker_row, row)
+        self.assertEqual(self.textBuffer.marker_col, wordBegin)
+        self.assertEqual(self.textBuffer.pen_row, row)
+        self.assertEqual(self.textBuffer.pen_col, wordEnd)
 
         self.textBuffer.mouse_moved(row, wordBegin, False, False, False)
-        self.assertEqual(self.textBuffer.markerRow, row)
-        self.assertEqual(self.textBuffer.markerCol, wordBegin)
-        self.assertEqual(self.textBuffer.penRow, row)
-        self.assertEqual(self.textBuffer.penCol, wordEnd)
+        self.assertEqual(self.textBuffer.marker_row, row)
+        self.assertEqual(self.textBuffer.marker_col, wordBegin)
+        self.assertEqual(self.textBuffer.pen_row, row)
+        self.assertEqual(self.textBuffer.pen_col, wordEnd)
 
         self.textBuffer.mouse_moved(row, wordBegin - 1, False, False, False)
-        self.assertEqual(self.textBuffer.markerRow, row)
-        self.assertEqual(self.textBuffer.penCol, 0)
-        self.assertEqual(self.textBuffer.markerCol, wordEnd)
-        self.assertEqual(self.textBuffer.penRow, row)
-        self.assertEqual(self.textBuffer.penCol, 0)
+        self.assertEqual(self.textBuffer.marker_row, row)
+        self.assertEqual(self.textBuffer.pen_col, 0)
+        self.assertEqual(self.textBuffer.marker_col, wordEnd)
+        self.assertEqual(self.textBuffer.pen_row, row)
+        self.assertEqual(self.textBuffer.pen_col, 0)
 
         self.textBuffer.mouse_moved(row, 1, False, False, False)
-        self.assertEqual(self.textBuffer.markerRow, row)
-        self.assertEqual(self.textBuffer.markerCol, wordEnd)
-        self.assertEqual(self.textBuffer.penRow, row)
-        self.assertEqual(self.textBuffer.penCol, 0)
+        self.assertEqual(self.textBuffer.marker_row, row)
+        self.assertEqual(self.textBuffer.marker_col, wordEnd)
+        self.assertEqual(self.textBuffer.pen_row, row)
+        self.assertEqual(self.textBuffer.pen_col, 0)
 
         self.textBuffer.mouse_moved(row + 1, 0, False, False, False)
-        self.assertEqual(self.textBuffer.markerRow, row)
-        self.assertEqual(self.textBuffer.markerCol, wordBegin)
-        self.assertEqual(self.textBuffer.penRow, row + 1)
-        self.assertEqual(self.textBuffer.penCol, 1)
+        self.assertEqual(self.textBuffer.marker_row, row)
+        self.assertEqual(self.textBuffer.marker_col, wordBegin)
+        self.assertEqual(self.textBuffer.pen_row, row + 1)
+        self.assertEqual(self.textBuffer.pen_col, 1)
 
         self.textBuffer.mouse_moved(row + 1, 1, False, False, False)
-        self.assertEqual(self.textBuffer.markerRow, row)
-        self.assertEqual(self.textBuffer.markerCol, wordBegin)
-        self.assertEqual(self.textBuffer.penRow, row + 1)
-        self.assertEqual(self.textBuffer.penCol, 8)
+        self.assertEqual(self.textBuffer.marker_row, row)
+        self.assertEqual(self.textBuffer.marker_col, wordBegin)
+        self.assertEqual(self.textBuffer.pen_row, row + 1)
+        self.assertEqual(self.textBuffer.pen_col, 8)
 
         self.textBuffer.mouse_moved(row, 1, False, False, False)
-        self.assertEqual(self.textBuffer.markerRow, row)
-        self.assertEqual(self.textBuffer.markerCol, wordEnd)
-        self.assertEqual(self.textBuffer.penRow, row)
-        self.assertEqual(self.textBuffer.penCol, 0)
+        self.assertEqual(self.textBuffer.marker_row, row)
+        self.assertEqual(self.textBuffer.marker_col, wordEnd)
+        self.assertEqual(self.textBuffer.pen_row, row)
+        self.assertEqual(self.textBuffer.pen_col, 0)
 
 class SelectionTestCases(ActionsTestCase):
     def setUp(self):
@@ -244,7 +244,7 @@ a\twith tab
         self.assertEqual(self.marker_pen_row_col(), (0, 0, 8, 8))
         self.textBuffer.cursor_move_up_or_begin()
         self.assertEqual(self.current_row_text(), "a\twith tab")
-        # The column is 10 because of the prior move right which set goalCol.
+        # The column is 10 because of the prior move right which set goal_col.
         self.assertEqual(self.marker_pen_row_col(), (0, 0, 7, 10))
         self.textBuffer.cursor_move_left()
         self.assertEqual(self.marker_pen_row_col(), (0, 0, 7, 9))
@@ -328,9 +328,9 @@ class TextIndentTestCases(ActionsTestCase):
         self.assertEqual(tb.parser.row_count(), 1)
         insert(ord("a"), None)
         insert(ord(":"), None)
-        self.assertEqual(tb.penRow, 0)
+        self.assertEqual(tb.pen_row, 0)
         tb.carriage_return()
-        self.assertEqual(tb.penRow, 1)
+        self.assertEqual(tb.pen_row, 1)
         check_row(self, tb, 0, "a:")
         check_row(self, tb, 1, "")
 
@@ -372,15 +372,15 @@ class TextIndentTestCases(ActionsTestCase):
         check_row(self, tb, 1, "b")
         check_row(self, tb, 2, "c")
         check_row(self, tb, 3, "d")
-        tb.penRow = 1
-        tb.markerRow = 2
+        tb.pen_row = 1
+        tb.marker_row = 2
         tb.indent_lines()
         check_row(self, tb, 0, "a")
         check_row(self, tb, 1, "  b")
         check_row(self, tb, 2, "  c")
         check_row(self, tb, 3, "d")
-        tb.penRow = 0
-        tb.markerRow = 3
+        tb.pen_row = 0
+        tb.marker_row = 3
         tb.indent_lines()
         check_row(self, tb, 0, "  a")
         check_row(self, tb, 1, "    b")
@@ -396,8 +396,8 @@ class TextIndentTestCases(ActionsTestCase):
         check_row(self, tb, 1, "b")
         check_row(self, tb, 2, "c")
         check_row(self, tb, 3, "d")
-        tb.penRow = 1
-        tb.markerRow = 1
+        tb.pen_row = 1
+        tb.marker_row = 1
         tb.indent_lines()
         check_row(self, tb, 0, "a")
         check_row(self, tb, 1, "  b")
@@ -413,22 +413,22 @@ class TextIndentTestCases(ActionsTestCase):
         check_row(self, tb, 1, "  b")
         check_row(self, tb, 2, "c")
         check_row(self, tb, 3, "d")
-        tb.penRow = 3
-        tb.markerRow = 3
+        tb.pen_row = 3
+        tb.marker_row = 3
         tb.indent_lines()
         check_row(self, tb, 0, "a")
         check_row(self, tb, 1, "  b")
         check_row(self, tb, 2, "c")
         check_row(self, tb, 3, "  d")
-        tb.penRow = 0
-        tb.markerRow = 3
+        tb.pen_row = 0
+        tb.marker_row = 3
         tb.indent_lines()
         check_row(self, tb, 0, "  a")
         check_row(self, tb, 1, "    b")
         check_row(self, tb, 2, "  c")
         check_row(self, tb, 3, "    d")
-        tb.penRow = 3
-        tb.markerRow = 3
+        tb.pen_row = 3
+        tb.marker_row = 3
         tb.unindent_lines()
         check_row(self, tb, 0, "  a")
         check_row(self, tb, 1, "    b")
@@ -444,8 +444,8 @@ class TextIndentTestCases(ActionsTestCase):
         check_row(self, tb, 1, "    b")
         check_row(self, tb, 2, "  c")
         check_row(self, tb, 3, "d")
-        tb.penRow = 0
-        tb.markerRow = 0
+        tb.pen_row = 0
+        tb.marker_row = 0
         tb.unindent_lines()
         check_row(self, tb, 0, "a")
         check_row(self, tb, 1, "    b")
@@ -467,18 +467,18 @@ class TextIndentTestCases(ActionsTestCase):
                     self.textBuffer.parse_document()
             self.assertEqual(self.textBuffer.parser.data, input)
 
-        def check_pen_marker(penRow, penCol, markerRow, markerCol):
+        def check_pen_marker(pen_row, pen_col, marker_row, marker_col):
             self.assertEqual(
-                (penRow, penCol, markerRow, markerCol),
-                (tb.penRow, tb.penCol, tb.markerRow, tb.markerCol),
+                (pen_row, pen_col, marker_row, marker_col),
+                (tb.pen_row, tb.pen_col, tb.marker_row, tb.marker_col),
             )
 
-        def select_char(penRow, penCol, markerRow, markerCol):
-            self.textBuffer.penRow = penRow
-            self.textBuffer.penCol = penCol
-            self.textBuffer.markerRow = markerRow
-            self.textBuffer.markerCol = markerCol
-            self.textBuffer.selectionMode = app.selectable.kSelectionCharacter
+        def select_char(pen_row, pen_col, marker_row, marker_col):
+            self.textBuffer.pen_row = pen_row
+            self.textBuffer.pen_col = pen_col
+            self.textBuffer.marker_row = marker_row
+            self.textBuffer.marker_col = marker_col
+            self.textBuffer.selectionMode = app.selectable.SELECTION_CHARACTER
 
         tb = self.textBuffer
         self.assertEqual(tb.parser.row_count(), 1)

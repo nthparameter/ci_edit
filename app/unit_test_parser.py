@@ -67,7 +67,7 @@ class ParserTestCases(unittest.TestCase):
 
     def print_parser_nodes(self, nodes):
         for n in nodes:
-            print("({}, {}, {}, {}),".format(n[0]["name"], n[1], n[2], n[3]))
+            print(f"({n[0]['name']}, {n[1]}, {n[2]}, {n[3]}),")
 
     def test_parse(self):
         tests = [
@@ -185,7 +185,7 @@ parse\t\t\tz
         if 0:
             print("")
             for i, t in enumerate(test.splitlines()):
-                print("{}: {}".format(i, repr(t)))
+                print(f"{i}: {repr(t)}")
             p.debug_log(print, test)
 
         self.assertEqual(p.row_count(), 12)
@@ -387,7 +387,7 @@ line\tち\ttabs
         if 0:
             print("")
             for i, t in enumerate(test.splitlines()):
-                print("{}: {}".format(i, repr(t)))
+                print(f"{i}: {repr(t)}")
             p.debug_log(print, test)
 
         self.assertEqual(p.row_count(), 10)
@@ -551,7 +551,7 @@ line\tち\ttabs
         if 0:
             print("")
             for i, t in enumerate(test.splitlines()):
-                print("{}: {}".format(i, repr(t)))
+                print(f"{i}: {repr(t)}")
             p.debug_log(print, test)
         self.assertEqual(p.data_offset(4, 5), 34)
 
@@ -635,7 +635,7 @@ line\tち\ttabs
         if 0:
             print("")
             for i, t in enumerate(test.splitlines()):
-                print("{}: {}".format(i, repr(t)))
+                print(f"{i}: {repr(t)}")
             p.debug_log(print, test)
 
         self.assertEqual(p.data_offset(4, 5), 34)
@@ -699,7 +699,7 @@ line\tち\ttabs
         if 0:
             print("")
             for i, t in enumerate(test.splitlines()):
-                print("{}: {}".format(i, repr(t)))
+                print(f"{i}: {repr(t)}")
             p.debug_log(print, test)
 
         self.assertEqual(p.data_offset(4, 5), 34)
@@ -729,7 +729,7 @@ e
         if 0:
             print("")
             for i, t in enumerate(test.splitlines()):
-                print("{}: {}".format(i, repr(t)))
+                print(f"{i}: {repr(t)}")
             p.debug_log(print, test)
 
         self.check_parser_nodes(expectedNodes, p.parserNodes)
@@ -752,7 +752,7 @@ e
         if 0:
             print("")
             for i, t in enumerate(test.splitlines()):
-                print("{}: {}".format(i, repr(t)))
+                print(f"{i}: {repr(t)}")
             p.debug_log(print, test)
 
         self.assertEqual(p.row_count(), 3)
@@ -785,7 +785,7 @@ e
         if 0:
             print("")
             for i, t in enumerate(test.splitlines()):
-                print("{}: {}".format(i, repr(t)))
+                print(f"{i}: {repr(t)}")
             p.debug_log(print, test)
 
         self.check_parser_nodes(
@@ -923,8 +923,8 @@ e
             parser = app.parser.Parser()
             path = "app/actions.py"
             data = open(path).read()
-            fileType = self.prefs.get_file_type(path)
-            grammar = self.prefs.get_grammar(fileType)
+            file_type = self.prefs.get_file_type(path)
+            grammar = self.prefs.get_grammar(file_type)
 
             profile.enable()
             parser.parse(data, grammar, 0, sys.maxsize)

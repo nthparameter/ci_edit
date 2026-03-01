@@ -273,7 +273,7 @@ class ViewWindow:
         extra = ""
         if hasattr(self, "label"):
             extra += ' "' + self.label + '"'
-        app.log.info("%s%s%s%s" % (indent, focus, self, extra))
+        app.log.info(f"{indent}{focus}{self}{extra}")
         for child in self.zOrder:
             child.show_window_hierarchy(indent + "  ")
 
@@ -517,7 +517,7 @@ class LabeledLine(Window):
         Window.__init__(self, program, parent)
         self.host = parent
         tb = app.text_buffer.TextBuffer(self.program)
-        tb.rootGrammar = self.program.prefs.grammars["none"]
+        tb.root_grammar = self.program.prefs.grammars["none"]
         self.set_text_buffer(tb)
         self.label = label
         self.leftColumn = ViewWindow(self.program, self)
@@ -623,7 +623,7 @@ class LineNumbers(ViewWindow):
                     and currentRow <= currentBookmark.end
                 ):
                     color = colorPrefs.get(currentBookmark.data.get("colorIndex"))
-                    if self.host.textBuffer.penRow == currentRow:
+                    if self.host.textBuffer.pen_row == currentRow:
                         cursorBookmarkColorIndex = currentBookmark.data.get(
                             "colorIndex"
                         )
@@ -641,7 +641,7 @@ class LineNumbers(ViewWindow):
         for i in range(limit, self.rows):
             self.add_str(i, 0, "       ", color)
         # Highlight the line numbers for the current cursor line.
-        cursorAt = self.host.textBuffer.penRow - self.host.scrollRow
+        cursorAt = self.host.textBuffer.pen_row - self.host.scrollRow
         if 0 <= cursorAt < limit:
             if cursorBookmarkColorIndex:
                 if self.program.prefs.startup["numColors"] == 8:
@@ -650,7 +650,7 @@ class LineNumbers(ViewWindow):
                     color = colorPrefs.get(cursorBookmarkColorIndex % 32 + 128)
             else:
                 color = colorPrefs.get("line_number_current")
-            self.add_str(cursorAt, 1, "%5d" % (self.host.textBuffer.penRow + 1), color)
+            self.add_str(cursorAt, 1, "%5d" % (self.host.textBuffer.pen_row + 1), color)
 
     def get_visible_bookmarks(self, beginRow, endRow):
         """
@@ -685,16 +685,16 @@ class LineNumbers(ViewWindow):
             tb.selection_none()
             return
         if shift:
-            if tb.selectionMode == app.selectable.kSelectionNone:
+            if tb.selectionMode == app.selectable.SELECTION_NONE:
                 tb.selection_line()
             self.mouse_release(paneRow, paneCol, shift, ctrl, alt)
         else:
             tb.cursor_move_and_mark(
-                self.host.scrollRow + paneRow - tb.penRow,
+                self.host.scrollRow + paneRow - tb.pen_row,
                 0,
-                self.host.scrollRow + paneRow - tb.markerRow,
+                self.host.scrollRow + paneRow - tb.marker_row,
                 0,
-                app.selectable.kSelectionNone - tb.selectionMode,
+                app.selectable.SELECTION_NONE - tb.selectionMode,
             )
             self.mouse_release(paneRow, paneCol, shift, ctrl, alt)
 
@@ -973,22 +973,19 @@ class StatusLine(ViewWindow):
         colPercentage = 0
         lineCount = tb.parser.row_count()
         if lineCount:
-            rowPercentage = self.host.textBuffer.penRow * 100 // lineCount
-            charCount = tb.parser.row_width(self.host.textBuffer.penRow)
-            if charCount and self.host.textBuffer.penCol != 0:
-                colPercentage = self.host.textBuffer.penCol * 100 // charCount
+            rowPercentage = self.host.textBuffer.pen_row * 100 // lineCount
+            charCount = tb.parser.row_width(self.host.textBuffer.pen_row)
+            if charCount and self.host.textBuffer.pen_col != 0:
+                colPercentage = self.host.textBuffer.pen_col * 100 // charCount
         # Format.
         rightSide = ""
         if len(statusLine):
             rightSide += " |"
         if self.program.prefs.startup.get("showLogWindow"):
-            rightSide += " %s | %s |" % (
-                tb.cursor_grammar_name(),
-                tb.selection_mode_name(),
-            )
+            rightSide += f" {tb.cursor_grammar_name()} | {tb.selection_mode_name()} |"
         rightSide += " %4d,%2d | %3d%%,%3d%%" % (
-            self.host.textBuffer.penRow + 1,
-            self.host.textBuffer.penCol + 1,
+            self.host.textBuffer.pen_row + 1,
+            self.host.textBuffer.pen_col + 1,
             rowPercentage,
             colPercentage,
         )
@@ -999,7 +996,7 @@ class TopInfo(ViewWindow):
     def __init__(self, program, host):
         ViewWindow.__init__(self, program, host)
         self.host = host
-        self.borrowedRows = 0
+        self.borrowed_rows = 0
         self.lines = []
         self.mode = 2
 
@@ -1038,9 +1035,9 @@ class TopInfo(ViewWindow):
                             indent = z
                             lines.append(line)
                     lineCursor -= 1
-        pathLine = app.string.path_encode(self.host.textBuffer.fullPath)
+        pathLine = app.string.path_encode(self.host.textBuffer.full_path)
         if 1:
-            if tb.isReadOnly:
+            if tb.is_read_only:
                 pathLine += " [RO]"
         if 1:
             if tb.is_dirty():
@@ -1052,10 +1049,10 @@ class TopInfo(ViewWindow):
         infoRows = len(self.lines)
         if self.mode > 0:
             infoRows = self.mode
-        if self.borrowedRows != infoRows:
+        if self.borrowed_rows != infoRows:
             self.host.topRows = infoRows
             self.host.layout()
-            self.borrowedRows = infoRows
+            self.borrowed_rows = infoRows
 
     def render(self):
         """Render the context information at the top of the window."""
@@ -1070,7 +1067,7 @@ class TopInfo(ViewWindow):
             self.add_str(i, 0, " " * self.cols, color)
 
     def reshape(self, top, left, rows, cols):
-        self.borrowedRows = 0
+        self.borrowed_rows = 0
         ViewWindow.reshape(self, top, left, rows, cols)
 
 class InputWindow(Window):
@@ -1179,7 +1176,7 @@ class InputWindow(Window):
 
     def layout(self):
         """Change self and sub-windows to fit within the given rectangle."""
-        top, left, rows, cols = self.outerShape
+        top, left, rows, cols = self.outer_shape
         lineNumbersCols = 7
         topRows = self.topRows
         bottomRows = max(1, self.interactiveFind.preferred_size(rows, cols)[0])
@@ -1270,7 +1267,7 @@ class InputWindow(Window):
         """Change self and sub-windows to fit within the given rectangle."""
         app.log.detail(top, left, rows, cols)
         Window.reshape(self, top, left, rows, cols)
-        self.outerShape = (top, left, rows, cols)
+        self.outer_shape = (top, left, rows, cols)
         self.layout()
 
     def set_text_buffer(self, textBuffer):
@@ -1280,51 +1277,51 @@ class InputWindow(Window):
             )
         app.log.info("set_text_buffer")
         if self.textBuffer is not None:
-            self.savedScrollPositions[self.textBuffer.fullPath] = (
+            self.savedScrollPositions[self.textBuffer.full_path] = (
                 self.scrollRow,
                 self.scrollCol,
             )
         # self.normalize()
-        textBuffer.lineLimitIndicator = self.program.prefs.editor["lineLimitIndicator"]
-        textBuffer.debugRedo = self.program.prefs.startup.get("debugRedo")
+        textBuffer.line_limit_indicator = self.program.prefs.editor["line_limit_indicator"]
+        textBuffer.debug_redo = self.program.prefs.startup.get("debug_redo")
         Window.set_text_buffer(self, textBuffer)
         self.controller.set_text_buffer(textBuffer)
-        savedScroll = self.savedScrollPositions.get(self.textBuffer.fullPath)
+        savedScroll = self.savedScrollPositions.get(self.textBuffer.full_path)
         if savedScroll is not None:
             self.scrollRow, self.scrollCol = savedScroll
         else:
-            historyScroll = self.textBuffer.fileHistory.get("scroll")
+            historyScroll = self.textBuffer.file_history.get("scroll")
             if historyScroll is not None:
                 self.scrollRow, self.scrollCol = historyScroll
             else:
                 self.textBuffer.scroll_to_optimal_scroll_position()
 
     def startup(self):
-        bufferManager = self.program.bufferManager
+        buffer_manager = self.program.buffer_manager
         for f in self.program.prefs.startup.get("cliFiles", []):
-            tb = bufferManager.load_text_buffer(f["path"])
+            tb = buffer_manager.load_text_buffer(f["path"])
             if tb is None:
                 # app.log.info('failed to load', repr(f["path"]))
                 continue
             tb.parse_document()
             if f["row"] is not None:
                 if f["col"] is not None:
-                    tb.select_text(f["row"], f["col"], 0, app.selectable.kSelectionNone)
+                    tb.select_text(f["row"], f["col"], 0, app.selectable.SELECTION_NONE)
                 else:
-                    tb.select_text(f["row"], 0, 0, app.selectable.kSelectionNone)
+                    tb.select_text(f["row"], 0, 0, app.selectable.SELECTION_NONE)
         if self.program.prefs.startup.get("read_stdin"):
-            bufferManager.read_stdin()
-        bufferManager.buffers.reverse()
-        tb = bufferManager.top_buffer()
+            buffer_manager.read_stdin()
+        buffer_manager.buffers.reverse()
+        tb = buffer_manager.top_buffer()
         if not tb:
-            tb = bufferManager.new_text_buffer()
+            tb = buffer_manager.new_text_buffer()
         self.set_text_buffer(tb)
         # Should parsing the document be a standard part of set_text_buffer? TBD.
         self.textBuffer.parse_document()
         openToLine = self.program.prefs.startup.get("openToLine")
         if openToLine is not None:
             self.textBuffer.select_text(
-                openToLine - 1, 0, 0, app.selectable.kSelectionNone
+                openToLine - 1, 0, 0, app.selectable.SELECTION_NONE
             )
 
     def toggle_show_tips(self):
@@ -1513,8 +1510,8 @@ class OptionsRow(ViewWindow):
             if control["dict"][control["name"]] is None:
                 decoration = "-"
             if control["width"] < 0:
-                return "%s %s" % (control["name"], decoration)
-            return "%s %s" % (decoration, control["name"])
+                return f"{control['name']} {decoration}"
+            return f"{decoration} {control['name']}"
 
         self.add_element(draw, "sort", name, reference, width, sep, len(" v"))
 
@@ -1715,9 +1712,9 @@ class SortableHeaderWindow(OptionsTrinaryStateWindow):
 
         def draw(label, decoration, width):
             if width < 0:
-                x = "%s %s" % (label, decoration)
+                x = f"{label} {decoration}"
             else:
-                x = "%s %s" % (decoration, label)
+                x = f"{decoration} {label}"
             return "%*s" % (width, x)
 
         OptionsTrinaryStateWindow.set_up(

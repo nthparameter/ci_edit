@@ -54,7 +54,7 @@ def path_encode(path):
         if t is not None:
             c = t
         elif ord_c < 32:
-            c = "\\x%02x" % (ord_c,)
+            c = f"\\x{ord_c:02x}"
         out += c
     return out
 

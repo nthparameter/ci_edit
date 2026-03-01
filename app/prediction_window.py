@@ -34,7 +34,7 @@ class PredictionList(app.window.Window):
         color = host.program.color.get("top_info")
         self.optionsRow = app.window.OptionsSelectionWindow(self.program, self)
         self.optionsRow.set_parent(self)
-        self.typeColumn = app.window.SortableHeaderWindow(
+        self.type_column = app.window.SortableHeaderWindow(
             self.program,
             self.optionsRow,
             "Type",
@@ -56,7 +56,7 @@ class PredictionList(app.window.Window):
         label = app.window.LabelWindow(self.program, self.optionsRow, "|")
         label.set_parent(self.optionsRow)
         label.color = color
-        self.statusColumn = app.window.SortableHeaderWindow(
+        self.status_column = app.window.SortableHeaderWindow(
             self.program,
             self.optionsRow,
             "Status ",
@@ -69,9 +69,9 @@ class PredictionList(app.window.Window):
         label.color = color
 
     def highlight_line(self, row):
-        self.textBuffer.penRow = min(row, self.textBuffer.parser.row_count() - 1)
-        self.textBuffer.penCol = 0
-        app.log.info(self.textBuffer.penRow)
+        self.textBuffer.pen_row = min(row, self.textBuffer.parser.row_count() - 1)
+        self.textBuffer.pen_col = 0
+        app.log.info(self.textBuffer.pen_row)
 
     def mouse_click(self, paneRow, paneCol, shift, ctrl, alt):
         self.highlight_line(self.scrollRow + paneRow)
@@ -102,10 +102,10 @@ class PredictionList(app.window.Window):
     def update(self, items):
         # Filter the list. (The filter function is not used so as to edit the
         # list in place).
-        appPrefs = self.program.prefs
-        showOpen = appPrefs.editor["predictionShowOpenFiles"]
-        showAlternate = appPrefs.editor["predictionShowAlternateFiles"]
-        showRecent = appPrefs.editor["predictionShowRecentFiles"]
+        app_prefs = self.program.prefs
+        showOpen = app_prefs.editor["predictionShowOpenFiles"]
+        showAlternate = app_prefs.editor["predictionShowAlternateFiles"]
+        showRecent = app_prefs.editor["predictionShowRecentFiles"]
         if not (showOpen and showAlternate and showRecent):
             i = 0
             while i < len(items):
@@ -118,10 +118,10 @@ class PredictionList(app.window.Window):
                 else:
                     i += 1
         # Sort the list
-        sortByPrediction = appPrefs.editor["predictionSortAscendingByPrediction"]
-        sortByType = appPrefs.editor["predictionSortAscendingByType"]
-        sortByName = appPrefs.editor["predictionSortAscendingByName"]
-        sortByStatus = appPrefs.editor["predictionSortAscendingByStatus"]
+        sortByPrediction = app_prefs.editor["predictionSortAscendingByPrediction"]
+        sortByType = app_prefs.editor["predictionSortAscendingByType"]
+        sortByName = app_prefs.editor["predictionSortAscendingByName"]
+        sortByStatus = app_prefs.editor["predictionSortAscendingByStatus"]
         if sortByPrediction is not None:
             items.sort(reverse=not sortByPrediction, key=lambda x: x[4])
         elif sortByType is not None:
@@ -144,11 +144,11 @@ class PredictionList(app.window.Window):
                     [
                         "%*s %*s %.*s"
                         % (
-                            self.typeColumn.cols,
+                            self.type_column.cols,
                             i[3],
                             -self.nameColumn.cols,
                             fit_path_to_width(i[1], self.nameColumn.cols),
-                            self.statusColumn.cols,
+                            self.status_column.cols,
                             i[2],
                         )
                         for i in items
@@ -173,9 +173,9 @@ class PredictionList(app.window.Window):
     def set_text_buffer(self, textBuffer):
         if app.config.strict_debug:
             assert textBuffer is not self.host.textBuffer
-        textBuffer.lineLimitIndicator = 0
-        textBuffer.highlightCursorLine = True
-        textBuffer.highlightTrailingWhitespace = False
+        textBuffer.line_limit_indicator = 0
+        textBuffer.highlight_cursor_line = True
+        textBuffer.highlight_trailing_whitespace = False
         app.window.Window.set_text_buffer(self, textBuffer)
         self.controller.set_text_buffer(textBuffer)
 
@@ -196,8 +196,8 @@ class PredictionInputWindow(app.window.Window):
         self.textBuffer.replace_lines((path,))
 
     def set_text_buffer(self, textBuffer):
-        textBuffer.lineLimitIndicator = 0
-        textBuffer.highlightTrailingWhitespace = False
+        textBuffer.line_limit_indicator = 0
+        textBuffer.highlight_trailing_whitespace = False
         app.window.Window.set_text_buffer(self, textBuffer)
         self.controller.set_text_buffer(textBuffer)
 
@@ -209,15 +209,15 @@ class PredictionWindow(app.window.Window):
         self.controller = app.cu_editor.PredictionController(self)
         self.set_text_buffer(app.text_buffer.TextBuffer(self.program))
 
-        self.titleRow = app.window.OptionsRow(self.program, self)
-        self.titleRow.add_label(" ci   ")
-        self.titleRow.set_parent(self)
+        self.title_row = app.window.OptionsRow(self.program, self)
+        self.title_row.add_label(" ci   ")
+        self.title_row.set_parent(self)
 
-        self.predictionInputWindow = PredictionInputWindow(self.program, self)
-        self.predictionInputWindow.set_parent(self)
+        self.prediction_input_window = PredictionInputWindow(self.program, self)
+        self.prediction_input_window.set_parent(self)
 
-        self.predictionList = PredictionList(self.program, self)
-        self.predictionList.set_parent(self)
+        self.prediction_list = PredictionList(self.program, self)
+        self.prediction_list.set_parent(self)
 
         if 1:
             self.optionsRow = app.window.RowWindow(self.program, self, 2)
@@ -263,32 +263,32 @@ class PredictionWindow(app.window.Window):
         self.reattach()
         self.parent.layout()
         app.window.Window.focus(self)
-        self.change_focus_to(self.predictionInputWindow)
+        self.change_focus_to(self.prediction_input_window)
 
     def get_path(self):
-        return self.predictionInputWindow.get_path()
+        return self.prediction_input_window.get_path()
 
     def on_pref_changed(self, category, name):
-        self.predictionList.controller.option_changed(category, name)
+        self.prediction_list.controller.option_changed(category, name)
         app.window.Window.on_pref_changed(self, category, name)
 
     def reshape(self, top, left, rows, cols):
         """Change self and sub-windows to fit within the given rectangle."""
         app.window.Window.reshape(self, top, left, rows, cols)
-        self.titleRow.reshape(top, left, 1, cols)
+        self.title_row.reshape(top, left, 1, cols)
         top += 1
         rows -= 1
-        self.predictionInputWindow.reshape(top, left, 1, cols)
+        self.prediction_input_window.reshape(top, left, 1, cols)
         top += 1
         rows -= 1
         self.messageLine.reshape(top + rows - 1, left, 1, cols)
         rows -= 1
         self.optionsRow.reshape(top + rows - 1, left, 1, cols)
         rows -= 1
-        self.predictionList.reshape(top, left, rows, cols)
+        self.prediction_list.reshape(top, left, rows, cols)
 
     def set_path(self, path):
-        self.predictionInputWindow.set_path(path)
+        self.prediction_input_window.set_path(path)
 
     def unfocus(self):
         app.window.Window.unfocus(self)

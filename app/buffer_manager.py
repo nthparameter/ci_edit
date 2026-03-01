@@ -93,24 +93,24 @@ class BufferManager:
         if app.config.strict_debug:
             assert issubclass(self.__class__, BufferManager), self
             assert isinstance(relPath, unicode), type(relPath)
-        fullPath = app.buffer_file.expand_full_path(relPath)
-        app.log.info(fullPath)
+        full_path = app.buffer_file.expand_full_path(relPath)
+        app.log.info(full_path)
         textBuffer = None
         for i, tb in enumerate(self.buffers):
-            if tb.fullPath == fullPath:
+            if tb.full_path == full_path:
                 textBuffer = tb
                 del self.buffers[i]
                 self.buffers.append(tb)
                 break
         app.log.info("Searched for textBuffer", repr(textBuffer))
         if not textBuffer:
-            if os.path.isdir(fullPath):
-                app.log.info("Tried to open directory as a file", fullPath)
+            if os.path.isdir(full_path):
+                app.log.info("Tried to open directory as a file", full_path)
                 return
-            if not os.path.isfile(fullPath):
-                app.log.info("creating a new file at\n ", fullPath)
+            if not os.path.isfile(full_path):
+                app.log.info("creating a new file at\n ", full_path)
             textBuffer = app.text_buffer.TextBuffer(self.program)
-            textBuffer.set_file_path(fullPath)
+            textBuffer.set_file_path(full_path)
             textBuffer.file_load()
             self.buffers.append(textBuffer)
         if 0:
@@ -120,7 +120,7 @@ class BufferManager:
     def debug_log(self):
         bufferList = ""
         for i in self.buffers:
-            bufferList += "\n  " + repr(i.fullPath)
+            bufferList += "\n  " + repr(i.full_path)
             bufferList += "\n    " + repr(i)
             bufferList += "\n    dirty: " + str(i.is_dirty())
         app.log.info("BufferManager" + bufferList)
@@ -145,7 +145,7 @@ class BufferManager:
         return textBuffer
 
     def untrack_buffer_(self, fileBuffer):
-        app.log.debug(fileBuffer.fullPath)
+        app.log.debug(fileBuffer.full_path)
         self.buffers.remove(fileBuffer)
 
     def file_close(self, path):

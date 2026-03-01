@@ -77,9 +77,9 @@ class ParserNode:
 class Parser:
     """A parser generates a set of grammar segments (ParserNode objects)."""
 
-    def __init__(self, appPrefs):
-        self.appPrefs = appPrefs
-        self._defaultGrammar = appPrefs.grammars["none"]
+    def __init__(self, app_prefs):
+        self.app_prefs = app_prefs
+        self._defaultGrammar = app_prefs.grammars["none"]
         self.data = ""
         self.emptyNode = ParserNode({}, None, None, 0)
         self.endNode = ({}, sys.maxsize, sys.maxsize, sys.maxsize)
@@ -207,7 +207,7 @@ class Parser:
         if remainingOffset > 0:
             ch = self.data[nodes[index][kBegin]]
             if ch == "\t":
-                tabWidth = self.appPrefs.editor.get("tabSize", 8)
+                tabWidth = self.app_prefs.editor.get("tabSize", 8)
                 # Add the (potentially) fractional tab.
                 col += app.curses_util.char_width(ch, col, tabWidth)
                 # Add the remaining tabs.
@@ -450,7 +450,7 @@ class Parser:
             assert isinstance(endRow, int)
             assert beginRow >= 0
             assert endRow >= 0
-            assert isinstance(self.appPrefs, app.prefs.Prefs)
+            assert isinstance(self.app_prefs, app.prefs.Prefs)
         self._defaultGrammar = grammar
         self.emptyNode = ParserNode(grammar, None, None, 0)
         self.data = data
@@ -696,7 +696,7 @@ class Parser:
         This code can be interrupted (by |bgThread|) and resumed (by calling it
         again).
         """
-        appPrefs = self.appPrefs
+        app_prefs = self.app_prefs
         # An arbitrary limit to avoid run-away looping.
         leash = 50000
         topNode = self.parserNodes[-1]
@@ -839,7 +839,7 @@ class Parser:
                 col = visual - rowStart
                 # Advance to the next tab stop.
                 self.parserNodes.append(
-                    (appPrefs.grammars["tabs"], cursor, topNode[kPrior], visual)
+                    (app_prefs.grammars["tabs"], cursor, topNode[kPrior], visual)
                 )
                 cursor += regEnd
                 visual = rowStart + ((col + 8) // 8 * 8)
@@ -946,7 +946,7 @@ class Parser:
                     # A special doesn't change the nodeIndex.
                     self.parserNodes.append(
                         (
-                            appPrefs.grammars["error"],
+                            app_prefs.grammars["error"],
                             cursor + reg[0],
                             len(self.parserNodes) - 1,
                             visual + reg[0],
@@ -965,7 +965,7 @@ class Parser:
                     # A keyword doesn't change the nodeIndex.
                     self.parserNodes.append(
                         (
-                            appPrefs.grammars["keyword"],
+                            app_prefs.grammars["keyword"],
                             cursor + reg[0],
                             len(self.parserNodes) - 1,
                             visual + reg[0],
@@ -984,7 +984,7 @@ class Parser:
                     # A type doesn't change the nodeIndex.
                     self.parserNodes.append(
                         (
-                            appPrefs.grammars["type"],
+                            app_prefs.grammars["type"],
                             cursor + reg[0],
                             len(self.parserNodes) - 1,
                             visual + reg[0],
@@ -1003,7 +1003,7 @@ class Parser:
                     # A special doesn't change the nodeIndex.
                     self.parserNodes.append(
                         (
-                            appPrefs.grammars["special"],
+                            app_prefs.grammars["special"],
                             cursor + reg[0],
                             len(self.parserNodes) - 1,
                             visual + reg[0],
@@ -1078,9 +1078,7 @@ class Parser:
                 repr(line), repr(parsedLine)
             )
             parsedLine = self.row_text(i)
-            assert line == parsedLine, "\nexpected:{}\n  actual:{}".format(
-                line, parsedLine
-            )
+            assert line == parsedLine, f"\nexpected:{line}\n  actual:{parsedLine}"
 
             if out is not None:
                 out("----------- ", line)

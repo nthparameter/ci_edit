@@ -32,7 +32,7 @@ def path_row_column(path, projectDir):
     error ':<line number>' may be appended. If the file doesn't exist as-is, try
     removing those decorations, and if that exists use that path instead.
 
-    Returns: (fullPath, openToRow, openToCol)
+    Returns: (full_path, openToRow, openToCol)
     """
     if app.config.strict_debug:
         assert isinstance(path, unicode)

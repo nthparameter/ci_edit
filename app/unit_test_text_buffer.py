@@ -79,8 +79,8 @@ ends with tab>\t
 
     def test_draw_long_line(self):
         # self.set_movie_mode(True)
-        lineLimitIndicator = self.prg.prefs.editor["lineLimitIndicator"]
-        self.prg.prefs.editor["lineLimitIndicator"] = 10
+        line_limit_indicator = self.prg.prefs.editor["line_limit_indicator"]
+        self.prg.prefs.editor["line_limit_indicator"] = 10
         self.run_with_fake_inputs(
             [
                 self.display_check(2, 7, ["      "]),
@@ -96,7 +96,7 @@ ends with tab>\t
                 "n",
             ]
         )
-        self.prg.prefs.editor["lineLimitIndicator"] = lineLimitIndicator
+        self.prg.prefs.editor["line_limit_indicator"] = line_limit_indicator
 
     def test_draw_line_endings(self):
         # self.set_movie_mode(True)

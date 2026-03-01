@@ -118,19 +118,13 @@ Within the Goto line prompt:
         # """Please add feedback"""
         # """ to https://github.com/google/ci_edit/issues/107""",
     ],
-    "version": """\
-  Version (build iteration): v51
-  Within Python %s
+    "version": f"""  Version (build iteration): v51
+  Within Python {sys.version}
   See LICENSE for license information
   See readme.md for an introduction
-  Both files may be found in "%s"
+  Both files may be found in "{dirPath}"
   Please give the gift of feedback and bug reports at
-    https://github.com/google/ci_edit/issues\
-"""
-    % (
-        sys.version,
-        dirPath,
-    ),
+    https://github.com/google/ci_edit/issues""",
     "welcome": """\
 Welcome to the ci_edit text editor.\
 """,

@@ -24,7 +24,7 @@ import app.regex
 
 class Prefs:
     def __init__(self):
-        self.prefsDirectory = "~/.ci_edit/prefs/"
+        self.prefs_directory = "~/.ci_edit/prefs/"
         prefs = app.default_prefs.prefs
         self.color8 = app.default_prefs.color8
         self.color16 = app.default_prefs.color16
@@ -36,16 +36,16 @@ class Prefs:
         self.palette = prefs.get("palette", {})
         self.startup = {}
         self.status = prefs.get("status", {})
-        self.userData = prefs.get("userData", {})
+        self.user_data = prefs.get("user_data", {})
         self.__set_up_grammars(prefs.get("grammar", {}))
-        self.__set_up_file_types(prefs.get("fileType", {}))
+        self.__set_up_file_types(prefs.get("file_type", {}))
         self.init()
 
     def load_prefs(self, fileName, category):
         # Check the user home directory for preferences.
         prefsPath = os.path.expanduser(
             os.path.expandvars(
-                os.path.join(self.prefsDirectory, "%s.json" % (fileName,))
+                os.path.join(self.prefs_directory, f"{fileName}.json")
             )
         )
         if os.path.isfile(prefsPath) and os.access(prefsPath, os.R_OK):
@@ -65,8 +65,8 @@ class Prefs:
         self.editor = self.load_prefs("editor", self.editor)
         self.status = self.load_prefs("status", self.status)
 
-        self.colorSchemeName = self.editor["colorScheme"]
-        if self.colorSchemeName == "custom":
+        self.color_scheme_name = self.editor["colorScheme"]
+        if self.color_scheme_name == "custom":
             # Check the user home directory for a color scheme preference. If
             # found load it to replace the default color scheme.
             self.color = self.load_prefs("color_scheme", self.color)
@@ -97,21 +97,21 @@ class Prefs:
         if filePath is None:
             return self.grammars.get("text")
         name = os.path.split(filePath)[1]
-        fileType = self.nameToType.get(name)
-        if fileType is None:
-            fileExtension = os.path.splitext(name)[1]
-            fileType = self.extensions.get(fileExtension, "text")
-        return fileType
+        file_type = self.nameToType.get(name)
+        if file_type is None:
+            file_extension = os.path.splitext(name)[1]
+            file_type = self.extensions.get(file_extension, "text")
+        return file_type
 
-    def tabs_to_spaces(self, fileType):
-        prefs = app.default_prefs.prefs.get("fileType", {})
-        if fileType is None or prefs is None:
+    def tabs_to_spaces(self, file_type):
+        prefs = app.default_prefs.prefs.get("file_type", {})
+        if file_type is None or prefs is None:
             return False
-        file_prefs = prefs.get(fileType)
+        file_prefs = prefs.get(file_type)
         return file_prefs and file_prefs.get("tabToSpaces")
 
-    def get_grammar(self, fileType):
-        return self.grammars.get(fileType)
+    def get_grammar(self, file_type):
+        return self.grammars.get(file_type)
 
     def save(self, category, label, value):
         app.log.info(category, label, value)
@@ -119,7 +119,7 @@ class Prefs:
         prefCategory[label] = value
         prefsPath = os.path.expanduser(
             os.path.expandvars(
-                os.path.join(self.prefsDirectory, "%s.json" % (category,))
+                os.path.join(self.prefs_directory, f"{category}.json")
             )
         )
         with open(prefsPath, "w", encoding="utf-8") as f:
@@ -164,7 +164,7 @@ class Prefs:
                 matchGrammars.append(v)
             else:
                 # Add a non-matchable placeholder.
-                markers.append(app.regex.kNonMatchingRegex)
+                markers.append(app.regex.RE_NON_MATCHING)
                 matchGrammars.append(None)
             # Index [1]
             if v.get("end"):
@@ -172,7 +172,7 @@ class Prefs:
                 matchGrammars.append(v)
             else:
                 # Add a non-matchable placeholder.
-                markers.append(app.regex.kNonMatchingRegex)
+                markers.append(app.regex.RE_NON_MATCHING)
                 matchGrammars.append(None)
             # |Contains| markers start at index 2.
             for grammarName in v.get("contains", []):

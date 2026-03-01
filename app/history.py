@@ -104,9 +104,9 @@ def get_file_info(filePath, data=None):
     return (checksum, fileSize)
 
 class History:
-    def __init__(self, pathToHistory):
-        self.userHistory = {}
-        self.pathToHistory = pathToHistory
+    def __init__(self, path_to_history):
+        self.user_history = {}
+        self.path_to_history = path_to_history
 
     def load_user_history(self):
         """
@@ -115,36 +115,36 @@ class History:
         Returns:
           None.
         """
-        if os.path.isfile(self.pathToHistory):
-            with open(self.pathToHistory, "rb") as historyFile:
+        if os.path.isfile(self.path_to_history):
+            with open(self.path_to_history, "rb") as historyFile:
                 try:
-                    self.userHistory = pickle.load(historyFile)
+                    self.user_history = pickle.load(historyFile)
                 except ValueError as e:
                     app.log.info(unicode(e))
 
-    def save_user_history(self, fileInfo, fileHistory):
+    def save_user_history(self, fileInfo, file_history):
         """
         Saves the user's file history by writing to a pickle file.
 
         Args:
-          fileInfo (tuple): Contains (filePath, lastChecksum, lastFileSize).
-          fileHistory (dict): The history of the file that the user wants to
+          fileInfo (tuple): Contains (filePath, last_checksum, last_file_size).
+          file_history (dict): The history of the file that the user wants to
                               save.
 
         Returns:
           None.
         """
-        filePath, lastChecksum, lastFileSize = fileInfo
+        filePath, last_checksum, last_file_size = fileInfo
         try:
-            if self.pathToHistory is not None:
-                self.userHistory.pop((lastChecksum, lastFileSize), None)
+            if self.path_to_history is not None:
+                self.user_history.pop((last_checksum, last_file_size), None)
                 newChecksum, newFileSize = get_file_info(filePath)
                 if newChecksum is None:
                     app.log.info("Failed to checksum", repr(filePath))
                     return
-                self.userHistory[(newChecksum, newFileSize)] = fileHistory
-                with open(self.pathToHistory, "wb") as historyFile:
-                    pickle.dump(self.userHistory, historyFile)
+                self.user_history[(newChecksum, newFileSize)] = file_history
+                with open(self.path_to_history, "wb") as historyFile:
+                    pickle.dump(self.user_history, historyFile)
                 app.log.info("wrote pickle")
         except Exception as e:
             app.log.exception(e)
@@ -168,11 +168,11 @@ class History:
         """
         checksum, fileSize = get_file_info(filePath, data)
         if checksum is None:
-            fileHistory = {}
+            file_history = {}
         else:
-            fileHistory = self.userHistory.get((checksum, fileSize), {})
-        fileHistory["adate"] = time.time()
-        return fileHistory
+            file_history = self.user_history.get((checksum, fileSize), {})
+        file_history["adate"] = time.time()
+        return file_history
 
     def get_recent_files(self):
         """
@@ -180,7 +180,7 @@ class History:
           A list of file paths to recently accessed files.
         """
         files = []
-        for entry in self.userHistory.values():
+        for entry in self.user_history.values():
             path = entry.get("path")
             if path is not None:
                 files.append(path)
@@ -196,9 +196,9 @@ class History:
         Returns:
           None.
         """
-        self.userHistory = {}
+        self.user_history = {}
         try:
-            os.remove(self.pathToHistory)
+            os.remove(self.path_to_history)
             app.log.info("user history cleared")
         except Exception as e:
             app.log.error("clear_user_history exception", e)

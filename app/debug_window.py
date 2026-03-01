@@ -37,23 +37,23 @@ class DebugWindow(app.window.ActiveWindow):
             intent = win.userIntent
         color = program.color.get("debug_window")
         self.write_line(
-            "   cRow %3d    cCol %2d goalCol %2d  %s"
+            "   cRow %3d    cCol %2d goal_col %2d  %s"
             % (
-                win.textBuffer.penRow,
-                win.textBuffer.penCol,
-                win.textBuffer.goalCol,
+                win.textBuffer.pen_row,
+                win.textBuffer.pen_col,
+                win.textBuffer.goal_col,
                 intent,
             ),
             color,
         )
         self.write_line(
             "   pRow %3d    pCol %2d chRow %4d"
-            % (textBuffer.penRow, textBuffer.penCol, textBuffer.debugUpperChangedRow),
+            % (textBuffer.pen_row, textBuffer.pen_col, textBuffer.debug_upper_changed_row),
             color,
         )
         self.write_line(
             " mkrRow %3d  mkrCol %2d sm %d"
-            % (textBuffer.markerRow, textBuffer.markerCol, textBuffer.selectionMode),
+            % (textBuffer.marker_row, textBuffer.marker_col, textBuffer.selectionMode),
             color,
         )
         self.write_line(
@@ -76,7 +76,7 @@ class DebugWindow(app.window.ActiveWindow):
                 screenCols,
                 program.mainLoopTime,
                 program.mainLoopTimePeak,
-                textBuffer.parserTime,
+                textBuffer.parser_time,
             ),
             color,
         )
@@ -85,9 +85,9 @@ class DebugWindow(app.window.ActiveWindow):
             % (program.ch, app.curses_util.curses_key_name(program.ch) or "UNKNOWN"),
             color,
         )
-        self.write_line("win %r" % (win,), color)
-        self.write_line("foc %r" % (program.programWindow.focusedWindow,), color)
-        self.write_line("tb %r" % (textBuffer,), color)
+        self.write_line(f"win {win!r}", color)
+        self.write_line(f"foc {program.programWindow.focusedWindow!r}", color)
+        self.write_line(f"tb {textBuffer!r}", color)
         (id, mouseCol, mouseRow, mouseZ, bState) = program.debugMouseEvent
         self.write_line(
             "mouse id %d, mouseCol %d, mouseRow %d, mouseZ %d"
@@ -97,7 +97,7 @@ class DebugWindow(app.window.ActiveWindow):
         self.write_line(
             "bState %s %d" % (app.curses_util.mouse_button_name(bState), bState), color
         )
-        self.write_line("start_and_end %r" % (textBuffer.start_and_end(),), color)
+        self.write_line(f"start_and_end {textBuffer.start_and_end()!r}", color)
 
 class DebugUndoWindow(app.window.ActiveWindow):
     def __init__(self, program, host):
@@ -113,7 +113,7 @@ class DebugUndoWindow(app.window.ActiveWindow):
         self.write_line(
             "procTemp %d temp %r"
             % (
-                textBuffer.processTempChange,
+                textBuffer.process_temp_change,
                 textBuffer.tempChange,
             ),
             redoColorA,
@@ -122,7 +122,7 @@ class DebugUndoWindow(app.window.ActiveWindow):
             "redoIndex %3d savedAt %3d depth %3d"
             % (
                 textBuffer.redoIndex,
-                textBuffer.savedAtRedoIndex,
+                textBuffer.saved_at_redo_index,
                 len(textBuffer.redo_chain),
             ),
             redoColorA,
