@@ -40,7 +40,7 @@ class pathRowColumnTestCases(unittest.TestCase):
         if not hasattr(unittest, "mock"):
             return
         # Shortcuts.
-        originalIsFile = test_buffer_file.os.path.isfile
+        original_is_file = test_buffer_file.os.path.isfile
         decode = test_buffer_file.path_row_column
         Mock = unittest.mock.MagicMock
 
@@ -113,4 +113,4 @@ class pathRowColumnTestCases(unittest.TestCase):
             decode("//apple:banana:cat:", None), ("apple:banana:cat:", None, None)
         )
 
-        os.path.isfile = originalIsFile
+        os.path.isfile = original_is_file

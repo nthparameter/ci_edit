@@ -54,31 +54,31 @@ class EditText(app.controller.Controller):
         app.controller.Controller.__init__(self, view, "EditText")
         self.document = None
 
-    def set_text_buffer(self, textBuffer):
-        textBuffer.lines = [""]
+    def set_text_buffer(self, text_buffer):
+        text_buffer.lines = [""]
         self.command_set = {
             KEY_F1: self.info,
-            CTRL_A: textBuffer.selection_all,
-            CTRL_C: textBuffer.edit_copy,
-            CTRL_H: textBuffer.backspace,
-            KEY_BACKSPACE1: textBuffer.backspace,
-            KEY_BACKSPACE2: textBuffer.backspace,
-            KEY_BACKSPACE3: textBuffer.backspace,
+            CTRL_A: text_buffer.selection_all,
+            CTRL_C: text_buffer.edit_copy,
+            CTRL_H: text_buffer.backspace,
+            KEY_BACKSPACE1: text_buffer.backspace,
+            KEY_BACKSPACE2: text_buffer.backspace,
+            KEY_BACKSPACE3: text_buffer.backspace,
             CTRL_Q: self.prg.quit,
             CTRL_S: self.save_document,
-            CTRL_V: textBuffer.edit_paste,
-            CTRL_X: textBuffer.edit_cut,
-            CTRL_Y: textBuffer.redo,
-            CTRL_Z: textBuffer.undo,
-            # KEY_DOWN: textBuffer.cursor_down,
-            KEY_LEFT: textBuffer.cursor_left,
-            KEY_RIGHT: textBuffer.cursor_right,
-            # KEY_UP: textBuffer.cursor_up,
+            CTRL_V: text_buffer.edit_paste,
+            CTRL_X: text_buffer.edit_cut,
+            CTRL_Y: text_buffer.redo,
+            CTRL_Z: text_buffer.undo,
+            # KEY_DOWN: text_buffer.cursor_down,
+            KEY_LEFT: text_buffer.cursor_left,
+            KEY_RIGHT: text_buffer.cursor_right,
+            # KEY_UP: text_buffer.cursor_up,
         }
 
     def focus(self):
         app.log.info("EditText.focus", repr(self))
-        self.command_default = self.textBuffer.insert_printable
+        self.command_default = self.text_buffer.insert_printable
         self.command_set = self.command_set
 
     def info(self):
@@ -86,8 +86,8 @@ class EditText(app.controller.Controller):
 
     def save_document(self):
         app.log.info("save_document", self.document)
-        if self.document and self.document.textBuffer:
-            self.document.textBuffer.file_write()
+        if self.document and self.document.text_buffer:
+            self.document.text_buffer.file_write()
 
     def unfocus(self):
         pass
@@ -95,8 +95,8 @@ class EditText(app.controller.Controller):
 class InteractiveOpener(EditText):
     """Open a file to edit."""
 
-    def __init__(self, prg, view, textBuffer):
-        EditText.__init__(self, prg, view, textBuffer)
+    def __init__(self, prg, view, text_buffer):
+        EditText.__init__(self, prg, view, text_buffer)
         self.document = view.host
         app.log.info("xxxxx", self.document)
         command_set = self.command_set.copy()
@@ -124,112 +124,112 @@ class InteractiveOpener(EditText):
 
     def create_or_open(self):
         app.log.info("create_or_open")
-        expandedPath = os.path.abspath(os.path.expanduser(self.textBuffer.lines[0]))
-        if not os.path.isdir(expandedPath):
+        expanded_path = os.path.abspath(os.path.expanduser(self.text_buffer.lines[0]))
+        if not os.path.isdir(expanded_path):
             self.view.host.set_text_buffer(
-                self.prg.buffer_manager.load_text_buffer(expandedPath), self.view.host
+                self.prg.buffer_manager.load_text_buffer(expanded_path), self.view.host
             )
         self.change_to_input_window()
 
-    def maybe_slash(self, expandedPath):
+    def maybe_slash(self, expanded_path):
         if (
-            self.textBuffer.lines[0]
-            and self.textBuffer.lines[0][-1] != "/"
-            and os.path.isdir(expandedPath)
+            self.text_buffer.lines[0]
+            and self.text_buffer.lines[0][-1] != "/"
+            and os.path.isdir(expanded_path)
         ):
-            self.textBuffer.insert("/")
+            self.text_buffer.insert("/")
 
     def tab_complete_first(self):
         """Find the first file that starts with the pattern."""
-        dirPath, fileName = os.path.split(self.lines[0])
-        foundOnce = ""
-        for i in os.listdir(os.path.expandvars(os.path.expanduser(dirPath)) or "."):
-            if i.startswith(fileName):
-                if foundOnce:
+        dir_path, file_name = os.path.split(self.lines[0])
+        found_once = ""
+        for i in os.listdir(os.path.expandvars(os.path.expanduser(dir_path)) or "."):
+            if i.startswith(file_name):
+                if found_once:
                     # Found more than one match.
                     return
-                fileName = os.path.join(dirPath, i)
-                if os.path.isdir(fileName):
-                    fileName += "/"
-                self.lines[0] = fileName
+                file_name = os.path.join(dir_path, i)
+                if os.path.isdir(file_name):
+                    file_name += "/"
+                self.lines[0] = file_name
                 self.on_change()
                 return
 
     def tab_complete_extend(self):
         """Extend the selection to match characters in common."""
-        dirPath, fileName = os.path.split(self.textBuffer.lines[0])
-        expandedDir = os.path.expandvars(os.path.expanduser(dirPath)) or "."
+        dir_path, file_name = os.path.split(self.text_buffer.lines[0])
+        expanded_dir = os.path.expandvars(os.path.expanduser(dir_path)) or "."
         matches = []
-        if not os.path.isdir(expandedDir):
+        if not os.path.isdir(expanded_dir):
             return
-        for i in os.listdir(expandedDir):
-            if i.startswith(fileName):
+        for i in os.listdir(expanded_dir):
+            if i.startswith(file_name):
                 matches.append(i)
             else:
                 app.log.info("not", i)
         if len(matches) <= 0:
-            self.maybe_slash(expandedDir)
+            self.maybe_slash(expanded_dir)
             self.on_change()
             return
         if len(matches) == 1:
-            self.textBuffer.insert(matches[0][len(fileName) :])
-            self.maybe_slash(os.path.join(expandedDir, matches[0]))
+            self.text_buffer.insert(matches[0][len(file_name) :])
+            self.maybe_slash(os.path.join(expanded_dir, matches[0]))
             self.on_change()
             return
 
-        def find_common_prefix_length(prefixLen):
+        def find_common_prefix_length(prefix_len):
             count = 0
             ch = None
             for match in matches:
-                if len(match) <= prefixLen:
-                    return prefixLen
+                if len(match) <= prefix_len:
+                    return prefix_len
                 if not ch:
-                    ch = match[prefixLen]
-                if match[prefixLen] == ch:
+                    ch = match[prefix_len]
+                if match[prefix_len] == ch:
                     count += 1
             if count and count == len(matches):
-                return find_common_prefix_length(prefixLen + 1)
-            return prefixLen
+                return find_common_prefix_length(prefix_len + 1)
+            return prefix_len
 
-        prefixLen = find_common_prefix_length(len(fileName))
-        self.textBuffer.insert(matches[0][len(fileName) : prefixLen])
+        prefix_len = find_common_prefix_length(len(file_name))
+        self.text_buffer.insert(matches[0][len(file_name) : prefix_len])
         self.on_change()
 
     def set_file_name(self, path):
-        self.textBuffer.lines = [path]
-        self.textBuffer.pen_col = len(path)
-        self.textBuffer.goal_col = self.textBuffer.pen_col
+        self.text_buffer.lines = [path]
+        self.text_buffer.pen_col = len(path)
+        self.text_buffer.goal_col = self.text_buffer.pen_col
 
     def on_change(self):
-        path = os.path.expanduser(os.path.expandvars(self.textBuffer.lines[0]))
-        dirPath, fileName = os.path.split(path)
-        dirPath = dirPath or "."
-        app.log.info("O.on_change", dirPath, fileName)
-        if os.path.isdir(dirPath):
+        path = os.path.expanduser(os.path.expandvars(self.text_buffer.lines[0]))
+        dir_path, file_name = os.path.split(path)
+        dir_path = dir_path or "."
+        app.log.info("O.on_change", dir_path, file_name)
+        if os.path.isdir(dir_path):
             lines = []
-            for i in os.listdir(dirPath):
-                if i.startswith(fileName):
+            for i in os.listdir(dir_path):
+                if i.startswith(file_name):
                     lines.append(i)
-            if len(lines) == 1 and os.path.isfile(os.path.join(dirPath, fileName)):
+            if len(lines) == 1 and os.path.isfile(os.path.join(dir_path, file_name)):
                 self.view.host.set_text_buffer(
                     self.view.program.buffer_manager.load_text_buffer(
-                        os.path.join(dirPath, fileName), self.view.host
+                        os.path.join(dir_path, file_name), self.view.host
                     )
                 )
             else:
-                self.view.host.textBuffer.lines = [
-                    os.path.abspath(os.path.expanduser(dirPath)) + ":"
+                self.view.host.text_buffer.lines = [
+                    os.path.abspath(os.path.expanduser(dir_path)) + ":"
                 ] + lines
         else:
-            self.view.host.textBuffer.lines = [
-                os.path.abspath(os.path.expanduser(dirPath)) + ": not found"
+            self.view.host.text_buffer.lines = [
+                os.path.abspath(os.path.expanduser(dir_path)) + ": not found"
             ]
 
 class InteractiveFind(EditText):
     """Find text within the current document."""
 
-    def __init__(self, prg, view, textBuffer):
-        EditText.__init__(self, prg, view, textBuffer)
+    def __init__(self, prg, view, text_buffer):
+        EditText.__init__(self, prg, view, text_buffer)
         self.document = view.host
         self.command_set.update(
             {
@@ -247,36 +247,36 @@ class InteractiveFind(EditText):
         self.height = 1
 
     def find_next(self):
-        self.findCmd = self.document.textBuffer.find_next
+        self.find_cmd = self.document.text_buffer.find_next
 
     def find_prior(self):
-        self.findCmd = self.document.textBuffer.find_prior
+        self.find_cmd = self.document.text_buffer.find_prior
 
     def focus(self):
-        # self.document.statusLine.hide()
+        # self.document.status_line.hide()
         # self.document.resize_by(-self.height, 0)
         # self.view.host.move_by(-self.height, 0)
         # self.view.host.resize_by(self.height-1, 0)
         EditText.focus(self)
-        self.findCmd = self.document.textBuffer.find
-        selection = self.document.textBuffer.get_selected_text()
+        self.find_cmd = self.document.text_buffer.find
+        selection = self.document.text_buffer.get_selected_text()
         if selection:
-            self.textBuffer.selection_all()
-            self.textBuffer.insert_lines(selection)
-        self.textBuffer.selection_all()
-        app.log.info("find tb", self.textBuffer.pen_col)
+            self.text_buffer.selection_all()
+            self.text_buffer.insert_lines(selection)
+        self.text_buffer.selection_all()
+        app.log.info("find tb", self.text_buffer.pen_col)
 
     def info(self):
         app.log.info("InteractiveFind command set")
 
     def on_change(self):
         app.log.info("InteractiveFind.on_change")
-        searchFor = self.textBuffer.lines[0]
+        search_for = self.text_buffer.lines[0]
         try:
-            self.findCmd(searchFor)
+            self.find_cmd(search_for)
         except re.error as e:
             self.error = e.message
-        self.findCmd = self.document.textBuffer.find
+        self.find_cmd = self.document.text_buffer.find
 
     # def replacement_text_edit(self):
     #  pass
@@ -288,8 +288,8 @@ class InteractiveFind(EditText):
 class InteractiveGoto(EditText):
     """Jump to a particular line number."""
 
-    def __init__(self, prg, view, textBuffer):
-        EditText.__init__(self, prg, view, textBuffer)
+    def __init__(self, prg, view, text_buffer):
+        EditText.__init__(self, prg, view, text_buffer)
         self.document = view.host
         command_set = self.command_set.copy()
         command_set.update(
@@ -307,20 +307,20 @@ class InteractiveGoto(EditText):
 
     def focus(self):
         app.log.info("InteractiveGoto.focus")
-        self.textBuffer.selection_all()
-        self.textBuffer.insert(str(self.document.textBuffer.pen_row + 1))
-        self.textBuffer.selection_all()
+        self.text_buffer.selection_all()
+        self.text_buffer.insert(str(self.document.text_buffer.pen_row + 1))
+        self.text_buffer.selection_all()
         EditText.focus(self)
 
     def info(self):
         app.log.info("InteractiveGoto command set")
 
     def goto_bottom(self):
-        self.cursor_move_to(len(self.document.textBuffer.lines), 0)
+        self.cursor_move_to(len(self.document.text_buffer.lines), 0)
         self.change_to_input_window()
 
     def goto_halfway(self):
-        self.cursor_move_to(len(self.document.textBuffer.lines) // 2 + 1, 0)
+        self.cursor_move_to(len(self.document.text_buffer.lines) // 2 + 1, 0)
         self.change_to_input_window()
 
     def goto_top(self):
@@ -328,20 +328,20 @@ class InteractiveGoto(EditText):
         self.change_to_input_window()
 
     def cursor_move_to(self, row, col):
-        textBuffer = self.document.textBuffer
-        pen_row = min(max(row - 1, 0), len(textBuffer.lines) - 1)
+        text_buffer = self.document.text_buffer
+        pen_row = min(max(row - 1, 0), len(text_buffer.lines) - 1)
         app.log.info("cursor_move_to row", row, pen_row)
-        textBuffer.cursor_move(
-            pen_row - textBuffer.pen_row,
-            col - textBuffer.pen_col,
-            col - textBuffer.goal_col,
+        text_buffer.cursor_move(
+            pen_row - text_buffer.pen_row,
+            col - text_buffer.pen_col,
+            col - text_buffer.goal_col,
         )
 
     def on_change(self):
-        gotoLine = 0
-        line = self.textBuffer.parser.row_text(0)
-        gotoLine, gotoCol = (line.split(",") + ["0", "0"])[:2]
-        self.cursor_move_to(parse_int(gotoLine), parse_int(gotoCol))
+        goto_line = 0
+        line = self.text_buffer.parser.row_text(0)
+        goto_line, goto_col = (line.split(",") + ["0", "0"])[:2]
+        self.cursor_move_to(parse_int(goto_line), parse_int(goto_col))
 
     # def unfocus(self):
     #  self.hide()
@@ -349,14 +349,14 @@ class InteractiveGoto(EditText):
 class CiEdit(app.controller.Controller):
     """Keyboard mappings for ci."""
 
-    def __init__(self, prg, textBuffer):
+    def __init__(self, prg, text_buffer):
         app.controller.Controller.__init__(self, prg, None, "CiEdit")
         app.log.info("CiEdit.__init__")
-        self.textBuffer = textBuffer
+        self.text_buffer = text_buffer
         self.command_set_main = {
             CTRL_SPACE: self.switch_to_command_set_cmd,
-            CTRL_A: textBuffer.cursor_start_of_line,
-            CTRL_B: textBuffer.cursor_left,
+            CTRL_A: text_buffer.cursor_start_of_line,
+            CTRL_B: text_buffer.cursor_left,
             KEY_LEFT: self.cursor_left,
             CTRL_C: self.edit_copy,
             CTRL_D: self.delete,
@@ -427,16 +427,16 @@ class CiEdit(app.controller.Controller):
 
     def switch_to_command_set_cmd(self):
         self.log("ci cmd")
-        self.command_default = self.textBuffer.no_op
+        self.command_default = self.text_buffer.no_op
         self.command_set = self.command_set_cmd
 
     def switch_to_command_set_application(self):
         self.log("ci application")
-        self.command_default = self.textBuffer.no_op
+        self.command_default = self.text_buffer.no_op
         self.command_set = self.command_set_application
 
     def switch_to_command_set_file(self):
-        self.command_default = self.textBuffer.no_op
+        self.command_default = self.text_buffer.no_op
         self.command_set = self.command_set_file
 
     def switch_to_command_set_file_open(self):
@@ -464,39 +464,39 @@ class EmacsEdit(app.controller.Controller):
 
     def focus(self):
         app.log.info("EmacsEdit.focus")
-        self.command_default = self.textBuffer.insert_printable
+        self.command_default = self.text_buffer.insert_printable
         self.command_set = self.command_set_main
 
     def on_change(self):
         pass
 
-    def set_text_buffer(self, textBuffer):
+    def set_text_buffer(self, text_buffer):
         app.log.info("EmacsEdit.set_text_buffer")
-        self.textBuffer = textBuffer
+        self.text_buffer = text_buffer
         self.command_set_main = {
             KEY_F1: self.info,
-            CTRL_A: textBuffer.cursor_start_of_line,
-            CTRL_B: textBuffer.cursor_left,
-            KEY_LEFT: textBuffer.cursor_left,
-            CTRL_D: textBuffer.delete,
-            CTRL_E: textBuffer.cursor_end_of_line,
-            CTRL_F: textBuffer.cursor_right,
-            KEY_RIGHT: textBuffer.cursor_right,
-            # CTRL_H: textBuffer.backspace,
-            KEY_BACKSPACE1: textBuffer.backspace,
-            KEY_BACKSPACE2: textBuffer.backspace,
-            KEY_BACKSPACE3: textBuffer.backspace,
-            CTRL_J: textBuffer.carriage_return,
-            CTRL_K: textBuffer.delete_to_end_of_line,
+            CTRL_A: text_buffer.cursor_start_of_line,
+            CTRL_B: text_buffer.cursor_left,
+            KEY_LEFT: text_buffer.cursor_left,
+            CTRL_D: text_buffer.delete,
+            CTRL_E: text_buffer.cursor_end_of_line,
+            CTRL_F: text_buffer.cursor_right,
+            KEY_RIGHT: text_buffer.cursor_right,
+            # CTRL_H: text_buffer.backspace,
+            KEY_BACKSPACE1: text_buffer.backspace,
+            KEY_BACKSPACE2: text_buffer.backspace,
+            KEY_BACKSPACE3: text_buffer.backspace,
+            CTRL_J: text_buffer.carriage_return,
+            CTRL_K: text_buffer.delete_to_end_of_line,
             CTRL_L: self.view.host.refresh,
-            CTRL_N: textBuffer.cursor_down,
-            KEY_DOWN: textBuffer.cursor_down,
-            CTRL_O: textBuffer.split_line,
-            CTRL_P: textBuffer.cursor_up,
-            KEY_UP: textBuffer.cursor_up,
+            CTRL_N: text_buffer.cursor_down,
+            KEY_DOWN: text_buffer.cursor_down,
+            CTRL_O: text_buffer.split_line,
+            CTRL_P: text_buffer.cursor_up,
+            KEY_UP: text_buffer.cursor_up,
             CTRL_X: self.switch_to_command_set_x,
-            CTRL_Y: textBuffer.redo,
-            CTRL_Z: textBuffer.undo,
+            CTRL_Y: text_buffer.redo,
+            CTRL_Z: text_buffer.undo,
         }
         self.command_set = self.command_set_main
 

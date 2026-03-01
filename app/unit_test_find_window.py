@@ -235,7 +235,7 @@ class FindWindowTestCases(app.fake_curses_testing.FakeCursesTestCase):
                 # self.display_check(2, 7, ["      "]),
                 # self.display_check_style(2, 7, 1, 10,
                 #    self.prg.color.get('text', 0)),
-                self.write_text("focusedWindow\n"),
+                self.write_text("focused_window\n"),
                 CTRL_F,
                 # self.display_check(-1, 0, ["Find:         "]),
                 self.write_text("focused"),

@@ -33,14 +33,14 @@ import time
 
 import app.log
 
-def calculate_checksum(filePath, data=None):
+def calculate_checksum(file_path, data=None):
     """
     Calculates the hash value of the specified file.
     The second argument can be passed in if a file's data has
     already been read so that you do not have to read the file again.
 
     Args:
-      filePath (str): The absolute path to the file.
+      file_path (str): The absolute path to the file.
       data (str): Defaults to None. This is the data
         returned by calling read() on a file object.
 
@@ -55,8 +55,8 @@ def calculate_checksum(filePath, data=None):
                 return None
             hasher.update(data.encode("utf-8"))
         else:
-            with open(filePath, "rb") as dataFile:
-                data = dataFile.read()
+            with open(file_path, "rb") as data_file:
+                data = data_file.read()
                 if len(data) == 0:
                     return None
                 hasher.update(data)
@@ -67,41 +67,41 @@ def calculate_checksum(filePath, data=None):
         app.log.exception(e)
     return None
 
-def calculate_file_size(filePath):
+def calculate_file_size(file_path):
     """
     Calculates the size of the specified value.
 
     Args:
-      filePath (str): The absolute path to the file.
+      file_path (str): The absolute path to the file.
 
     Returns:
       The size of the file in bytes.
     """
     try:
-        return os.stat(filePath).st_size
+        return os.stat(file_path).st_size
     except FileNotFoundError:
         pass
     except Exception as e:
         app.log.exception(e)
     return 0
 
-def get_file_info(filePath, data=None):
+def get_file_info(file_path, data=None):
     """
     Returns the hash value and size of the specified file.
     The second argument can be passed in if a file's data has
     already been read so that you do not have to read the file again.
 
     Args:
-      filePath (str): The absolute path to the file.
+      file_path (str): The absolute path to the file.
       data (str): Defaults to None. This is the data
         returned by calling read() on a file object.
 
     Returns:
       A tuple containing the checksum and size of the file.
     """
-    checksum = calculate_checksum(filePath, data)
-    fileSize = calculate_file_size(filePath)
-    return (checksum, fileSize)
+    checksum = calculate_checksum(file_path, data)
+    file_size = calculate_file_size(file_path)
+    return (checksum, file_size)
 
 class History:
     def __init__(self, path_to_history):
@@ -116,40 +116,40 @@ class History:
           None.
         """
         if os.path.isfile(self.path_to_history):
-            with open(self.path_to_history, "rb") as historyFile:
+            with open(self.path_to_history, "rb") as history_file:
                 try:
-                    self.user_history = pickle.load(historyFile)
+                    self.user_history = pickle.load(history_file)
                 except ValueError as e:
                     app.log.info(unicode(e))
 
-    def save_user_history(self, fileInfo, file_history):
+    def save_user_history(self, file_info, file_history):
         """
         Saves the user's file history by writing to a pickle file.
 
         Args:
-          fileInfo (tuple): Contains (filePath, last_checksum, last_file_size).
+          file_info (tuple): Contains (file_path, last_checksum, last_file_size).
           file_history (dict): The history of the file that the user wants to
                               save.
 
         Returns:
           None.
         """
-        filePath, last_checksum, last_file_size = fileInfo
+        file_path, last_checksum, last_file_size = file_info
         try:
             if self.path_to_history is not None:
                 self.user_history.pop((last_checksum, last_file_size), None)
-                newChecksum, newFileSize = get_file_info(filePath)
-                if newChecksum is None:
-                    app.log.info("Failed to checksum", repr(filePath))
+                new_checksum, new_file_size = get_file_info(file_path)
+                if new_checksum is None:
+                    app.log.info("Failed to checksum", repr(file_path))
                     return
-                self.user_history[(newChecksum, newFileSize)] = file_history
-                with open(self.path_to_history, "wb") as historyFile:
-                    pickle.dump(self.user_history, historyFile)
+                self.user_history[(new_checksum, new_file_size)] = file_history
+                with open(self.path_to_history, "wb") as history_file:
+                    pickle.dump(self.user_history, history_file)
                 app.log.info("wrote pickle")
         except Exception as e:
             app.log.exception(e)
 
-    def get_file_history(self, filePath, data=None):
+    def get_file_history(self, file_path, data=None):
         """
         Takes in an file path and an optimal data
         argument and checks for the current file's history.
@@ -159,18 +159,18 @@ class History:
         so that you do not have to read the file again.
 
         Args:
-          filePath (str): The absolute path to the file.
+          file_path (str): The absolute path to the file.
           data (str): Defaults to None. This is the data
             returned by calling read() on a file object.
 
         Returns:
           The file history (dict) of the desired file if it exists.
         """
-        checksum, fileSize = get_file_info(filePath, data)
+        checksum, file_size = get_file_info(file_path, data)
         if checksum is None:
             file_history = {}
         else:
-            file_history = self.user_history.get((checksum, fileSize), {})
+            file_history = self.user_history.get((checksum, file_size), {})
         file_history["adate"] = time.time()
         return file_history
 

@@ -42,26 +42,26 @@ class BufferManager:
         # ordered list turns out to be more valuable.
         self.buffers = []
 
-    def close_text_buffer(self, textBuffer):
+    def close_text_buffer(self, text_buffer):
         """Warning this will throw away the buffer. Please be sure the user is
         ok with this before calling."""
         if app.config.strict_debug:
             assert issubclass(self.__class__, BufferManager), self
-            assert issubclass(textBuffer.__class__, app.text_buffer.TextBuffer)
-        self.untrack_buffer_(textBuffer)
+            assert issubclass(text_buffer.__class__, app.text_buffer.TextBuffer)
+        self.untrack_buffer_(text_buffer)
 
     def get_unsaved_buffer(self):
-        for fileBuffer in self.buffers:
-            if fileBuffer.is_dirty():
-                return fileBuffer
+        for file_buffer in self.buffers:
+            if file_buffer.is_dirty():
+                return file_buffer
         return None
 
     def new_text_buffer(self):
-        textBuffer = app.text_buffer.TextBuffer(self.program)
-        self.buffers.append(textBuffer)
-        app.log.info(textBuffer)
+        text_buffer = app.text_buffer.TextBuffer(self.program)
+        self.buffers.append(text_buffer)
+        app.log.info(text_buffer)
         self.debug_log()
-        return textBuffer
+        return text_buffer
 
     def next_buffer(self):
         app.log.info()
@@ -77,76 +77,76 @@ class BufferManager:
             return self.buffers[-1]
         return None
 
-    def get_valid_text_buffer(self, textBuffer):
-        """If |textBuffer| is a managed buffer return it, otherwise create a new
-        buffer. Primarily used to determine if a held reference to a textBuffer
+    def get_valid_text_buffer(self, text_buffer):
+        """If |text_buffer| is a managed buffer return it, otherwise create a new
+        buffer. Primarily used to determine if a held reference to a text_buffer
         is still valid."""
-        if textBuffer in self.buffers:
-            del self.buffers[self.buffers.index(textBuffer)]
-            self.buffers.append(textBuffer)
-            return textBuffer
-        textBuffer = app.text_buffer.TextBuffer(self.program)
-        self.buffers.append(textBuffer)
-        return textBuffer
+        if text_buffer in self.buffers:
+            del self.buffers[self.buffers.index(text_buffer)]
+            self.buffers.append(text_buffer)
+            return text_buffer
+        text_buffer = app.text_buffer.TextBuffer(self.program)
+        self.buffers.append(text_buffer)
+        return text_buffer
 
-    def load_text_buffer(self, relPath):
+    def load_text_buffer(self, rel_path):
         if app.config.strict_debug:
             assert issubclass(self.__class__, BufferManager), self
-            assert isinstance(relPath, unicode), type(relPath)
-        full_path = app.buffer_file.expand_full_path(relPath)
+            assert isinstance(rel_path, unicode), type(rel_path)
+        full_path = app.buffer_file.expand_full_path(rel_path)
         app.log.info(full_path)
-        textBuffer = None
+        text_buffer = None
         for i, tb in enumerate(self.buffers):
             if tb.full_path == full_path:
-                textBuffer = tb
+                text_buffer = tb
                 del self.buffers[i]
                 self.buffers.append(tb)
                 break
-        app.log.info("Searched for textBuffer", repr(textBuffer))
-        if not textBuffer:
+        app.log.info("Searched for text_buffer", repr(text_buffer))
+        if not text_buffer:
             if os.path.isdir(full_path):
                 app.log.info("Tried to open directory as a file", full_path)
                 return
             if not os.path.isfile(full_path):
                 app.log.info("creating a new file at\n ", full_path)
-            textBuffer = app.text_buffer.TextBuffer(self.program)
-            textBuffer.set_file_path(full_path)
-            textBuffer.file_load()
-            self.buffers.append(textBuffer)
+            text_buffer = app.text_buffer.TextBuffer(self.program)
+            text_buffer.set_file_path(full_path)
+            text_buffer.file_load()
+            self.buffers.append(text_buffer)
         if 0:
             self.debug_log()
-        return textBuffer
+        return text_buffer
 
     def debug_log(self):
-        bufferList = ""
+        buffer_list = ""
         for i in self.buffers:
-            bufferList += "\n  " + repr(i.full_path)
-            bufferList += "\n    " + repr(i)
-            bufferList += "\n    dirty: " + str(i.is_dirty())
-        app.log.info("BufferManager" + bufferList)
+            buffer_list += "\n  " + repr(i.full_path)
+            buffer_list += "\n    " + repr(i)
+            buffer_list += "\n    dirty: " + str(i.is_dirty())
+        app.log.info("BufferManager" + buffer_list)
 
     def read_stdin(self):
         app.log.info("reading from stdin")
         # Create a new input stream for the file data.
         # Fd is short for file descriptor. os.dup and os.dup2 will duplicate
         # file descriptors.
-        stdinFd = sys.stdin.fileno()
-        newFd = os.dup(stdinFd)
-        newStdin = open("/dev/tty")
-        os.dup2(newStdin.fileno(), stdinFd)
+        stdin_fd = sys.stdin.fileno()
+        new_fd = os.dup(stdin_fd)
+        new_stdin = open("/dev/tty")
+        os.dup2(new_stdin.fileno(), stdin_fd)
         # Create a text buffer to read from alternate stream.
-        textBuffer = self.new_text_buffer()
+        text_buffer = self.new_text_buffer()
         try:
-            with open(newFd, "r") as fileInput:
-                textBuffer.file_filter(fileInput.read())
+            with open(new_fd, "r") as fileInput:
+                text_buffer.file_filter(fileInput.read())
         except Exception as e:
             app.log.exception(e)
         app.log.info("finished reading from stdin")
-        return textBuffer
+        return text_buffer
 
-    def untrack_buffer_(self, fileBuffer):
-        app.log.debug(fileBuffer.full_path)
-        self.buffers.remove(fileBuffer)
+    def untrack_buffer_(self, file_buffer):
+        app.log.debug(file_buffer.full_path)
+        self.buffers.remove(file_buffer)
 
     def file_close(self, path):
         pass

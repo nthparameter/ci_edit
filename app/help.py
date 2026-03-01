@@ -15,7 +15,7 @@
 import os
 import sys
 
-dirPath = os.path.split(os.path.abspath(os.path.dirname(__file__)))[0]
+dir_path = os.path.split(os.path.abspath(os.path.dirname(__file__)))[0]
 
 docs = {
     "command line": """\
@@ -24,11 +24,11 @@ Command line help
 
   -               Read from standard in.
   --              Treat remaining arguments as file names.
-  --clearHistory  Cleanup the file (and undo) into in ~/.ci_edit/.
+  --clear_history  Cleanup the file (and undo) into in ~/.ci_edit/.
   --log           Display logging and debug info.
   --help          Print this help message then exit.
   --keys          Print key bindings then exit.
-  --singleThread  Do not use a background thread for parsing.
+  --single_thread  Do not use a background thread for parsing.
   --test          Run unit tests and exit.
   --version       Print version and license information then exit.\
 """
@@ -122,7 +122,7 @@ Within the Goto line prompt:
   Within Python {sys.version}
   See LICENSE for license information
   See readme.md for an introduction
-  Both files may be found in "{dirPath}"
+  Both files may be found in "{dir_path}"
   Please give the gift of feedback and bug reports at
     https://github.com/google/ci_edit/issues""",
     "welcome": """\

@@ -19,19 +19,19 @@ class Bookmark(object):
     references to rows also assume that 0 is the first line.
     """
 
-    def __init__(self, beginRow, endRow, data):
+    def __init__(self, begin_row, end_row, data):
         """
         Creates a bookmark located at the specified rows. This will
         automatically cast the passed in rows into integers.
         Args:
-          beginRow (int-like): The line that the bookmark starts on (inclusive).
-          endRow (int-like): The line that the bookmark ends on (inclusive).
+          begin_row (int-like): The line that the bookmark starts on (inclusive).
+          end_row (int-like): The line that the bookmark ends on (inclusive).
           data (other): This is used to store any information that you would
                         like to to associate with this bookmark. It is an empty
                         dictionary by default.
         """
-        self.__begin = int(beginRow)
-        self.__end = int(endRow)
+        self.__begin = int(begin_row)
+        self.__end = int(end_row)
         self.data = data
 
     @property

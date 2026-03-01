@@ -31,20 +31,20 @@ import app.controller
 class CiEdit(app.controller.Controller):
     """Keyboard mappings for ci."""
 
-    def __init__(self, prg, textBuffer):
+    def __init__(self, prg, text_buffer):
         app.controller.Controller.__init__(self, prg, None, "CiEdit")
         self.prg.log("CiEdit.__init__")
-        self.textBuffer = textBuffer
+        self.text_buffer = text_buffer
         self.command_set_main = {
             CTRL_SPACE: self.switch_to_command_set_cmd,
-            CTRL_A: textBuffer.cursor_start_of_line,
-            CTRL_B: textBuffer.cursor_left,
+            CTRL_A: text_buffer.cursor_start_of_line,
+            CTRL_B: text_buffer.cursor_left,
             KEY_LEFT: self.cursor_left,
             CTRL_C: self.edit_copy,
             CTRL_H: self.backspace,
-            KEY_BACKSPACE1: textBuffer.backspace,
-            KEY_BACKSPACE2: textBuffer.backspace,
-            KEY_BACKSPACE3: textBuffer.backspace,
+            KEY_BACKSPACE1: text_buffer.backspace,
+            KEY_BACKSPACE2: text_buffer.backspace,
+            KEY_BACKSPACE3: text_buffer.backspace,
             CTRL_D: self.delete,
             CTRL_E: self.cursor_end_of_line,
             CTRL_F: self.cursor_right,
@@ -109,16 +109,16 @@ class CiEdit(app.controller.Controller):
 
     def switch_to_command_set_cmd(self):
         self.log("ci cmd")
-        self.command_default = self.textBuffer.no_op
+        self.command_default = self.text_buffer.no_op
         self.command_set = self.command_set_cmd
 
     def switch_to_command_set_application(self):
         self.log("ci application")
-        self.command_default = self.textBuffer.no_op
+        self.command_default = self.text_buffer.no_op
         self.command_set = self.command_set_application
 
     def switch_to_command_set_file(self):
-        self.command_default = self.textBuffer.no_op
+        self.command_default = self.text_buffer.no_op
         self.command_set = self.command_set_file
 
     def switch_to_command_set_file_open(self):

@@ -21,7 +21,7 @@ from app.curses_util import *
 import app.ci_program
 import app.fake_curses_testing
 
-kTestFile = "#application_test_file_with_unlikely_file_name~"
+TEST_FILE = "#application_test_file_with_unlikely_file_name~"
 
 class ApplicationTestCases(app.fake_curses_testing.FakeCursesTestCase):
     def setUp(self):
@@ -30,7 +30,7 @@ class ApplicationTestCases(app.fake_curses_testing.FakeCursesTestCase):
 
     def test_backspace(self):
         self.run_with_test_file(
-            kTestFile,
+            TEST_FILE,
             [
                 self.display_check(2, 7, ["      "]),
                 self.write_text("tex"),
@@ -45,7 +45,7 @@ class ApplicationTestCases(app.fake_curses_testing.FakeCursesTestCase):
 
     def test_backspace_with_colon(self):
         self.run_with_test_file(
-            kTestFile,
+            TEST_FILE,
             [
                 self.display_check(2, 0, ["     1       "]),
                 ":",
@@ -60,7 +60,7 @@ class ApplicationTestCases(app.fake_curses_testing.FakeCursesTestCase):
     def test_backspace_emoji(self):
         # self.set_movie_mode(True)
         self.run_with_test_file(
-            kTestFile,
+            TEST_FILE,
             [
                 self.display_check(2, 7, ["      "]),
                 self.cursor_check(2, 7),
@@ -80,7 +80,7 @@ class ApplicationTestCases(app.fake_curses_testing.FakeCursesTestCase):
 
     def test_backspace_emoji2(self):
         self.run_with_test_file(
-            kTestFile,
+            TEST_FILE,
             [
                 self.display_check(2, 7, ["      "]),
                 self.cursor_check(2, 7),
@@ -150,7 +150,7 @@ class ApplicationTestCases(app.fake_curses_testing.FakeCursesTestCase):
 
     def test_cursor_moves(self):
         self.run_with_test_file(
-            kTestFile,
+            TEST_FILE,
             [
                 self.display_check(
                     0,
@@ -224,7 +224,7 @@ class ApplicationTestCases(app.fake_curses_testing.FakeCursesTestCase):
 
     def test_cursor_select_first_line(self):
         self.run_with_test_file(
-            kTestFile,
+            TEST_FILE,
             [
                 self.cursor_check(2, 7),
                 self.write_text("test\napple\norange"),
@@ -263,7 +263,7 @@ class ApplicationTestCases(app.fake_curses_testing.FakeCursesTestCase):
 
     def test_cursor_select_last_line(self):
         self.run_with_test_file(
-            kTestFile,
+            TEST_FILE,
             [
                 self.cursor_check(2, 7),
                 self.write_text("test\napple\norange"),
@@ -306,7 +306,7 @@ class ApplicationTestCases(app.fake_curses_testing.FakeCursesTestCase):
 
     def test_ctrl_cursor_moves(self):
         self.run_with_test_file(
-            kTestFile,
+            TEST_FILE,
             [
                 self.display_check(
                     0,
@@ -362,7 +362,7 @@ class ApplicationTestCases(app.fake_curses_testing.FakeCursesTestCase):
     def test_select_line(self):
         # self.set_movie_mode(True)
         self.run_with_test_file(
-            kTestFile,
+            TEST_FILE,
             [
                 self.display_check(
                     0,
@@ -563,7 +563,7 @@ class ApplicationTestCases(app.fake_curses_testing.FakeCursesTestCase):
 
     def test_select_line_via_line_numbers(self):
         self.run_with_test_file(
-            kTestFile,
+            TEST_FILE,
             [
                 self.display_check(
                     0,

@@ -36,10 +36,10 @@ class PathRow(app.window.ViewWindow):
         self.host = host
         self.path = ""
 
-    def mouse_click(self, paneRow, paneCol, shift, ctrl, alt):
-        col = self.scrollCol + paneCol
+    def mouse_click(self, pane_row, pane_col, shift, ctrl, alt):
+        col = self.scroll_col + pane_col
         line = self.path
-        col = self.scrollCol + paneCol
+        col = self.scroll_col + pane_col
         self.host.controller.shown_directory = None
         if col >= len(line):
             return
@@ -54,60 +54,60 @@ class PathRow(app.window.ViewWindow):
 class DirectoryList(app.window.Window):
     """This <tbd>."""
 
-    def __init__(self, program, host, inputWindow):
+    def __init__(self, program, host, input_window):
         if app.config.strict_debug:
             assert host
             assert self is not host
         app.window.Window.__init__(self, program, host)
         self.host = host
-        self.inputWindow = inputWindow
+        self.input_window = input_window
         self.controller = app.cu_editor.DirectoryList(self)
         self.set_text_buffer(app.text_buffer.TextBuffer(self.program))
 
-    def color_pref(self, colorType, delta=0):
-        if colorType == "current_line":
+    def color_pref(self, color_type, delta=0):
+        if color_type == "current_line":
             return self.program.color.get("selected", delta)
-        return self.program.color.get(colorType, delta)
+        return self.program.color.get(color_type, delta)
 
-    def mouse_click(self, paneRow, paneCol, shift, ctrl, alt):
-        row = self.scrollRow + paneRow
-        if row >= self.textBuffer.parser.row_count():
+    def mouse_click(self, pane_row, pane_col, shift, ctrl, alt):
+        row = self.scroll_row + pane_row
+        if row >= self.text_buffer.parser.row_count():
             return
         self.controller.open_file_or_dir(row)
 
-    def mouse_double_click(self, paneRow, paneCol, shift, ctrl, alt):
+    def mouse_double_click(self, pane_row, pane_col, shift, ctrl, alt):
         self.change_focus_to(self.host)
 
-    def mouse_moved(self, paneRow, paneCol, shift, ctrl, alt):
+    def mouse_moved(self, pane_row, pane_col, shift, ctrl, alt):
         self.change_focus_to(self.host)
 
-    def mouse_release(self, paneRow, paneCol, shift, ctrl, alt):
+    def mouse_release(self, pane_row, pane_col, shift, ctrl, alt):
         self.change_focus_to(self.host)
 
-    def mouse_triple_click(self, paneRow, paneCol, shift, ctrl, alt):
+    def mouse_triple_click(self, pane_row, pane_col, shift, ctrl, alt):
         self.change_focus_to(self.host)
 
     def mouse_wheel_down(self, shift, ctrl, alt):
-        self.textBuffer.mouse_wheel_down(shift, ctrl, alt)
+        self.text_buffer.mouse_wheel_down(shift, ctrl, alt)
         self.change_focus_to(self.host)
 
     def mouse_wheel_up(self, shift, ctrl, alt):
-        self.textBuffer.mouse_wheel_up(shift, ctrl, alt)
+        self.text_buffer.mouse_wheel_up(shift, ctrl, alt)
         self.change_focus_to(self.host)
 
     def on_pref_changed(self, category, name):
         self.controller.option_changed(category, name)
         app.window.Window.on_pref_changed(self, category, name)
 
-    def set_text_buffer(self, textBuffer):
+    def set_text_buffer(self, text_buffer):
         if app.config.strict_debug:
-            assert textBuffer is not self.host.textBuffer
-        textBuffer.line_limit_indicator = 0
-        textBuffer.highlight_cursor_line = True
-        textBuffer.highlight_trailing_whitespace = False
-        app.window.Window.set_text_buffer(self, textBuffer)
-        textBuffer.view.showCursor = False
-        self.controller.set_text_buffer(textBuffer)
+            assert text_buffer is not self.host.text_buffer
+        text_buffer.line_limit_indicator = 0
+        text_buffer.highlight_cursor_line = True
+        text_buffer.highlight_trailing_whitespace = False
+        app.window.Window.set_text_buffer(self, text_buffer)
+        text_buffer.view.show_cursor = False
+        self.controller.set_text_buffer(text_buffer)
 
 class PathWindow(app.window.Window):
     """The path window is the editable text line where the user may freely type
@@ -123,30 +123,30 @@ class PathWindow(app.window.Window):
         self.controller = app.cu_editor.FilePathInput(self)
         self.set_text_buffer(app.text_buffer.TextBuffer(self.program))
 
-    def mouse_click(self, paneRow, paneCol, shift, ctrl, alt):
-        col = self.scrollCol + paneCol
+    def mouse_click(self, pane_row, pane_col, shift, ctrl, alt):
+        col = self.scroll_col + pane_col
         line = self.controller.decoded_path()
-        col = self.scrollCol + paneCol
+        col = self.scroll_col + pane_col
         self.parent.directory_list.controller.shown_directory = None
         if col >= len(line):
             return
         slash = line[col:].find("/")
         self.controller.set_encoded_path(line[: col + slash + 1])
 
-    def set_text_buffer(self, textBuffer):
-        textBuffer.line_limit_indicator = 0
-        textBuffer.highlight_trailing_whitespace = False
-        app.window.Window.set_text_buffer(self, textBuffer)
-        self.controller.set_text_buffer(textBuffer)
+    def set_text_buffer(self, text_buffer):
+        text_buffer.line_limit_indicator = 0
+        text_buffer.highlight_trailing_whitespace = False
+        app.window.Window.set_text_buffer(self, text_buffer)
+        self.controller.set_text_buffer(text_buffer)
 
 class FileManagerWindow(app.window.Window):
-    def __init__(self, program, host, inputWindow):
+    def __init__(self, program, host, input_window):
         app.window.Window.__init__(self, program, host)
-        self.inputWindow = inputWindow
-        self.inputWindow.fileManagerWindow = self
+        self.input_window = input_window
+        self.input_window.file_manager_window = self
 
         self.mode = "open"
-        self.showTips = False
+        self.show_tips = False
         self.controller = app.cu_editor.FileOpener(self)
         self.set_text_buffer(app.text_buffer.TextBuffer(self.program))
 
@@ -156,8 +156,8 @@ class FileManagerWindow(app.window.Window):
         self.set_mode("open")
         self.title_row.set_parent(self)
 
-        self.pathWindow = PathWindow(self.program, self)
-        self.pathWindow.set_parent(self)
+        self.path_window = PathWindow(self.program, self)
+        self.path_window.set_parent(self)
 
         # Set up table headers.
         color = self.program.color.get("top_info")
@@ -168,7 +168,7 @@ class FileManagerWindow(app.window.Window):
             self.table_headers,
             "Name",
             "editor",
-            "filesSortAscendingByName",
+            "files_sort_ascending_by_name",
             -41,
         )
         label = app.window.LabelWindow(self.program, self.table_headers, "|")
@@ -179,7 +179,7 @@ class FileManagerWindow(app.window.Window):
             self.table_headers,
             "Size ",
             "editor",
-            "filesSortAscendingBySize",
+            "files_sort_ascending_by_size",
             16,
         )
         label = app.window.LabelWindow(self.program, self.table_headers, "|")
@@ -190,42 +190,42 @@ class FileManagerWindow(app.window.Window):
             self.table_headers,
             "Modified ",
             "editor",
-            "filesSortAscendingByModifiedDate",
+            "files_sort_ascending_by_modified_date",
             25,
         )
         label = app.window.LabelWindow(self.program, self.table_headers, "|")
         label.set_parent(self.table_headers)
         label.color = color
 
-        self.directory_list = DirectoryList(self.program, self, inputWindow)
+        self.directory_list = DirectoryList(self.program, self, input_window)
         self.directory_list.set_parent(self)
 
         if 1:
-            self.optionsRow = app.window.RowWindow(self.program, self, 2)
-            self.optionsRow.set_parent(self)
+            self.options_row = app.window.RowWindow(self.program, self, 2)
+            self.options_row.set_parent(self)
             colorPrefs = self.program.color
-            self.optionsRow.color = colorPrefs.get("top_info")
-            label = app.window.LabelWindow(self.program, self.optionsRow, "Show:")
+            self.options_row.color = colorPrefs.get("top_info")
+            label = app.window.LabelWindow(self.program, self.options_row, "Show:")
             label.color = colorPrefs.get("top_info")
-            label.set_parent(self.optionsRow)
+            label.set_parent(self.options_row)
             toggle = app.window.OptionsToggle(
                 self.program,
-                self.optionsRow,
-                "dotFiles",
+                self.options_row,
+                "dot_files",
                 "editor",
-                "filesShowDotFiles",
+                "files_show_dot_files",
             )
             toggle.color = colorPrefs.get("top_info")
             toggle = app.window.OptionsToggle(
-                self.program, self.optionsRow, "sizes", "editor", "filesShowSizes"
+                self.program, self.options_row, "sizes", "editor", "files_show_sizes"
             )
             toggle.color = colorPrefs.get("top_info")
             toggle = app.window.OptionsToggle(
                 self.program,
-                self.optionsRow,
+                self.options_row,
                 "modified",
                 "editor",
-                "filesShowModifiedDates",
+                "files_show_modified_dates",
             )
             toggle.color = colorPrefs.get("top_info")
 
@@ -241,16 +241,16 @@ class FileManagerWindow(app.window.Window):
         self.parent.layout()
         self.controller.focus()
         # Set the initial path each time the window is focused.
-        if not self.pathWindow.controller.decoded_path():
-            inputWindow = self.parent.inputWindow
-            if len(inputWindow.textBuffer.full_path) == 0:
+        if not self.path_window.controller.decoded_path():
+            input_window = self.parent.input_window
+            if len(input_window.text_buffer.full_path) == 0:
                 path = os.getcwd()
             else:
-                path = os.path.dirname(inputWindow.textBuffer.full_path)
+                path = os.path.dirname(input_window.text_buffer.full_path)
             if len(path) != 0:
                 path += os.path.sep
-            self.pathWindow.controller.set_encoded_path(unicode(path))
-        self.change_focus_to(self.pathWindow)
+            self.path_window.controller.set_encoded_path(unicode(path))
+        self.change_focus_to(self.path_window)
 
     def on_pref_changed(self, category, name):
         self.directory_list.controller.option_changed(category, name)
@@ -268,7 +268,7 @@ class FileManagerWindow(app.window.Window):
         self.title_row.reshape(top, left, 1, cols)
         top += 1
         rows -= 1
-        self.pathWindow.reshape(top, left, 1, cols)
+        self.path_window.reshape(top, left, 1, cols)
         top += 1
         rows -= 1
         self.table_headers.reshape(top, left, 1, cols)
@@ -276,21 +276,21 @@ class FileManagerWindow(app.window.Window):
         rows -= 1
         self.messageLine.reshape(top + rows - 1, left, 1, cols)
         rows -= 1
-        self.optionsRow.reshape(top + rows - 1, left, 1, cols)
+        self.options_row.reshape(top + rows - 1, left, 1, cols)
         rows -= 1
         self.directory_list.reshape(top, left, rows, cols)
 
     def set_mode(self, mode):
         self.mode = mode
-        modeTitles = {
+        mode_titles = {
             "open": "Open File",
-            "saveAs": "Save File As",
-            "selectDir": "Select a Directory",
+            "save_as": "Save File As",
+            "select_dir": "Select a Directory",
         }
-        self.mode_title["name"] = modeTitles[mode]
+        self.mode_title["name"] = mode_titles[mode]
 
     def unfocus(self):
         # Clear the path.
-        self.pathWindow.controller.set_encoded_path("")
+        self.path_window.controller.set_encoded_path("")
         app.window.Window.unfocus(self)
         self.detach()

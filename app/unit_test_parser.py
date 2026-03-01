@@ -30,40 +30,40 @@ class ParserTestCases(unittest.TestCase):
     def tearDown(self):
         self.parser = None
 
-    def check_parser_nodes(self, expected, actual, startIndex=None):
-        kGrammar = app.parser.kGrammar
-        kBegin = app.parser.kBegin
-        kPrior = app.parser.kPrior
-        kVisual = app.parser.kVisual
-        if startIndex is None:
+    def check_parser_nodes(self, expected, actual, start_index=None):
+        PARSER_GRAMMAR = app.parser.PARSER_GRAMMAR
+        PARSER_BEGIN = app.parser.PARSER_BEGIN
+        PARSER_PRIOR = app.parser.PARSER_PRIOR
+        PARSER_VISUAL = app.parser.PARSER_VISUAL
+        if start_index is None:
             # Test for exact match.
-            startIndex = 0
+            start_index = 0
             self.assertEqual(len(expected), len(actual))
         else:
             # Test a subset.
-            self.assertLessEqual(len(expected), startIndex + len(actual))
-        for index, expectedNode in enumerate(expected):
-            actualNode = actual[startIndex + index]
-            self.assertTrue(isinstance(actualNode, tuple))
-            # print("Node:", startIndex + index, expectedNode, actualNode[1:])
-            self.assertEqual(expectedNode[kGrammar], actualNode[kGrammar]["name"])
-            self.assertEqual(expectedNode[kBegin], actualNode[kBegin])
-            self.assertEqual(expectedNode[kPrior], actualNode[kPrior])
-            self.assertEqual(expectedNode[kVisual], actualNode[kVisual])
+            self.assertLessEqual(len(expected), start_index + len(actual))
+        for index, expected_node in enumerate(expected):
+            actual_node = actual[start_index + index]
+            self.assertTrue(isinstance(actual_node, tuple))
+            # print("Node:", start_index + index, expected_node, actual_node[1:])
+            self.assertEqual(expected_node[PARSER_GRAMMAR], actual_node[PARSER_GRAMMAR]["name"])
+            self.assertEqual(expected_node[PARSER_BEGIN], actual_node[PARSER_BEGIN])
+            self.assertEqual(expected_node[PARSER_PRIOR], actual_node[PARSER_PRIOR])
+            self.assertEqual(expected_node[PARSER_VISUAL], actual_node[PARSER_VISUAL])
 
-    def check_parser_rows(self, expected, actual, startIndex=None):
-        if startIndex is None:
+    def check_parser_rows(self, expected, actual, start_index=None):
+        if start_index is None:
             # Test for exact match.
-            startIndex = 0
+            start_index = 0
             self.assertEqual(len(expected), len(actual))
         else:
             # Test a subset.
-            self.assertLessEqual(len(expected), startIndex + len(actual))
-        for index, expectedRow in enumerate(expected):
-            actualRow = actual[startIndex + index]
-            self.assertTrue(isinstance(actualRow, int))
-            # print("Node:", startIndex + index, expectedNode, actualRow)
-            self.assertEqual(expectedRow, actualRow)
+            self.assertLessEqual(len(expected), start_index + len(actual))
+        for index, expected_row in enumerate(expected):
+            actual_row = actual[start_index + index]
+            self.assertTrue(isinstance(actual_row, int))
+            # print("Node:", start_index + index, expected_node, actual_row)
+            self.assertEqual(expected_row, actual_row)
 
     def print_parser_nodes(self, nodes):
         for n in nodes:
@@ -111,9 +111,9 @@ void blah();
             for i, line in enumerate(lines):
                 self.assertEqual(self.parser.row_text(i), line)
                 self.assertEqual(self.parser.row_text_and_width(i), (line, len(line)))
-            for node in self.parser.parserNodes:
+            for node in self.parser.parser_nodes:
                 # These tests have no double wide characters.
-                self.assertEqual(node[app.parser.kBegin], node[app.parser.kVisual])
+                self.assertEqual(node[app.parser.PARSER_BEGIN], node[app.parser.PARSER_VISUAL])
             self.parser.debug_check_lines(None, test)
 
     def test_parse_cpp_literal(self):
@@ -545,9 +545,9 @@ line\tち\ttabs
 """
         self.prefs = app.prefs.Prefs()
         p = self.parser
-        self.assertEqual(p.resumeAtRow, 0)
+        self.assertEqual(p.resume_at_row, 0)
         self.parser.parse(None, test, self.prefs.grammars["rs"], 0, 99999)
-        self.assertEqual(p.resumeAtRow, 10)
+        self.assertEqual(p.resume_at_row, 10)
         if 0:
             print("")
             for i, t in enumerate(test.splitlines()):
@@ -629,9 +629,9 @@ line\tち\ttabs
 """
         self.prefs = app.prefs.Prefs()
         p = self.parser
-        self.assertEqual(p.resumeAtRow, 0)
+        self.assertEqual(p.resume_at_row, 0)
         self.parser.parse(None, test, self.prefs.grammars["rs"], 0, 99999)
-        self.assertEqual(p.resumeAtRow, 10)
+        self.assertEqual(p.resume_at_row, 10)
         if 0:
             print("")
             for i, t in enumerate(test.splitlines()):
@@ -693,9 +693,9 @@ line\tち\ttabs
 """
         self.prefs = app.prefs.Prefs()
         p = self.parser
-        self.assertEqual(p.resumeAtRow, 0)
+        self.assertEqual(p.resume_at_row, 0)
         self.parser.parse(None, test, self.prefs.grammars["rs"], 0, 99999)
-        self.assertEqual(p.resumeAtRow, 10)
+        self.assertEqual(p.resume_at_row, 10)
         if 0:
             print("")
             for i, t in enumerate(test.splitlines()):
@@ -714,7 +714,7 @@ line\tち\ttabs
         test = """a⏰
 e
 """
-        expectedNodes = [
+        expected_nodes = [
             # (NodeName, begin, prior, visual).
             ("rs", 0, None, 0),
             ("rs", 0, None, 0),
@@ -722,7 +722,7 @@ e
             ("rs", 3, None, 4),
             ("rs", 5, None, 6),
         ]
-        expectedRows = [0, 3, 4]
+        expected_rows = [0, 3, 4]
         self.prefs = app.prefs.Prefs()
         p = self.parser
         self.parser.parse(None, test, self.prefs.grammars["rs"], 0, 99999)
@@ -732,15 +732,15 @@ e
                 print(f"{i}: {repr(t)}")
             p.debug_log(print, test)
 
-        self.check_parser_nodes(expectedNodes, p.parserNodes)
-        self.check_parser_rows(expectedRows, p.rows)
+        self.check_parser_nodes(expected_nodes, p.parser_nodes)
+        self.check_parser_rows(expected_rows, p.rows)
         # Regression test: a reparse should not add nodes.
         self.parser.parse(None, test, self.prefs.grammars["rs"], 3, 4)
         self.parser.parse(None, test, self.prefs.grammars["rs"], 3, 4)
         self.parser.parse(None, test, self.prefs.grammars["rs"], 3, 4)
         self.parser.parse(None, test, self.prefs.grammars["rs"], 3, 4)
-        self.check_parser_nodes(expectedNodes, p.parserNodes)
-        self.check_parser_rows(expectedRows, p.rows)
+        self.check_parser_nodes(expected_nodes, p.parser_nodes)
+        self.check_parser_rows(expected_rows, p.rows)
 
     def test_parse_short(self):
         test = """a⏰
@@ -779,9 +779,9 @@ e
     def test_insert(self):
         self.prefs = app.prefs.Prefs()
         p = self.parser
-        self.assertEqual(p.resumeAtRow, 0)
+        self.assertEqual(p.resume_at_row, 0)
         self.parser.parse(None, "", self.prefs.grammars["rs"], 0, 99999)
-        self.assertEqual(p.resumeAtRow, 1)
+        self.assertEqual(p.resume_at_row, 1)
         if 0:
             print("")
             for i, t in enumerate(test.splitlines()):
@@ -792,7 +792,7 @@ e
             [
                 ("rs", 0, None, 0),
             ],
-            p.parserNodes,
+            p.parser_nodes,
         )
         self.assertEqual(p.data_offset(4, 5), None)
         p.insert(0, 0, "a")
@@ -800,7 +800,7 @@ e
             [
                 ("rs", 0, None, 0),
             ],
-            p.parserNodes,
+            p.parser_nodes,
         )
         self.assertEqual(p.row_text_and_width(0), ("a", 1))
         self.check_parser_nodes(
@@ -809,7 +809,7 @@ e
                 ("rs", 0, None, 0),
                 ("rs", 1, None, 1),
             ],
-            p.parserNodes,
+            p.parser_nodes,
         )
         # An insert to an invalid row, col will append to the end.
         p.insert(2, 2, "z")
@@ -821,7 +821,7 @@ e
                 ("rs", 0, None, 0),
                 ("rs", 2, None, 2),
             ],
-            p.parserNodes,
+            p.parser_nodes,
         )
         p.insert(0, 0, "ち")
         self.assertEqual(p.row_text_and_width(0), ("ちaz", 4))
@@ -832,7 +832,7 @@ e
                 ("rs", 1, None, 2),
                 ("rs", 3, None, 4),
             ],
-            p.parserNodes,
+            p.parser_nodes,
         )
         p.insert(0, 2, "b")
         self.assertEqual(p.row_text_and_width(0), ("ちbaz", 5))
@@ -843,20 +843,20 @@ e
                 ("rs", 1, None, 2),
                 ("rs", 4, None, 5),
             ],
-            p.parserNodes,
+            p.parser_nodes,
         )
         p.insert(0, 0, "x")
         self.assertEqual(p.row_text_and_width(0), ("xちbaz", 6))
         # p.debug_log(print, p.data)
-        # self.print_parser_nodes(p.parserNodes)
+        # self.print_parser_nodes(p.parser_nodes)
 
     def test_data_offset(self):
         test = "xちbaz"
         self.prefs = app.prefs.Prefs()
         p = self.parser
-        self.assertEqual(p.resumeAtRow, 0)
+        self.assertEqual(p.resume_at_row, 0)
         self.parser.parse(None, test, self.prefs.grammars["rs"], 0, 99999)
-        self.assertEqual(p.resumeAtRow, 1)
+        self.assertEqual(p.resume_at_row, 1)
 
         self.check_parser_nodes(
             [
@@ -866,7 +866,7 @@ e
                 ("rs", 2, None, 3),
                 ("rs", 5, None, 6),
             ],
-            p.parserNodes,
+            p.parser_nodes,
         )
         self.assertEqual(p.data[p.data_offset(0, 0)], "x")
         self.assertEqual(p.data[p.data_offset(0, 1)], "ち")
@@ -887,7 +887,7 @@ e
                 ("rs", 4, None, 6),
                 ("rs", 6, None, 8),
             ],
-            p.parserNodes,
+            p.parser_nodes,
         )
         self.assertEqual(p.data[p.data_offset(0, 0)], "x")
         self.assertEqual(p.data[p.data_offset(0, 1)], "ち")
@@ -908,7 +908,7 @@ e
                 ("rs", 2, None, 3),
                 ("rs", 3, None, 5),
             ],
-            p.parserNodes,
+            p.parser_nodes,
         )
         self.assertEqual(p.data[p.data_offset(0, 0)], "ち")
         self.assertEqual(p.data[p.data_offset(0, 1)], "ち")

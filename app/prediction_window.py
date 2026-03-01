@@ -27,109 +27,109 @@ class PredictionList(app.window.Window):
             assert self is not host
         app.window.Window.__init__(self, program, host)
         self.host = host
-        self.isFocusable = False
+        self.is_focusable = False
         self.controller = app.cu_editor.PredictionList(self)
         self.set_text_buffer(app.text_buffer.TextBuffer(self.program))
         # Set up table headers.
         color = host.program.color.get("top_info")
-        self.optionsRow = app.window.OptionsSelectionWindow(self.program, self)
-        self.optionsRow.set_parent(self)
+        self.options_row = app.window.OptionsSelectionWindow(self.program, self)
+        self.options_row.set_parent(self)
         self.type_column = app.window.SortableHeaderWindow(
             self.program,
-            self.optionsRow,
+            self.options_row,
             "Type",
             "editor",
-            "predictionSortAscendingByType",
+            "prediction_sort_ascending_by_type",
             8,
         )
-        label = app.window.LabelWindow(self.program, self.optionsRow, "|")
-        label.set_parent(self.optionsRow)
+        label = app.window.LabelWindow(self.program, self.options_row, "|")
+        label.set_parent(self.options_row)
         label.color = color
-        self.nameColumn = app.window.SortableHeaderWindow(
+        self.name_column = app.window.SortableHeaderWindow(
             self.program,
-            self.optionsRow,
+            self.options_row,
             "Name",
             "editor",
-            "predictionSortAscendingByName",
+            "prediction_sort_ascending_by_name",
             -61,
         )
-        label = app.window.LabelWindow(self.program, self.optionsRow, "|")
-        label.set_parent(self.optionsRow)
+        label = app.window.LabelWindow(self.program, self.options_row, "|")
+        label.set_parent(self.options_row)
         label.color = color
         self.status_column = app.window.SortableHeaderWindow(
             self.program,
-            self.optionsRow,
+            self.options_row,
             "Status ",
             "editor",
-            "predictionSortAscendingByStatus",
+            "prediction_sort_ascending_by_status",
             -7,
         )
-        label = app.window.LabelWindow(self.program, self.optionsRow, "|")
-        label.set_parent(self.optionsRow)
+        label = app.window.LabelWindow(self.program, self.options_row, "|")
+        label.set_parent(self.options_row)
         label.color = color
 
     def highlight_line(self, row):
-        self.textBuffer.pen_row = min(row, self.textBuffer.parser.row_count() - 1)
-        self.textBuffer.pen_col = 0
-        app.log.info(self.textBuffer.pen_row)
+        self.text_buffer.pen_row = min(row, self.text_buffer.parser.row_count() - 1)
+        self.text_buffer.pen_col = 0
+        app.log.info(self.text_buffer.pen_row)
 
-    def mouse_click(self, paneRow, paneCol, shift, ctrl, alt):
-        self.highlight_line(self.scrollRow + paneRow)
-        row = self.scrollRow + paneRow
-        if row >= self.textBuffer.parser.row_count():
+    def mouse_click(self, pane_row, pane_col, shift, ctrl, alt):
+        self.highlight_line(self.scroll_row + pane_row)
+        row = self.scroll_row + pane_row
+        if row >= self.text_buffer.parser.row_count():
             return
         self.controller.open_file_or_dir(row)
 
-    def mouse_double_click(self, paneRow, paneCol, shift, ctrl, alt):
+    def mouse_double_click(self, pane_row, pane_col, shift, ctrl, alt):
         app.log.info()
         assert False
 
-    # def mouse_moved(self, paneRow, paneCol, shift, ctrl, alt):
+    # def mouse_moved(self, pane_row, pane_col, shift, ctrl, alt):
     #  app.log.info()
 
-    # def mouse_release(self, paneRow, paneCol, shift, ctrl, alt):
+    # def mouse_release(self, pane_row, pane_col, shift, ctrl, alt):
     #  app.log.info()
 
-    # def mouse_triple_click(self, paneRow, paneCol, shift, ctrl, alt):
+    # def mouse_triple_click(self, pane_row, pane_col, shift, ctrl, alt):
     #  app.log.info()
 
     def mouse_wheel_down(self, shift, ctrl, alt):
-        self.textBuffer.mouse_wheel_down(shift, ctrl, alt)
+        self.text_buffer.mouse_wheel_down(shift, ctrl, alt)
 
     def mouse_wheel_up(self, shift, ctrl, alt):
-        self.textBuffer.mouse_wheel_up(shift, ctrl, alt)
+        self.text_buffer.mouse_wheel_up(shift, ctrl, alt)
 
     def update(self, items):
         # Filter the list. (The filter function is not used so as to edit the
         # list in place).
         app_prefs = self.program.prefs
-        showOpen = app_prefs.editor["predictionShowOpenFiles"]
-        showAlternate = app_prefs.editor["predictionShowAlternateFiles"]
-        showRecent = app_prefs.editor["predictionShowRecentFiles"]
-        if not (showOpen and showAlternate and showRecent):
+        show_open = app_prefs.editor["prediction_show_open_files"]
+        show_alternate = app_prefs.editor["prediction_show_alternate_files"]
+        show_recent = app_prefs.editor["prediction_show_recent_files"]
+        if not (show_open and show_alternate and show_recent):
             i = 0
             while i < len(items):
-                if not showOpen and items[i][3] == "open":
+                if not show_open and items[i][3] == "open":
                     items.pop(i)
-                elif not showAlternate and items[i][3] == "alt":
+                elif not show_alternate and items[i][3] == "alt":
                     items.pop(i)
-                elif not showRecent and items[i][3] == "recent":
+                elif not show_recent and items[i][3] == "recent":
                     items.pop(i)
                 else:
                     i += 1
         # Sort the list
-        sortByPrediction = app_prefs.editor["predictionSortAscendingByPrediction"]
-        sortByType = app_prefs.editor["predictionSortAscendingByType"]
-        sortByName = app_prefs.editor["predictionSortAscendingByName"]
-        sortByStatus = app_prefs.editor["predictionSortAscendingByStatus"]
-        if sortByPrediction is not None:
-            items.sort(reverse=not sortByPrediction, key=lambda x: x[4])
-        elif sortByType is not None:
-            items.sort(reverse=not sortByType, key=lambda x: x[3])
-        elif sortByStatus is not None:
-            items.sort(reverse=not sortByStatus, key=lambda x: x[2])
-        elif sortByName is not None:
-            items.sort(reverse=not sortByName, key=lambda x: x[1])
+        sort_by_prediction = app_prefs.editor["prediction_sort_ascending_by_prediction"]
+        sort_by_type = app_prefs.editor["prediction_sort_ascending_by_type"]
+        sort_by_name = app_prefs.editor["prediction_sort_ascending_by_name"]
+        sort_by_status = app_prefs.editor["prediction_sort_ascending_by_status"]
+        if sort_by_prediction is not None:
+            items.sort(reverse=not sort_by_prediction, key=lambda x: x[4])
+        elif sort_by_type is not None:
+            items.sort(reverse=not sort_by_type, key=lambda x: x[3])
+        elif sort_by_status is not None:
+            items.sort(reverse=not sort_by_status, key=lambda x: x[2])
+        elif sort_by_name is not None:
+            items.sort(reverse=not sort_by_name, key=lambda x: x[1])
         # Write the lines to the text buffer.
         def fit_path_to_width(path, width):
             if len(path) < width:
@@ -137,17 +137,17 @@ class PredictionList(app.window.Window):
             return path[-width:]
 
         if len(items) == 0:
-            self.textBuffer.replace_lines(("",))
+            self.text_buffer.replace_lines(("",))
         else:
-            self.textBuffer.replace_lines(
+            self.text_buffer.replace_lines(
                 tuple(
                     [
                         "%*s %*s %.*s"
                         % (
                             self.type_column.cols,
                             i[3],
-                            -self.nameColumn.cols,
-                            fit_path_to_width(i[1], self.nameColumn.cols),
+                            -self.name_column.cols,
+                            fit_path_to_width(i[1], self.name_column.cols),
                             self.status_column.cols,
                             i[2],
                         )
@@ -155,8 +155,8 @@ class PredictionList(app.window.Window):
                     ]
                 )
             )
-        self.textBuffer.parse_screen_maybe()  # TODO(dschuyler): Add test.
-        self.textBuffer.cursor_move_to_begin()
+        self.text_buffer.parse_screen_maybe()  # TODO(dschuyler): Add test.
+        self.text_buffer.cursor_move_to_begin()
 
     def on_pref_changed(self, category, name):
         self.controller.option_changed(category, name)
@@ -165,19 +165,19 @@ class PredictionList(app.window.Window):
     def reshape(self, top, left, rows, cols):
         """Change self and sub-windows to fit within the given rectangle."""
         app.log.detail("reshape", top, left, rows, cols)
-        self.optionsRow.reshape(top, left, 1, cols)
+        self.options_row.reshape(top, left, 1, cols)
         top += 1
         rows -= 1
         app.window.Window.reshape(self, top, left, rows, cols)
 
-    def set_text_buffer(self, textBuffer):
+    def set_text_buffer(self, text_buffer):
         if app.config.strict_debug:
-            assert textBuffer is not self.host.textBuffer
-        textBuffer.line_limit_indicator = 0
-        textBuffer.highlight_cursor_line = True
-        textBuffer.highlight_trailing_whitespace = False
-        app.window.Window.set_text_buffer(self, textBuffer)
-        self.controller.set_text_buffer(textBuffer)
+            assert text_buffer is not self.host.text_buffer
+        text_buffer.line_limit_indicator = 0
+        text_buffer.highlight_cursor_line = True
+        text_buffer.highlight_trailing_whitespace = False
+        app.window.Window.set_text_buffer(self, text_buffer)
+        self.controller.set_text_buffer(text_buffer)
 
 class PredictionInputWindow(app.window.Window):
     def __init__(self, program, host):
@@ -190,22 +190,22 @@ class PredictionInputWindow(app.window.Window):
         self.set_text_buffer(app.text_buffer.TextBuffer(self.program))
 
     def get_path(self):
-        return self.textBuffer.parser.row_text(0)
+        return self.text_buffer.parser.row_text(0)
 
     def set_path(self, path):
-        self.textBuffer.replace_lines((path,))
+        self.text_buffer.replace_lines((path,))
 
-    def set_text_buffer(self, textBuffer):
-        textBuffer.line_limit_indicator = 0
-        textBuffer.highlight_trailing_whitespace = False
-        app.window.Window.set_text_buffer(self, textBuffer)
-        self.controller.set_text_buffer(textBuffer)
+    def set_text_buffer(self, text_buffer):
+        text_buffer.line_limit_indicator = 0
+        text_buffer.highlight_trailing_whitespace = False
+        app.window.Window.set_text_buffer(self, text_buffer)
+        self.controller.set_text_buffer(text_buffer)
 
 class PredictionWindow(app.window.Window):
     def __init__(self, program, host):
         app.window.Window.__init__(self, program, host)
 
-        self.showTips = False
+        self.show_tips = False
         self.controller = app.cu_editor.PredictionController(self)
         self.set_text_buffer(app.text_buffer.TextBuffer(self.program))
 
@@ -220,35 +220,35 @@ class PredictionWindow(app.window.Window):
         self.prediction_list.set_parent(self)
 
         if 1:
-            self.optionsRow = app.window.RowWindow(self.program, self, 2)
-            self.optionsRow.set_parent(self)
+            self.options_row = app.window.RowWindow(self.program, self, 2)
+            self.options_row.set_parent(self)
             colorPrefs = host.program.color
-            self.optionsRow.color = colorPrefs.get("top_info")
-            label = app.window.LabelWindow(self.program, self.optionsRow, "Show:")
+            self.options_row.color = colorPrefs.get("top_info")
+            label = app.window.LabelWindow(self.program, self.options_row, "Show:")
             label.color = colorPrefs.get("top_info")
-            label.set_parent(self.optionsRow)
+            label.set_parent(self.options_row)
             toggle = app.window.OptionsToggle(
                 self.program,
-                self.optionsRow,
+                self.options_row,
                 "open",
                 "editor",
-                "predictionShowOpenFiles",
+                "prediction_show_open_files",
             )
             toggle.color = colorPrefs.get("top_info")
             toggle = app.window.OptionsToggle(
                 self.program,
-                self.optionsRow,
+                self.options_row,
                 "alternates",
                 "editor",
-                "predictionShowAlternateFiles",
+                "prediction_show_alternate_files",
             )
             toggle.color = colorPrefs.get("top_info")
             toggle = app.window.OptionsToggle(
                 self.program,
-                self.optionsRow,
+                self.options_row,
                 "recent",
                 "editor",
-                "predictionShowRecentFiles",
+                "prediction_show_recent_files",
             )
             toggle.color = colorPrefs.get("top_info")
 
@@ -283,7 +283,7 @@ class PredictionWindow(app.window.Window):
         rows -= 1
         self.messageLine.reshape(top + rows - 1, left, 1, cols)
         rows -= 1
-        self.optionsRow.reshape(top + rows - 1, left, 1, cols)
+        self.options_row.reshape(top + rows - 1, left, 1, cols)
         rows -= 1
         self.prediction_list.reshape(top, left, rows, cols)
 

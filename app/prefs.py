@@ -32,7 +32,7 @@ class Prefs:
         self.color = self.color256
         self.dictionaries = prefs.get("dictionaries", [])
         self.editor = prefs.get("editor", {})
-        self.devTest = prefs.get("devTest", {})
+        self.dev_test = prefs.get("dev_test", {})
         self.palette = prefs.get("palette", {})
         self.startup = {}
         self.status = prefs.get("status", {})
@@ -41,23 +41,23 @@ class Prefs:
         self.__set_up_file_types(prefs.get("file_type", {}))
         self.init()
 
-    def load_prefs(self, fileName, category):
+    def load_prefs(self, file_name, category):
         # Check the user home directory for preferences.
-        prefsPath = os.path.expanduser(
+        prefs_path = os.path.expanduser(
             os.path.expandvars(
-                os.path.join(self.prefs_directory, f"{fileName}.json")
+                os.path.join(self.prefs_directory, f"{file_name}.json")
             )
         )
-        if os.path.isfile(prefsPath) and os.access(prefsPath, os.R_OK):
-            with open(prefsPath, "r") as f:
+        if os.path.isfile(prefs_path) and os.access(prefs_path, os.R_OK):
+            with open(prefs_path, "r") as f:
                 try:
-                    additionalPrefs = json.loads(f.read())
-                    app.log.startup(additionalPrefs)
-                    category.update(additionalPrefs)
-                    app.log.startup("Updated editor prefs from", prefsPath)
+                    additional_prefs = json.loads(f.read())
+                    app.log.startup(additional_prefs)
+                    category.update(additional_prefs)
+                    app.log.startup("Updated editor prefs from", prefs_path)
                     app.log.startup("as", category)
                 except Exception as e:
-                    app.log.startup("failed to parse", prefsPath)
+                    app.log.startup("failed to parse", prefs_path)
                     app.log.startup("error", e)
         return category
 
@@ -65,24 +65,24 @@ class Prefs:
         self.editor = self.load_prefs("editor", self.editor)
         self.status = self.load_prefs("status", self.status)
 
-        self.color_scheme_name = self.editor["colorScheme"]
+        self.color_scheme_name = self.editor["color_scheme"]
         if self.color_scheme_name == "custom":
             # Check the user home directory for a color scheme preference. If
             # found load it to replace the default color scheme.
             self.color = self.load_prefs("color_scheme", self.color)
 
-        defaultColor = self.color["default"]
-        defaultKeywordsColor = self.color["keyword"]
-        defaultSpecialsColor = self.color["special"]
+        default_color = self.color["default"]
+        default_keywords_color = self.color["keyword"]
+        default_specials_color = self.color["special"]
         for k, v in self.grammars.items():
             # Colors.
-            v["colorIndex"] = self.color.get(k, defaultColor)
+            v["color_index"] = self.color.get(k, default_color)
             if 0:
-                v["keywordsColor"] = curses.color_pair(
-                    self.color.get(k + "_keyword_color", defaultKeywordsColor)
+                v["keywords_color"] = curses.color_pair(
+                    self.color.get(k + "_keyword_color", default_keywords_color)
                 )
-                v["specialsColor"] = curses.color_pair(
-                    self.color.get(k + "_special_color", defaultSpecialsColor)
+                v["specials_color"] = curses.color_pair(
+                    self.color.get(k + "_special_color", default_specials_color)
                 )
         app.log.info("prefs init")
 
@@ -93,11 +93,11 @@ class Prefs:
             "startup": self.startup,
         }[name]
 
-    def get_file_type(self, filePath):
-        if filePath is None:
+    def get_file_type(self, file_path):
+        if file_path is None:
             return self.grammars.get("text")
-        name = os.path.split(filePath)[1]
-        file_type = self.nameToType.get(name)
+        name = os.path.split(file_path)[1]
+        file_type = self.name_to_type.get(name)
         if file_type is None:
             file_extension = os.path.splitext(name)[1]
             file_type = self.extensions.get(file_extension, "text")
@@ -108,21 +108,21 @@ class Prefs:
         if file_type is None or prefs is None:
             return False
         file_prefs = prefs.get(file_type)
-        return file_prefs and file_prefs.get("tabToSpaces")
+        return file_prefs and file_prefs.get("tab_to_spaces")
 
     def get_grammar(self, file_type):
         return self.grammars.get(file_type)
 
     def save(self, category, label, value):
         app.log.info(category, label, value)
-        prefCategory = self.category(category)
-        prefCategory[label] = value
-        prefsPath = os.path.expanduser(
+        pref_category = self.category(category)
+        pref_category[label] = value
+        prefs_path = os.path.expanduser(
             os.path.expandvars(
                 os.path.join(self.prefs_directory, f"{category}.json")
             )
         )
-        with open(prefsPath, "w", encoding="utf-8") as f:
+        with open(prefs_path, "w", encoding="utf-8") as f:
             try:
                 f.write(json.dumps(prefs[category]))
             except Exception as e:
@@ -133,61 +133,61 @@ class Prefs:
         app.log.startup("Available grammars:")
         for k, v in self.grammars.items():
             app.log.startup("  ", k, ":", len(v))
-        raise Exception('missing grammar for "' + grammarName + '" in prefs.py')
+        raise Exception('missing grammar for "' + grammar_name + '" in prefs.py')
 
-    def __set_up_grammars(self, defaultGrammars):
+    def __set_up_grammars(self, default_grammars):
         self.grammars = {}
         # Arrange all the grammars by name.
-        for k, v in defaultGrammars.items():
+        for k, v in default_grammars.items():
             v["name"] = k
             self.grammars[k] = v
 
         # Compile regexes for each grammar.
-        for k, v in defaultGrammars.items():
+        for k, v in default_grammars.items():
             if 0:
                 # keywords re.
-                v["keywordsRe"] = re.compile(
+                v["keywords_re"] = re.compile(
                     app.regex.join_re_word_list(
                         v.get("keywords", []) + v.get("types", [])
                     )
                 )
-                v["errorsRe"] = re.compile(app.regex.join_re_list(v.get("errors", [])))
-                v["specialsRe"] = re.compile(
+                v["errors_re"] = re.compile(app.regex.join_re_list(v.get("errors", [])))
+                v["specials_re"] = re.compile(
                     app.regex.join_re_list(v.get("special", []))
                 )
             # contains and end re.
-            matchGrammars = []
+            match_grammars = []
             markers = []
             # Index [0]
             if v.get("escaped"):
                 markers.append(v["escaped"])
-                matchGrammars.append(v)
+                match_grammars.append(v)
             else:
                 # Add a non-matchable placeholder.
                 markers.append(app.regex.RE_NON_MATCHING)
-                matchGrammars.append(None)
+                match_grammars.append(None)
             # Index [1]
             if v.get("end"):
                 markers.append(v["end"])
-                matchGrammars.append(v)
+                match_grammars.append(v)
             else:
                 # Add a non-matchable placeholder.
                 markers.append(app.regex.RE_NON_MATCHING)
-                matchGrammars.append(None)
+                match_grammars.append(None)
             # |Contains| markers start at index 2.
-            for grammarName in v.get("contains", []):
-                g = self.grammars.get(grammarName, None)
+            for grammar_name in v.get("contains", []):
+                g = self.grammars.get(grammar_name, None)
                 if g is None:
                     self._raise_grammar_not_found()
                 markers.append(g.get("begin", g.get("matches", "")))
-                matchGrammars.append(g)
+                match_grammars.append(g)
             # |Next| markers start after |contains|.
-            for grammarName in v.get("next", []):
-                g = self.grammars.get(grammarName, None)
+            for grammar_name in v.get("next", []):
+                g = self.grammars.get(grammar_name, None)
                 if g is None:
                     self._raise_grammar_not_found()
                 markers.append(g["begin"])
-                matchGrammars.append(g)
+                match_grammars.append(g)
             # |Errors| markers start after |next| markers.
             markers += v.get("errors", [])
             # |Keywords| markers start after |errors| markers.
@@ -205,41 +205,41 @@ class Prefs:
             # Carriage return characters are at index [-1] in markers.
             markers.append(r"\n")
             # app.log.startup('markers', v['name'], markers)
-            v["matchRe"] = re.compile(app.regex.join_re_list(markers))
+            v["match_re"] = re.compile(app.regex.join_re_list(markers))
             v["markers"] = markers
-            v["matchGrammars"] = matchGrammars
-            containsGrammarIndexLimit = 2 + len(v.get("contains", []))
-            nextGrammarIndexLimit = containsGrammarIndexLimit + len(v.get("next", []))
-            errorIndexLimit = nextGrammarIndexLimit + len(v.get("errors", []))
-            keywordIndexLimit = errorIndexLimit + len(v.get("keywords", []))
-            typeIndexLimit = keywordIndexLimit + len(v.get("types", []))
-            specialIndexLimit = typeIndexLimit + len(v.get("special", []))
-            v["indexLimits"] = (
-                containsGrammarIndexLimit,
-                nextGrammarIndexLimit,
-                errorIndexLimit,
-                keywordIndexLimit,
-                typeIndexLimit,
-                specialIndexLimit,
+            v["match_grammars"] = match_grammars
+            contains_grammar_index_limit = 2 + len(v.get("contains", []))
+            next_grammar_index_limit = contains_grammar_index_limit + len(v.get("next", []))
+            error_index_limit = next_grammar_index_limit + len(v.get("errors", []))
+            keyword_index_limit = error_index_limit + len(v.get("keywords", []))
+            type_index_limit = keyword_index_limit + len(v.get("types", []))
+            special_index_limit = type_index_limit + len(v.get("special", []))
+            v["index_limits"] = (
+                contains_grammar_index_limit,
+                next_grammar_index_limit,
+                error_index_limit,
+                keyword_index_limit,
+                type_index_limit,
+                special_index_limit,
             )
 
         # Reset the re.cache for user regexes.
         re.purge()
 
-    def __set_up_file_types(self, defaultFileTypes):
-        self.nameToType = {}
+    def __set_up_file_types(self, default_file_types):
+        self.name_to_type = {}
         self.extensions = {}
-        fileTypes = {}
-        for k, v in defaultFileTypes.items():
+        file_types = {}
+        for k, v in default_file_types.items():
             for name in v.get("name", []):
-                self.nameToType[name] = v.get("grammar")
+                self.name_to_type[name] = v.get("grammar")
             for ext in v["ext"]:
                 self.extensions[ext] = v.get("grammar")
-            fileTypes[k] = v
+            file_types[k] = v
         if 0:
             app.log.info("extensions")
             for k, v in extensions.items():
                 app.log.info("  ", k, ":", v)
-            app.log.info("fileTypes")
-            for k, v in fileTypes.items():
+            app.log.info("file_types")
+            for k, v in file_types.items():
                 app.log.info("  ", k, ":", v)

@@ -18,7 +18,7 @@ import sys
 from app.curses_util import *
 import app.fake_curses_testing
 
-kTestFile = "#automatic_column_adjustment_test_file_with_unlikely_file_name~"
+TEST_FILE = "#automatic_column_adjustment_test_file_with_unlikely_file_name~"
 
 class AutomaticColumnAdjustmentCases(app.fake_curses_testing.FakeCursesTestCase):
     def setUp(self):
@@ -101,7 +101,7 @@ class AutomaticColumnAdjustmentCases(app.fake_curses_testing.FakeCursesTestCase)
                         "                                        ",
                     ],
                 ),
-                # scrollCol should be set to 0 since line 1 fits on screen.
+                # scroll_col should be set to 0 since line 1 fits on screen.
                 KEY_UP,
                 self.display_check(
                     0,
@@ -147,7 +147,7 @@ class AutomaticColumnAdjustmentCases(app.fake_curses_testing.FakeCursesTestCase)
                         "                                        ",
                     ],
                 ),
-                # scrollCol should not change since line 1 doesn't fit on
+                # scroll_col should not change since line 1 doesn't fit on
                 # screen.
                 KEY_DOWN,
                 self.display_check(
@@ -200,7 +200,7 @@ class AutomaticColumnAdjustmentCases(app.fake_curses_testing.FakeCursesTestCase)
                 KEY_BACKSPACE1,
                 KEY_BACKSPACE1,
                 KEY_UP,
-                # Since line 3 now fits on screen, this should set scrollCol to
+                # Since line 3 now fits on screen, this should set scroll_col to
                 # 0.
                 KEY_DOWN,
                 self.display_check(

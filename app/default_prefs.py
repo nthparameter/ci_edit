@@ -361,165 +361,165 @@ color8 = {
 for i in color8.values():
     assert 0 <= i < 8, i
 
-commentColor16Index = 2
-defaultColor16Index = 1
-foundColor16Index = 3
-keywordsColor16Index = 2
-pathColor16Index = 6
-selectedColor16Index = 4  # Active find is a selection.
-specialsColor16Index = 5
-stringColor16Index = 6
-outsideOfBufferColor16Index = 7
-borderColor16Index = 8
-borderHighlightColor16Index = 9
+comment_color_16_index = 2
+default_color_16_index = 1
+found_color_16_index = 3
+keywords_color_16_index = 2
+path_color_16_index = 6
+selected_color_16_index = 4  # Active find is a selection.
+specials_color_16_index = 5
+string_color_16_index = 6
+outside_of_buffer_color_16_index = 7
+border_color_16_index = 8
+border_highlight_color_16_index = 9
 
 color16 = {
-    "_pre_selection": stringColor16Index,
+    "_pre_selection": string_color_16_index,
     "bracket": 6,
-    "c": defaultColor16Index,
-    "c_path_bracketed_file": pathColor16Index,
-    "c_path_quoted_file": pathColor16Index,
+    "c": default_color_16_index,
+    "c_path_bracketed_file": path_color_16_index,
+    "c_path_quoted_file": path_color_16_index,
     "c_preprocessor": 1,
-    "c_preprocessor_include": specialsColor16Index,
-    "c_raw_string1": stringColor16Index,
-    "c_raw_string2": stringColor16Index,
-    "c_string1": stringColor16Index,
-    "c_string2": stringColor16Index,
+    "c_preprocessor_include": specials_color_16_index,
+    "c_raw_string1": string_color_16_index,
+    "c_raw_string2": string_color_16_index,
+    "c_string1": string_color_16_index,
+    "c_string2": string_color_16_index,
     "context_menu": 15,
-    "cpp_block_comment": commentColor16Index,
-    "cpp_line_comment": commentColor16Index,
-    "cpp_string_literal": stringColor16Index,
+    "cpp_block_comment": comment_color_16_index,
+    "cpp_line_comment": comment_color_16_index,
+    "cpp_string_literal": string_color_16_index,
     "current_line": 15,
-    "dart_nesting_block_comment": commentColor16Index,
-    "debug_window": defaultColor16Index,
-    "default": defaultColor16Index,
-    "doc_block_comment": commentColor16Index,
+    "dart_nesting_block_comment": comment_color_16_index,
+    "debug_window": default_color_16_index,
+    "default": default_color_16_index,
+    "doc_block_comment": comment_color_16_index,
     "error": 9,
-    "found_find": foundColor16Index,
+    "found_find": found_color_16_index,
     "highlight": 15,
-    "html_block_comment": commentColor16Index,
-    "html_element": keywordsColor16Index,
-    "html_element_end": keywordsColor16Index,
-    "js_string": stringColor16Index,
-    "keyword": keywordsColor16Index,
-    "line_number": borderColor16Index,
-    "line_number_current": borderHighlightColor16Index,
+    "html_block_comment": comment_color_16_index,
+    "html_element": keywords_color_16_index,
+    "html_element_end": keywords_color_16_index,
+    "js_string": string_color_16_index,
+    "keyword": keywords_color_16_index,
+    "line_number": border_color_16_index,
+    "line_number_current": border_highlight_color_16_index,
     "line_overflow": 15,
-    "logo": borderColor16Index,
+    "logo": border_color_16_index,
     "matching_bracket": 15,
     "matching_find": 9,
-    "md_code": stringColor16Index,
-    "md_heading": specialsColor16Index,
-    "md_link": stringColor16Index,
-    "message_line": borderColor16Index,
+    "md_code": string_color_16_index,
+    "md_heading": specials_color_16_index,
+    "md_link": string_color_16_index,
+    "message_line": border_color_16_index,
     "misspelling": 9,
     "number": 2,
-    "outside_document": outsideOfBufferColor16Index,
-    "popup_window": borderColor16Index,
-    "pound_comment": commentColor16Index,
-    "py_import": keywordsColor16Index,
-    "py_import_file": stringColor16Index,
-    "py_raw_string1": stringColor16Index,
-    "py_raw_string2": stringColor16Index,
-    "py_string1": stringColor16Index,
-    "py_string2": stringColor16Index,
-    "quoted_string2": stringColor16Index,
-    "regex_string": stringColor16Index,
-    "right_column": outsideOfBufferColor16Index,
-    "rs_block_comment": commentColor16Index,
-    "rs_byte_string1": stringColor16Index,
-    "rs_byte_string2": stringColor16Index,
-    "rs_label_or_char": stringColor16Index,
-    "rs_raw_string": stringColor16Index,
-    "selected": selectedColor16Index,
-    "special": specialsColor16Index,
-    "status_line": borderColor16Index,
-    "status_line_error": borderHighlightColor16Index,
-    "text": defaultColor16Index,
-    "top_info": borderColor16Index,
+    "outside_document": outside_of_buffer_color_16_index,
+    "popup_window": border_color_16_index,
+    "pound_comment": comment_color_16_index,
+    "py_import": keywords_color_16_index,
+    "py_import_file": string_color_16_index,
+    "py_raw_string1": string_color_16_index,
+    "py_raw_string2": string_color_16_index,
+    "py_string1": string_color_16_index,
+    "py_string2": string_color_16_index,
+    "quoted_string2": string_color_16_index,
+    "regex_string": string_color_16_index,
+    "right_column": outside_of_buffer_color_16_index,
+    "rs_block_comment": comment_color_16_index,
+    "rs_byte_string1": string_color_16_index,
+    "rs_byte_string2": string_color_16_index,
+    "rs_label_or_char": string_color_16_index,
+    "rs_raw_string": string_color_16_index,
+    "selected": selected_color_16_index,
+    "special": specials_color_16_index,
+    "status_line": border_color_16_index,
+    "status_line_error": border_highlight_color_16_index,
+    "text": default_color_16_index,
+    "top_info": border_color_16_index,
     "trailing_space": 15,
-    "type": keywordsColor16Index,
+    "type": keywords_color_16_index,
 }
 
 for i in color16.values():
     assert 0 <= i < 16, i
 
-commentColorIndex = 2
-defaultColorIndex = 18
-foundColorIndex = 32
-keywordsColorIndex = 21
-pathColorIndex = 30
-selectedColor = 64  # Active find is a selection.
-specialsColorIndex = 20
-stringColorIndex = 5
-outsideOfBufferColorIndex = 211
+comment_color_index = 2
+default_color_index = 18
+found_color_index = 32
+keywords_color_index = 21
+path_color_index = 30
+selected_color = 64  # Active find is a selection.
+specials_color_index = 20
+string_color_index = 5
+outside_of_buffer_color_index = 211
 
 color256 = {
-    "_pre_selection": stringColorIndex,
+    "_pre_selection": string_color_index,
     "bracket": 6,
-    "c": defaultColorIndex,
-    "c_path_bracketed_file": pathColorIndex,
-    "c_path_quoted_file": pathColorIndex,
+    "c": default_color_index,
+    "c_path_bracketed_file": path_color_index,
+    "c_path_quoted_file": path_color_index,
     "c_preprocessor": 1,
-    "c_preprocessor_include": specialsColorIndex,
-    "c_raw_string1": stringColorIndex,
-    "c_raw_string2": stringColorIndex,
-    "c_string1": stringColorIndex,
-    "c_string2": stringColorIndex,
+    "c_preprocessor_include": specials_color_index,
+    "c_raw_string1": string_color_index,
+    "c_raw_string2": string_color_index,
+    "c_string1": string_color_index,
+    "c_string2": string_color_index,
     "context_menu": 201,
-    "cpp_block_comment": commentColorIndex,
-    "cpp_line_comment": commentColorIndex,
-    "cpp_string_literal": stringColorIndex,
+    "cpp_block_comment": comment_color_index,
+    "cpp_line_comment": comment_color_index,
+    "cpp_string_literal": string_color_index,
     "current_line": 180,
-    "dart_nesting_block_comment": commentColorIndex,
-    "debug_window": defaultColorIndex,
-    "default": defaultColorIndex,
-    "doc_block_comment": commentColorIndex,
+    "dart_nesting_block_comment": comment_color_index,
+    "debug_window": default_color_index,
+    "default": default_color_index,
+    "doc_block_comment": comment_color_index,
     "error": 9,
-    "found_find": foundColorIndex,
+    "found_find": found_color_index,
     "highlight": 96,
-    "html_block_comment": commentColorIndex,
-    "html_element": keywordsColorIndex,
-    "html_element_end": keywordsColorIndex,
-    "js_string": stringColorIndex,
-    "keyword": keywordsColorIndex,
+    "html_block_comment": comment_color_index,
+    "html_element": keywords_color_index,
+    "html_element_end": keywords_color_index,
+    "js_string": string_color_index,
+    "keyword": keywords_color_index,
     "line_number": 168,
     "line_number_current": 146,
     "line_overflow": 105,
     "logo": 168,
     "matching_bracket": 201,
     "matching_find": 9,
-    "md_code": stringColorIndex,
-    "md_heading": specialsColorIndex,
-    "md_link": stringColorIndex,
+    "md_code": string_color_index,
+    "md_heading": specials_color_index,
+    "md_link": string_color_index,
     "message_line": 3,
     "misspelling": 9,
     "number": 31,
-    "outside_document": outsideOfBufferColorIndex,
+    "outside_document": outside_of_buffer_color_index,
     "popup_window": 117,
-    "pound_comment": commentColorIndex,
-    "py_import": keywordsColorIndex,
-    "py_import_file": stringColorIndex,
-    "py_raw_string1": stringColorIndex,
-    "py_raw_string2": stringColorIndex,
-    "py_string1": stringColorIndex,
-    "py_string2": stringColorIndex,
-    "quoted_string2": stringColorIndex,
-    "regex_string": stringColorIndex,
-    "right_column": outsideOfBufferColorIndex,
-    "rs_block_comment": commentColorIndex,
-    "rs_byte_string1": stringColorIndex,
-    "rs_byte_string2": stringColorIndex,
-    "rs_label_or_char": stringColorIndex,
-    "rs_raw_string": stringColorIndex,
-    "selected": selectedColor,
-    "special": specialsColorIndex,
+    "pound_comment": comment_color_index,
+    "py_import": keywords_color_index,
+    "py_import_file": string_color_index,
+    "py_raw_string1": string_color_index,
+    "py_raw_string2": string_color_index,
+    "py_string1": string_color_index,
+    "py_string2": string_color_index,
+    "quoted_string2": string_color_index,
+    "regex_string": string_color_index,
+    "right_column": outside_of_buffer_color_index,
+    "rs_block_comment": comment_color_index,
+    "rs_byte_string1": string_color_index,
+    "rs_byte_string2": string_color_index,
+    "rs_label_or_char": string_color_index,
+    "rs_raw_string": string_color_index,
+    "selected": selected_color,
+    "special": specials_color_index,
     "status_line": 168,
     "status_line_error": 161,
-    "text": defaultColorIndex,
+    "text": default_color_index,
     "top_info": 168,
     "trailing_space": 180,
-    "type": keywordsColorIndex,
+    "type": keywords_color_index,
 }
 
 for i in color256.values():
@@ -532,7 +532,7 @@ assert color16.keys() == color256.keys()
 # These prefs are not fully working.
 prefs = {
     "color": {},
-    "devTest": {},
+    "dev_test": {},
     # TODO(dschuyler): provide a UI to enable selected dictionaries.
     "dictionaries": {
         # The base dictionaries are loaded at startup. They are active for all
@@ -560,62 +560,62 @@ prefs = {
     },
     "editor": {
         # Whether to automatically indent after pressing carriage return.
-        "autoIndent": True,
+        "auto_indent": True,
         # E.g. When key "(" is pressed, "()" is typed.
-        "autoInsertClosingCharacter": False,
+        "auto_insert_closing_character": False,
         # When opening a path that starts with "//", the value is used to
         # replace the first slash in a double slash prefix.
-        "baseDirEnv": "/",  # "${FUCHSIA_DIR}",
+        "base_dir_env": "/",  # "${FUCHSIA_DIR}",
         # Scroll the window to keep the cursor on screen.
-        "captiveCursor": False,
-        "colorScheme": "default",
+        "captive_cursor": False,
+        "color_scheme": "default",
         # Show hidden files in file list.
-        "filesShowDotFiles": True,
+        "files_show_dot_files": True,
         # Show the size on disk for files in the file list.
-        "filesShowSizes": True,
-        "filesShowModifiedDates": True,
-        "filesSortAscendingByName": True,
-        "filesSortAscendingBySize": None,
-        "filesSortAscendingByModifiedDate": None,
-        "findDotAll": False,
-        "findIgnoreCase": True,
-        "findLocale": False,
-        "findMultiLine": False,
-        "findUnicode": True,
-        "findUseRegex": True,
-        "findVerbose": False,
-        "findWholeWord": False,
+        "files_show_sizes": True,
+        "files_show_modified_dates": True,
+        "files_sort_ascending_by_name": True,
+        "files_sort_ascending_by_size": None,
+        "files_sort_ascending_by_modified_date": None,
+        "find_dot_all": False,
+        "find_ignore_case": True,
+        "find_locale": False,
+        "find_multi_line": False,
+        "find_unicode": True,
+        "find_use_regex": True,
+        "find_verbose": False,
+        "find_whole_word": False,
         # An example indentation. If the grammar has its own indent that can
         # override this value.
         "indentation": "  ",
         "line_limit_indicator": 80,
         # When the mouse wheel is moved, which way should the window scroll.
-        "naturalScrollDirection": True,
-        "onSaveStripTrailingSpaces": True,
+        "natural_scroll_direction": True,
+        "on_save_strip_trailing_spaces": True,
         # Ratio of columns: 0 left, 1.0 right.
-        "optimalCursorCol": 0.98,
+        "optimal_cursor_col": 0.98,
         # Ratio of rows: 0 top, 0.5 middle, 1.0 bottom.
-        "optimalCursorRow": 0.28,
+        "optimal_cursor_row": 0.28,
         "palette": "default",
         "palette8": "default8",
         "palette16": "default16",
         "palette256": "default256",
-        "predictionShowOpenFiles": True,
-        "predictionShowAlternateFiles": True,
-        "predictionShowRecentFiles": True,
-        "predictionSortAscendingByPrediction": True,
-        "predictionSortAscendingByType": None,
-        "predictionSortAscendingByName": None,
-        "predictionSortAscendingByStatus": None,
-        "saveUndo": True,
-        "showLineNumbers": True,
-        "showStatusLine": True,
-        "showTopInfo": True,
-        # Convert/expand tabs to spaces (see tabSize).
-        "tabToSpaces": True,
+        "prediction_show_open_files": True,
+        "prediction_show_alternate_files": True,
+        "prediction_show_recent_files": True,
+        "prediction_sort_ascending_by_prediction": True,
+        "prediction_sort_ascending_by_type": None,
+        "prediction_sort_ascending_by_name": None,
+        "prediction_sort_ascending_by_status": None,
+        "save_undo": True,
+        "show_line_numbers": True,
+        "show_status_line": True,
+        "show_top_info": True,
+        # Convert/expand tabs to spaces (see tab_size).
+        "tab_to_spaces": True,
         # When expanding tabs to spaces, how many spaces to use. This is not
         # used for indentation, see "indentation" or grammar "indent".
-        "tabSize": 8,
+        "tab_size": 8,
         # Use a background thread to process changes and parse grammars.
         "useBgThread": True,
     },
@@ -623,13 +623,13 @@ prefs = {
         "bash": {
             "ext": [".bash", ".sh"],
             "grammar": "bash",
-            "tabToSpaces": True,
+            "tab_to_spaces": True,
         },
         "bazel": {
             "ext": [],
             "grammar": "bazel",
             "name": ["BUILD"],
-            "tabToSpaces": True,
+            "tab_to_spaces": True,
         },
         "binary": {
             "ext": [
@@ -649,12 +649,12 @@ prefs = {
                 ".zip",
             ],
             "grammar": "binary",
-            "tabToSpaces": False,
+            "tab_to_spaces": False,
         },
         "c": {
             "ext": [".c"],
             "grammar": "c",
-            "tabToSpaces": True,
+            "tab_to_spaces": True,
         },
         "cpp": {
             "ext": [
@@ -669,99 +669,99 @@ prefs = {
                 ".h",  # Hmm, some source uses .h for cpp headers.
             ],
             "grammar": "cpp",
-            "tabToSpaces": True,
+            "tab_to_spaces": True,
         },
         "css": {
             "ext": [".css", "_css.html"],
             "grammar": "css",
-            "tabToSpaces": True,
+            "tab_to_spaces": True,
         },
         "dart": {
             "ext": [
                 ".dart",
             ],
             "grammar": "dart",
-            "tabToSpaces": True,
+            "tab_to_spaces": True,
         },
         "fidl": {
             "ext": [".fidl"],
             "grammar": "fidl",
-            "tabToSpaces": True,
+            "tab_to_spaces": True,
         },
         "gn": {
             "ext": [".gn", ".gni"],
             "grammar": "gn",
-            "tabToSpaces": True,
+            "tab_to_spaces": True,
         },
         "golang": {
             "ext": [
                 ".go",
             ],
             "grammar": "golang",
-            "tabToSpaces": True,
+            "tab_to_spaces": True,
         },
         "grd": {
             "ext": [".grd", ".grdp"],
             "grammar": "grd",
-            "tabToSpaces": True,
+            "tab_to_spaces": True,
         },
         "html": {
             "ext": [".htm", ".html"],
             "grammar": "html",
-            "tabToSpaces": True,
+            "tab_to_spaces": True,
         },
         "java": {
             "ext": [
                 ".java",
             ],
             "grammar": "java",
-            "tabToSpaces": True,
+            "tab_to_spaces": True,
         },
         "js": {
             "ext": [".json", ".js"],
             "grammar": "js",
-            "tabToSpaces": True,
+            "tab_to_spaces": True,
         },
         "json5": {
             "ext": [".json5"],
             "grammar": "json5",
-            "tabToSpaces": True,
+            "tab_to_spaces": True,
         },
         "make": {
             "ext": [],
             "grammar": "make",
             "name": ["Makefile"],
-            "tabToSpaces": False,
+            "tab_to_spaces": False,
         },
         "md": {
             "ext": [".md"],
             "grammar": "md",
-            "tabToSpaces": True,
+            "tab_to_spaces": True,
         },
         "proto": {
             "ext": [".proto"],
             "grammar": "proto",
-            "tabToSpaces": True,
+            "tab_to_spaces": True,
         },
         "python": {
             "ext": [".py"],
             "grammar": "py",
-            "tabToSpaces": True,
+            "tab_to_spaces": True,
         },
         "rust": {
             "ext": [".rs"],
             "grammar": "rs",
-            "tabToSpaces": True,
+            "tab_to_spaces": True,
         },
         "text": {
             "ext": [".txt"],
             "grammar": "text",
-            "tabToSpaces": False,
+            "tab_to_spaces": False,
         },
         "words": {
             "ext": [".words", ""],
             "grammar": "words",
-            "tabToSpaces": True,
+            "tab_to_spaces": True,
         },
     },
     "grammar": {
@@ -785,7 +785,7 @@ prefs = {
         #   "single_line": Boolean, Whether entire grammar must be on a single
         #       line,
         #   "special": None or list of string.
-        #   "tabToSpaces": Boolean, Convert/expand tabs to spaces (see tabSize).
+        #   "tab_to_spaces": Boolean, Convert/expand tabs to spaces (see tab_size).
         #   "type": text or binary. default: text.
         #   "contains": other grammars that may be contained within this
         #       grammar.
@@ -1867,13 +1867,13 @@ prefs = {
         # entry.
         "test": {
             # Same foreground color in all 256 slots.
-            "foregroundIndexes": [18] * 256,
+            "foreground_indexes": [18] * 256,
             # Separate background color in every slot.
-            "backgroundIndexes": [i for i in range(0, 256)],
+            "background_indexes": [i for i in range(0, 256)],
         },
         "dark": {
             # This series repeats 8 times (32 * 8 = 256).
-            "foregroundIndexes": [
+            "foreground_indexes": [
                 14,
                 202,
                 39,
@@ -1909,7 +1909,7 @@ prefs = {
             ]
             * 8,
             # Each of the foreground colors repeat 8 times (32 * 8 = 256).
-            "backgroundIndexes": [232] * 32
+            "background_indexes": [232] * 32
             + [229] * 32
             + [6] * 32
             + [221] * 32
@@ -1922,15 +1922,15 @@ prefs = {
             # With only 8 colors, make a custom pair for each slot.
             # 0: black, 1: red, 2: green, 3: yellow, 4: blue, 5: pink, 6: cyan,
             # 7: gray.
-            "foregroundIndexes": [1, 4, 2, 3, 4, 5, 6, 0],
-            "backgroundIndexes": [0, 6, 7, 7, 7, 7, 7, 7],
+            "foreground_indexes": [1, 4, 2, 3, 4, 5, 6, 0],
+            "background_indexes": [0, 6, 7, 7, 7, 7, 7, 7],
         },
         "default16": {
             # With only 16 colors, make a custom pair for each slot.
             # 0: black, 1: red, 2: green, 3: yellow, 4: blue, 5: pink, 6: cyan,
             # 7: gray.
-            "foregroundIndexes": [0, 1, 2, 3, 4, 5, 6, 7, 8, 4, 2, 3, 4, 5, 6, 0],
-            "backgroundIndexes": [
+            "foreground_indexes": [0, 1, 2, 3, 4, 5, 6, 7, 8, 4, 2, 3, 4, 5, 6, 0],
+            "background_indexes": [
                 0,
                 15,
                 15,
@@ -1951,7 +1951,7 @@ prefs = {
         },
         "default256": {
             # This series repeats 8 times (32 * 8 = 256).
-            "foregroundIndexes": [
+            "foreground_indexes": [
                 18,
                 1,
                 2,
@@ -1987,7 +1987,7 @@ prefs = {
             ]
             * 8,
             # Each of the foreground colors repeat 8 times (32 * 8 = 256).
-            "backgroundIndexes": [231] * 32
+            "background_indexes": [231] * 32
             + [229] * 32
             + [14] * 32
             + [221] * 32
@@ -1998,11 +1998,11 @@ prefs = {
         },
     },
     "status": {
-        "showTips": False,
+        "show_tips": False,
     },
     "user_data": {
-        "homePath": os.path.expanduser("~/.ci_edit"),
-        "historyPath": os.path.join(os.path.expanduser("~/.ci_edit"), "history.dat"),
+        "home_path": os.path.expanduser("~/.ci_edit"),
+        "history_path": os.path.join(os.path.expanduser("~/.ci_edit"), "history.dat"),
     },
 }
 

@@ -22,7 +22,7 @@ import os
 
 import app.config
 
-def path_row_column(path, projectDir):
+def path_row_column(path, project_dir):
     """Guess whether unrecognized file path refers to another file or has line
     and column information.
 
@@ -32,49 +32,49 @@ def path_row_column(path, projectDir):
     error ':<line number>' may be appended. If the file doesn't exist as-is, try
     removing those decorations, and if that exists use that path instead.
 
-    Returns: (full_path, openToRow, openToCol)
+    Returns: (full_path, open_to_row, open_to_col)
     """
     if app.config.strict_debug:
         assert isinstance(path, unicode)
-        assert projectDir is None or isinstance(projectDir, unicode)
-    openToRow = None
-    openToColumn = None
+        assert project_dir is None or isinstance(project_dir, unicode)
+    open_to_row = None
+    open_to_column = None
     if os.path.isfile(path):  # or os.path.isdir(os.path.dirname(path)):
-        return path, openToRow, openToColumn
+        return path, open_to_row, open_to_column
     pieces = path.split(":")
     if pieces[-1] == "":
         if len(pieces) == 3:
             try:
-                openToRow = int(pieces[1]) - 1
+                open_to_row = int(pieces[1]) - 1
             except ValueError:
                 pass
         elif len(pieces) == 4:
             try:
-                openToRow = int(pieces[1]) - 1
-                openToColumn = int(pieces[2]) - 1
+                open_to_row = int(pieces[1]) - 1
+                open_to_column = int(pieces[2]) - 1
             except ValueError:
                 pass
     else:
         if len(pieces) == 2:
             try:
-                openToRow = int(pieces[1]) - 1
+                open_to_row = int(pieces[1]) - 1
             except ValueError:
                 pass
         elif len(pieces) == 3:
             try:
-                openToRow = int(pieces[1]) - 1
-                openToColumn = int(pieces[2]) - 1
+                open_to_row = int(pieces[1]) - 1
+                open_to_column = int(pieces[2]) - 1
             except ValueError:
                 pass
-    if openToRow is not None:
+    if open_to_row is not None:
         path = pieces[0]
     if len(path) > 2:  #  and not os.path.isdir(path[:2]):
-        if projectDir is not None and path.startswith("//"):
-            path = projectDir + path[1:]
+        if project_dir is not None and path.startswith("//"):
+            path = project_dir + path[1:]
         elif path[1] == "/":
             if os.path.isfile(path[2:]):
                 path = path[2:]
-    return path, openToRow, openToColumn
+    return path, open_to_row, open_to_column
 
 def expand_full_path(path):
     return os.path.abspath(os.path.expanduser(os.path.expandvars(path)))

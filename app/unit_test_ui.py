@@ -22,7 +22,7 @@ from app.curses_util import *
 import app.ci_program
 import app.fake_curses_testing
 
-kTestFile = "#application_test_file_with_unlikely_file_name~"
+TEST_FILE = "#application_test_file_with_unlikely_file_name~"
 
 class UiBasicsTestCases(app.fake_curses_testing.FakeCursesTestCase):
     def setUp(self):
@@ -31,9 +31,9 @@ class UiBasicsTestCases(app.fake_curses_testing.FakeCursesTestCase):
 
     def test_logo(self):
         self.run_with_test_file(
-            kTestFile,
+            TEST_FILE,
             [
-                # self.assertEqual(256, self.prg.prefs.startup['numColors']),
+                # self.assertEqual(256, self.prg.prefs.startup['num_colors']),
                 self.display_check(0, 0, [" ci "]),
                 self.display_check_style(
                     0, 0, 1, len(" ci "), self.prg.color.get("logo", 0)
@@ -45,7 +45,7 @@ class UiBasicsTestCases(app.fake_curses_testing.FakeCursesTestCase):
     def test_prediction(self):
         # self.set_movie_mode(True)
         self.run_with_test_file(
-            kTestFile,
+            TEST_FILE,
             [
                 self.display_check(-1, 0, ["      "]),
                 # CTRL_P, self.display_check(-1, 0, ["p: "]), CTRL_J,
@@ -57,7 +57,7 @@ class UiBasicsTestCases(app.fake_curses_testing.FakeCursesTestCase):
 
     def test_resize_screen(self):
         self.run_with_test_file(
-            kTestFile,
+            TEST_FILE,
             [
                 self.display_check(
                     0,
@@ -104,13 +104,13 @@ class UiBasicsTestCases(app.fake_curses_testing.FakeCursesTestCase):
     def test_save_on_close(self):
         # self.set_movie_mode(True)
         self.run_with_test_file(
-            kTestFile,
+            TEST_FILE,
             [
                 self.display_check(
                     0,
                     0,
                     [
-                        " ci    " + kTestFile[-30:],
+                        " ci    " + TEST_FILE[-30:],
                     ],
                 ),
                 self.cursor_check(2, 7),
@@ -160,13 +160,13 @@ class UiBasicsTestCases(app.fake_curses_testing.FakeCursesTestCase):
                     ],
                 ),
                 CTRL_O,
-                self.write_text(kTestFile),
+                self.write_text(TEST_FILE),
                 CTRL_J,
                 self.display_check(
                     0,
                     0,
                     [
-                        " ci    " + kTestFile[-30:],
+                        " ci    " + TEST_FILE[-30:],
                         "            ",
                         "     1 te   ",
                     ],
@@ -177,7 +177,7 @@ class UiBasicsTestCases(app.fake_curses_testing.FakeCursesTestCase):
 
     def test_message_on_text_selection(self):
         self.run_with_test_file(
-            kTestFile,
+            TEST_FILE,
             [
                 self.cursor_check(2, 7),
                 "H",
@@ -213,7 +213,7 @@ class UiBasicsTestCases(app.fake_curses_testing.FakeCursesTestCase):
 
     def test_session(self):
         self.run_with_test_file(
-            kTestFile,
+            TEST_FILE,
             [
                 self.display_check(
                     0,
@@ -290,7 +290,7 @@ class UiBasicsTestCases(app.fake_curses_testing.FakeCursesTestCase):
 
     def test_text_contents(self):
         self.run_with_test_file(
-            kTestFile,
+            TEST_FILE,
             [
                 self.display_check(2, 7, ["        "]),
                 "t",
@@ -306,7 +306,7 @@ class UiBasicsTestCases(app.fake_curses_testing.FakeCursesTestCase):
     def test_whole_screen(self):
         # self.set_movie_mode(True)
         self.run_with_test_file(
-            kTestFile,
+            TEST_FILE,
             [
                 self.display_check(
                     0,

@@ -20,14 +20,14 @@ class Colors:
         self.colors = 256
         self.__cache = {}
 
-    def get(self, colorType, delta=0):
-        if type(colorType) == type(0):
-            colorIndex = colorType
+    def get(self, color_type, delta=0):
+        if type(color_type) == type(0):
+            color_index = color_type
         else:
-            colorIndex = self.__colorPrefs[colorType]
-        colorIndex = min(self.colors - 1, colorIndex + delta)
-        color = self.__cache.get(colorIndex) or curses.color_pair(colorIndex)
-        self.__cache[colorIndex] = color
-        if colorType in ("error", "misspelling"):
+            color_index = self.__colorPrefs[color_type]
+        color_index = min(self.colors - 1, color_index + delta)
+        color = self.__cache.get(color_index) or curses.color_pair(color_index)
+        self.__cache[color_index] = color
+        if color_type in ("error", "misspelling"):
             color |= curses.A_BOLD | curses.A_REVERSE
         return color

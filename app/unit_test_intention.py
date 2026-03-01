@@ -22,7 +22,7 @@ from app.curses_util import *
 import app.ci_program
 import app.fake_curses_testing
 
-kTestFile = "#application_test_file_with_unlikely_file_name~"
+TEST_FILE = "#application_test_file_with_unlikely_file_name~"
 
 class IntentionTestCases(app.fake_curses_testing.FakeCursesTestCase):
     def setUp(self):
@@ -30,11 +30,11 @@ class IntentionTestCases(app.fake_curses_testing.FakeCursesTestCase):
         app.fake_curses_testing.FakeCursesTestCase.set_up(self)
 
     def test_open_and_quit(self):
-        self.run_with_test_file(kTestFile, [CTRL_Q])
+        self.run_with_test_file(TEST_FILE, [CTRL_Q])
 
     def test_new_file_quit(self):
         self.run_with_test_file(
-            kTestFile, [self.display_check(2, 7, ["        "]), CTRL_Q]
+            TEST_FILE, [self.display_check(2, 7, ["        "]), CTRL_Q]
         )
 
     def test_quit_cancel(self):
@@ -66,7 +66,7 @@ class IntentionTestCases(app.fake_curses_testing.FakeCursesTestCase):
 
     def test_quit_save_as(self):
         # self.set_movie_mode(True)
-        self.assertFalse(os.path.isfile(kTestFile))
+        self.assertFalse(os.path.isfile(TEST_FILE))
         self.run_with_fake_inputs(
             [
                 self.display_check(
@@ -79,11 +79,11 @@ class IntentionTestCases(app.fake_curses_testing.FakeCursesTestCase):
                 "x",
                 CTRL_Q,
                 "y",
-                self.write_text(kTestFile),
+                self.write_text(TEST_FILE),
                 CTRL_J,
                 CTRL_Q,
             ]
         )
-        self.assertTrue(os.path.isfile(kTestFile))
-        os.unlink(kTestFile)
-        self.assertFalse(os.path.isfile(kTestFile))
+        self.assertTrue(os.path.isfile(TEST_FILE))
+        os.unlink(TEST_FILE)
+        self.assertFalse(os.path.isfile(TEST_FILE))

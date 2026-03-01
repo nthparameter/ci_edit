@@ -14,20 +14,20 @@
 
 import re
 
-def join_re_list(reList):
-    return r"(" + r")|(".join(reList) + r")"
+def join_re_list(re_list):
+    return r"(" + r")|(".join(re_list) + r")"
 
-def join_re_word_list(reList):
-    return r"(\b" + r"\b)|(\b".join(reList) + r"\b)"
+def join_re_word_list(re_list):
+    return r"(\b" + r"\b)|(\b".join(re_list) + r"\b)"
 
 RE_NON_MATCHING = r"^\b$"
-kReNonMatching = re.compile(RE_NON_MATCHING)
+RE_NON_MATCHING = re.compile(RE_NON_MATCHING)
 
 # Beware, to include a ] in a set, it should be the first character in the set.
 # So, the first ] does not close the set and the second [ does not open a set.
 # The set of characters is ]{}()[.
 RE_BRACKETS = "[]{}()[]"
-kReBrackets = re.compile(RE_BRACKETS)
+RE_BRACKETS = re.compile(RE_BRACKETS)
 
 RE_COMMENTS = re.compile("(?:#|//).*$|/\*.*?\*/|<!--.*?-->")
 

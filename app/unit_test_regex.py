@@ -19,8 +19,8 @@ import app.regex
 
 class RegexTestCases(unittest.TestCase):
     def test_common_numbers(self):
-        def test_number(strInput, reg):
-            sre = app.regex.RE_NUMBERS.search(strInput)
+        def test_number(str_input, reg):
+            sre = app.regex.RE_NUMBERS.search(str_input)
             if sre is None:
                 self.assertEqual(sre, reg)
                 return

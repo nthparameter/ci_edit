@@ -81,8 +81,8 @@ KEY_ALT_A = 165
 KEY_ALT_B = 171
 KEY_ALT_C = 167
 KEY_ALT_S = 159
-KEY_ALT_SHIFT_PAGE_DOWN = b"kNXT4"
-KEY_ALT_SHIFT_PAGE_UP = b"kPRV4"
+KEY_ALT_SHIFT_PAGE_DOWN = b"NXT4"
+KEY_ALT_SHIFT_PAGE_UP = b"PRV4"
 KEY_BACKSPACE1 = curses.ascii.BS  # 8
 KEY_BACKSPACE2 = curses.ascii.DEL  # 127
 KEY_BACKSPACE3 = curses.KEY_BACKSPACE  # 263
@@ -118,23 +118,23 @@ if sys.platform == "darwin":
         67,
     )
 else:
-    KEY_ALT_LEFT = b"kLFT3"
-    KEY_ALT_RIGHT = b"kRIT3"
-    KEY_ALT_SHIFT_LEFT = b"kLFT4"
-    KEY_ALT_SHIFT_RIGHT = b"kRIT4"
+    KEY_ALT_LEFT = b"LFT3"
+    KEY_ALT_RIGHT = b"RIT3"
+    KEY_ALT_SHIFT_LEFT = b"LFT4"
+    KEY_ALT_SHIFT_RIGHT = b"RIT4"
 
 if "SSH_CLIENT" in os.environ:
     KEY_ALT_LEFT = (98,)  # Need a better way to sort this out.
     KEY_ALT_RIGHT = (102,)  # ditto
 
-KEY_CTRL_DOWN = b"kDN5"
-KEY_CTRL_SHIFT_DOWN = b"kDN6"
-KEY_CTRL_LEFT = b"kLFT5"
-KEY_CTRL_SHIFT_LEFT = b"kLFT6"
-KEY_CTRL_RIGHT = b"kRIT5"
-KEY_CTRL_SHIFT_RIGHT = b"kRIT6"
-KEY_CTRL_UP = b"kUP5"
-KEY_CTRL_SHIFT_UP = b"kUP6"
+KEY_CTRL_DOWN = b"DN5"
+KEY_CTRL_SHIFT_DOWN = b"DN6"
+KEY_CTRL_LEFT = b"LFT5"
+KEY_CTRL_SHIFT_LEFT = b"LFT6"
+KEY_CTRL_RIGHT = b"RIT5"
+KEY_CTRL_SHIFT_RIGHT = b"RIT6"
+KEY_CTRL_UP = b"UP5"
+KEY_CTRL_SHIFT_UP = b"UP6"
 
 KEY_F1 = curses.KEY_F1
 KEY_F2 = curses.KEY_F2
@@ -169,59 +169,59 @@ KEY_SHIFT_RIGHT = curses.KEY_SRIGHT
 KEY_MOUSE = curses.KEY_MOUSE
 KEY_RESIZE = curses.KEY_RESIZE
 
-def mouse_button_name(buttonState):
+def mouse_button_name(button_state):
     """Curses debugging. Prints readable name for state of mouse buttons."""
     result = ""
-    if buttonState & curses.BUTTON1_RELEASED:
+    if button_state & curses.BUTTON1_RELEASED:
         result += "BUTTON1_RELEASED"
-    if buttonState & curses.BUTTON1_PRESSED:
+    if button_state & curses.BUTTON1_PRESSED:
         result += "BUTTON1_PRESSED"
-    if buttonState & curses.BUTTON1_CLICKED:
+    if button_state & curses.BUTTON1_CLICKED:
         result += "BUTTON1_CLICKED"
-    if buttonState & curses.BUTTON1_DOUBLE_CLICKED:
+    if button_state & curses.BUTTON1_DOUBLE_CLICKED:
         result += "BUTTON1_DOUBLE_CLICKED"
 
-    if buttonState & curses.BUTTON2_RELEASED:
+    if button_state & curses.BUTTON2_RELEASED:
         result += "BUTTON2_RELEASED"
-    if buttonState & curses.BUTTON2_PRESSED:
+    if button_state & curses.BUTTON2_PRESSED:
         result += "BUTTON2_PRESSED"
-    if buttonState & curses.BUTTON2_CLICKED:
+    if button_state & curses.BUTTON2_CLICKED:
         result += "BUTTON2_CLICKED"
-    if buttonState & curses.BUTTON2_DOUBLE_CLICKED:
+    if button_state & curses.BUTTON2_DOUBLE_CLICKED:
         result += "BUTTON2_DOUBLE_CLICKED"
 
-    if buttonState & curses.BUTTON3_RELEASED:
+    if button_state & curses.BUTTON3_RELEASED:
         result += "BUTTON3_RELEASED"
-    if buttonState & curses.BUTTON3_PRESSED:
+    if button_state & curses.BUTTON3_PRESSED:
         result += "BUTTON3_PRESSED"
-    if buttonState & curses.BUTTON3_CLICKED:
+    if button_state & curses.BUTTON3_CLICKED:
         result += "BUTTON3_CLICKED"
-    if buttonState & curses.BUTTON3_DOUBLE_CLICKED:
+    if button_state & curses.BUTTON3_DOUBLE_CLICKED:
         result += "BUTTON3_DOUBLE_CLICKED"
 
-    if buttonState & curses.BUTTON4_RELEASED:
+    if button_state & curses.BUTTON4_RELEASED:
         result += "BUTTON4_RELEASED"
-    if buttonState & curses.BUTTON4_PRESSED:
+    if button_state & curses.BUTTON4_PRESSED:
         result += "BUTTON4_PRESSED"
-    if buttonState & curses.BUTTON4_CLICKED:
+    if button_state & curses.BUTTON4_CLICKED:
         result += "BUTTON4_CLICKED"
-    if buttonState & curses.BUTTON4_DOUBLE_CLICKED:
+    if button_state & curses.BUTTON4_DOUBLE_CLICKED:
         result += "BUTTON4_DOUBLE_CLICKED"
 
-    if buttonState & curses.REPORT_MOUSE_POSITION:
+    if button_state & curses.REPORT_MOUSE_POSITION:
         result += "REPORT_MOUSE_POSITION"
 
-    if buttonState & curses.BUTTON_SHIFT:
+    if button_state & curses.BUTTON_SHIFT:
         result += " SHIFT"
-    if buttonState & curses.BUTTON_CTRL:
+    if button_state & curses.BUTTON_CTRL:
         result += " CTRL"
-    if buttonState & curses.BUTTON_ALT:
+    if button_state & curses.BUTTON_ALT:
         result += " ALT"
     return result
 
-def curses_key_name(keyCode):
+def curses_key_name(key_code):
     try:
-        return curses.keyname(keyCode)
+        return curses.keyname(key_code)
     except Exception:
         pass
     return None
@@ -234,15 +234,15 @@ def column_to_index(column, string):
         assert isinstance(string, unicode)
     if not string:
         return None
-    indexLimit = len(string) - 1
-    colCursor = 0
+    index_limit = len(string) - 1
+    col_cursor = 0
     index = 0
     for ch in string:
-        colCursor += char_width(ch, colCursor)
-        if colCursor > column:
+        col_cursor += char_width(ch, col_cursor)
+        if col_cursor > column:
             break
         index += 1
-        if index > indexLimit:
+        if index > index_limit:
             return None
     return index
 
@@ -268,47 +268,47 @@ def fit_to_rendered_width(column, width, string):
     if app.config.strict_debug:
         assert isinstance(width, int)
         assert isinstance(string, unicode)
-    indexLimit = len(string)
+    index_limit = len(string)
     index = 0
     for i in string:
         cols = char_width(i, column)
         width -= cols
         column += cols
-        if width < 0 or index >= indexLimit:
+        if width < 0 or index >= index_limit:
             break
         index += 1
     return index
 
-def rendered_find_iter(string, beginCol, endCol, charGroups, numbers, eolSpaces):
-    """Get a slice (similar to `string[beginCol:endCol]`) based on the rendered
+def rendered_find_iter(string, begin_col, end_col, char_groups, numbers, eol_spaces):
+    """Get a slice (similar to `string[begin_col:end_col]`) based on the rendered
     width of the string.
 
-    Note: charGroups cannot (currently) contain double width characters.
+    Note: char_groups cannot (currently) contain double width characters.
 
     Returns:
-      tuple of (subStr, column, index, id)
+      tuple of (sub_str, column, index, id)
     """
     if app.config.strict_debug:
         assert isinstance(string, unicode)
-        assert isinstance(beginCol, int)
-        assert isinstance(endCol, int)
+        assert isinstance(begin_col, int)
+        assert isinstance(end_col, int)
     column = 0
     index = 0
     limit = len(string)
     while index < limit:
-        if column >= endCol:
+        if column >= end_col:
             break
         c = string[index]
-        if column >= beginCol:
+        if column >= begin_col:
             if numbers and c in "0123456789":
                 sre = app.regex.RE_NUMBERS.match(string[index:])
                 begin = index
-                length = min(sre.regs[0][1], endCol - column)
+                length = min(sre.regs[0][1], end_col - column)
                 index += length
-                yield string[begin:index], column, length, len(charGroups)
+                yield string[begin:index], column, length, len(char_groups)
                 column += length
             else:
-                for id, group in enumerate(charGroups):
+                for id, group in enumerate(char_groups):
                     if c in group:
                         begin = index
                         while index < limit and string[index] in group:
@@ -323,71 +323,71 @@ def rendered_find_iter(string, beginCol, endCol, charGroups, numbers, eolSpaces)
         else:
             column += char_width(c, column)
             index += 1
-    if eolSpaces and limit and string[-1] == " ":
+    if eol_spaces and limit and string[-1] == " ":
         index = limit - 1
         while index and string[index - 1] == " ":
             index -= 1
-        yield string[index:], index, index, len(charGroups) + 1
+        yield string[index:], index, index, len(char_groups) + 1
 
-def rendered_sub_str(string, beginCol, endCol=None):
+def rendered_sub_str(string, begin_col, end_col=None):
     """
-    Get a slice (similar to `string[beginCol:endCol]`) based on the rendered
-    width of the string. If columns beginCol or endCol land in the middle of a
+    Get a slice (similar to `string[begin_col:end_col]`) based on the rendered
+    width of the string. If columns begin_col or end_col land in the middle of a
     double-wide character, a space is used to pad the result.
 
     Negative columns are not supported. (Just haven't implemented it).
 
     Args:
       string: The string to slice.
-      beginCol: The first column of text (inclusive).
-      endCol: The last column of text (exclusive). Omit parameter for
-              end-of-line (similar to `string[beginCol:]`).
+      begin_col: The first column of text (inclusive).
+      end_col: The last column of text (exclusive). Omit parameter for
+              end-of-line (similar to `string[begin_col:]`).
 
     Returns:
       unicode string
     """
-    if endCol is None:
-        endCol = sys.maxsize
+    if end_col is None:
+        end_col = sys.maxsize
     if app.config.strict_debug:
         assert isinstance(string, unicode)
-        assert isinstance(beginCol, int)
-        assert isinstance(endCol, int)
+        assert isinstance(begin_col, int)
+        assert isinstance(end_col, int)
     column = 0
     i = 0
     limit = len(string)
     output = []
-    while column < beginCol:
+    while column < begin_col:
         if i >= limit:
-            # The |string| is entirely before |beginCol|.
+            # The |string| is entirely before |begin_col|.
             return ""
         ch = string[i]
         column += char_width(ch, column)
         i += 1
-        if column > beginCol:
+        if column > begin_col:
             # Split the leading character.
-            paddingWidth = column - beginCol
-            output.append(" " * paddingWidth)
-    while i < limit and column < endCol:
+            padding_width = column - begin_col
+            output.append(" " * padding_width)
+    while i < limit and column < end_col:
         ch = string[i]
-        lastCharWidth = char_width(ch, column)
-        column += lastCharWidth
+        last_char_width = char_width(ch, column)
+        column += last_char_width
         i += 1
-        if column > endCol:
+        if column > end_col:
             # Split the trailing character.
-            paddingWidth = min(endCol - (column - lastCharWidth), lastCharWidth - 1)
-            output.append(" " * paddingWidth)
+            padding_width = min(end_col - (column - last_char_width), last_char_width - 1)
+            output.append(" " * padding_width)
         else:
             if ch == "\t":
-                output.append(" " * lastCharWidth)
+                output.append(" " * last_char_width)
             else:
                 output.append(ch)
     return "".join(output)
 
 if sys.version_info[0] == 2:
 
-    def char_width(ch, column, tabWidth=8):
+    def char_width(ch, column, tab_width=8):
         if ch == "\t":
-            return tabWidth - (column % tabWidth)
+            return tab_width - (column % tab_width)
         elif ch == "" or ch < " ":
             return 0
         elif ch < "ᄀ":
@@ -411,9 +411,9 @@ if sys.version_info[0] == 2:
 
 else:
 
-    def char_width(ch, column, tabWidth=8):
+    def char_width(ch, column, tab_width=8):
         if ch == "\t":
-            return tabWidth - (column % tabWidth)
+            return tab_width - (column % tab_width)
         elif ch == "" or ch < " ":
             return 0
         elif ch < "ᄀ":
@@ -441,13 +441,13 @@ def floor_col(column, line):
     if app.config.strict_debug:
         assert isinstance(column, int)
         assert isinstance(line, unicode)
-    floorColumn = 0
+    floor_column = 0
     for ch in line:
-        width = char_width(ch, floorColumn)
-        if floorColumn + width > column:
-            return floorColumn
-        floorColumn += width
-    return floorColumn
+        width = char_width(ch, floor_column)
+        if floor_column + width > column:
+            return floor_column
+        floor_column += width
+    return floor_column
 
 def prior_char_col(column, line):
     """Return the start column of the character before |column|."""
@@ -456,12 +456,12 @@ def prior_char_col(column, line):
         assert isinstance(line, unicode)
     if column == 0:
         return None
-    priorColumn = 0
+    prior_column = 0
     for ch in line:
-        width = char_width(ch, priorColumn)
-        if priorColumn + width >= column:
-            return priorColumn
-        priorColumn += width
+        width = char_width(ch, prior_column)
+        if prior_column + width >= column:
+            return prior_column
+        prior_column += width
     return None
 
 def column_width(string):
@@ -498,15 +498,15 @@ def wrap_lines(lines, indent, width):
     # to do exactly what I desired. It may be useful to revisit textwrap later.
     words = " ".join(lines).split()
     output = [indent]
-    indentLen = column_width(indent)
+    indent_len = column_width(indent)
     index = 0
     while index < len(words):
-        lineLen = column_width(output[-1])
+        line_len = column_width(output[-1])
         word = words[index]
-        wordLen = column_width(word)
-        if lineLen == indentLen and lineLen + wordLen < width:
+        word_len = column_width(word)
+        if line_len == indent_len and line_len + word_len < width:
             output[-1] += word
-        elif lineLen + wordLen + 1 < width:
+        elif line_len + word_len + 1 < width:
             output[-1] += " " + word
         else:
             output.append(indent + word)

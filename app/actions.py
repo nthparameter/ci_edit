@@ -75,27 +75,27 @@ class Actions(app.mutator.Mutator):
             return None
         ch = app.curses_util.char_at_column(self.pen_col, text)
 
-        def search_forward(openCh, closeCh):
+        def search_forward(open_ch, close_ch):
             count = 1
-            textCol = self.pen_col + 1
+            text_col = self.pen_col + 1
             for row in range(self.pen_row, self.parser.row_count()):
                 line = self.parser.row_text(row)
                 if row == self.pen_row:
-                    line = app.curses_util.rendered_sub_str(line, textCol)
+                    line = app.curses_util.rendered_sub_str(line, text_col)
                 else:
-                    textCol = 0
+                    text_col = 0
                 for match in re.finditer(
-                    "(\\" + openCh + ")|(\\" + closeCh + ")", line
+                    "(\\" + open_ch + ")|(\\" + close_ch + ")", line
                 ):
-                    if match.group() == openCh:
+                    if match.group() == open_ch:
                         count += 1
                     else:
                         count -= 1
                     if count == 0:
-                        textCol += app.curses_util.column_width(line[: match.start()])
-                        return row, textCol
+                        text_col += app.curses_util.column_width(line[: match.start()])
+                        return row, text_col
 
-        def search_back(closeCh, openCh):
+        def search_back(close_ch, open_ch):
             count = -1
             for row in range(self.pen_row, -1, -1):
                 line = self.parser.row_text(row)
@@ -104,17 +104,17 @@ class Actions(app.mutator.Mutator):
                 found = [
                     i
                     for i in re.finditer(
-                        "(\\" + openCh + ")|(\\" + closeCh + ")", line
+                        "(\\" + open_ch + ")|(\\" + close_ch + ")", line
                     )
                 ]
                 for match in reversed(found):
-                    if match.group() == openCh:
+                    if match.group() == open_ch:
                         count += 1
                     else:
                         count -= 1
                     if count == 0:
-                        textCol = app.curses_util.column_width(line[: match.start()])
-                        return row, textCol
+                        text_col = app.curses_util.column_width(line[: match.start()])
+                        return row, text_col
 
         matcher = {
             "(": (")", search_forward),
@@ -129,16 +129,16 @@ class Actions(app.mutator.Mutator):
             return look[1](ch, look[0])
 
     def jump_to_matching_bracket(self):
-        matchingBracketRowCol = self.get_matching_bracket_row_col()
-        if matchingBracketRowCol is not None:
-            self.pen_row = matchingBracketRowCol[0]
-            self.pen_col = matchingBracketRowCol[1]
+        matching_bracket_row_col = self.get_matching_bracket_row_col()
+        if matching_bracket_row_col is not None:
+            self.pen_row = matching_bracket_row_col[0]
+            self.pen_col = matching_bracket_row_col[1]
 
     def perform_delete(self):
-        if self.selectionMode != app.selectable.SELECTION_NONE:
+        if self.selection_mode != app.selectable.SELECTION_NONE:
             text = self.get_selected_text()
             if text:
-                if self.selectionMode == app.selectable.SELECTION_BLOCK:
+                if self.selection_mode == app.selectable.SELECTION_BLOCK:
                     upper = min(self.pen_row, self.marker_row)
                     left = min(self.pen_col, self.marker_col)
                     lower = max(self.pen_row, self.marker_row)
@@ -158,23 +158,23 @@ class Actions(app.mutator.Mutator):
                 self.redo()
             self.selection_none()
 
-    def _perform_delete_range(self, upperRow, upperCol, lowerRow, lowerCol):
-        if upperRow == self.pen_row == lowerRow:
-            if upperCol < self.pen_col:
-                col = upperCol - self.pen_col
-                if lowerCol <= self.pen_col:
-                    col = upperCol - lowerCol
+    def _perform_delete_range(self, upper_row, upper_col, lower_row, lower_col):
+        if upper_row == self.pen_row == lower_row:
+            if upper_col < self.pen_col:
+                col = upper_col - self.pen_col
+                if lower_col <= self.pen_col:
+                    col = upper_col - lower_col
                 self.cursor_move(0, col)
-        elif upperRow <= self.pen_row < lowerRow:
-            self.cursor_move(upperRow - self.pen_row, upperCol - self.pen_col)
-        elif self.pen_row == lowerRow:
-            col = upperCol - lowerCol
-            self.cursor_move(upperRow - self.pen_row, col)
+        elif upper_row <= self.pen_row < lower_row:
+            self.cursor_move(upper_row - self.pen_row, upper_col - self.pen_col)
+        elif self.pen_row == lower_row:
+            col = upper_col - lower_col
+            self.cursor_move(upper_row - self.pen_row, col)
         self.redo_add_change(
             (
                 "dr",
-                (upperRow, upperCol, lowerRow, lowerCol),
-                self.get_text(upperRow, upperCol, lowerRow, lowerCol),
+                (upper_row, upper_col, lower_row, lower_col),
+                self.get_text(upper_row, upper_col, lower_row, lower_col),
             )
         )
         self.redo()
@@ -189,14 +189,14 @@ class Actions(app.mutator.Mutator):
         Returns:
           A color (int) for a new bookmark.
         """
-        if self.program.prefs.startup["numColors"] == 8:
-            goodColorIndices = [1, 2, 3, 4, 5]
+        if self.program.prefs.startup["num_colors"] == 8:
+            good_color_indices = [1, 2, 3, 4, 5]
         else:
-            goodColorIndices = [97, 98, 113, 117, 127]
+            good_color_indices = [97, 98, 113, 117, 127]
         self.next_bookmark_color_pos = (self.next_bookmark_color_pos + 1) % len(
-            goodColorIndices
+            good_color_indices
         )
-        return goodColorIndices[self.next_bookmark_color_pos]
+        return good_color_indices[self.next_bookmark_color_pos]
 
     def data_to_bookmark(self):
         """Convert bookmark data to a bookmark.
@@ -209,14 +209,14 @@ class Actions(app.mutator.Mutator):
           cursor and selection mode. The bookmark is also assigned a color,
           which is used to determine the color of the bookmark's line numbers.
         """
-        bookmarkData = {
+        bookmark_data = {
             "marker": (self.marker_row, self.marker_col),
             "pen": (self.pen_row, self.pen_col),
-            "selectionMode": self.selectionMode,
-            "colorIndex": self.get_bookmark_color(),
+            "selection_mode": self.selection_mode,
+            "color_index": self.get_bookmark_color(),
         }
-        upperRow, _, lowerRow, _ = self.start_and_end()
-        return app.bookmark.Bookmark(upperRow, lowerRow, bookmarkData)
+        upper_row, _, lower_row, _ = self.start_and_end()
+        return app.bookmark.Bookmark(upper_row, lower_row, bookmark_data)
 
     def bookmark_add(self):
         """Adds a bookmark at the cursor's location. If multiple lines are
@@ -229,9 +229,9 @@ class Actions(app.mutator.Mutator):
         Returns:
           None.
         """
-        newBookmark = self.data_to_bookmark()
+        new_bookmark = self.data_to_bookmark()
         self.bookmark_remove()
-        bisect.insort_right(self.bookmarks, newBookmark)
+        bisect.insort_right(self.bookmarks, new_bookmark)
 
     def bookmark_goto(self, bookmark):
         """Goes to the bookmark that is passed in.
@@ -243,16 +243,16 @@ class Actions(app.mutator.Mutator):
         Returns:
           None.
         """
-        bookmarkData = bookmark.data
-        pen_row, pen_col = bookmarkData["pen"]
-        marker_row, marker_col = bookmarkData["marker"]
-        selectionMode = bookmarkData["selectionMode"]
+        bookmark_data = bookmark.data
+        pen_row, pen_col = bookmark_data["pen"]
+        marker_row, marker_col = bookmark_data["marker"]
+        selection_mode = bookmark_data["selection_mode"]
         self.cursor_move_and_mark(
             pen_row - self.pen_row,
             pen_col - self.pen_col,
             marker_row - self.marker_row,
             marker_col - self.marker_col,
-            selectionMode - self.selectionMode,
+            selection_mode - self.selection_mode,
         )
         self.scroll_to_optimal_scroll_position()
 
@@ -268,8 +268,8 @@ class Actions(app.mutator.Mutator):
         if not len(self.bookmarks):
             self.set_message("No bookmarks to jump to")
             return
-        _, _, lowerRow, _ = self.start_and_end()
-        needle = app.bookmark.Bookmark(lowerRow + 1, lowerRow + 1, {})
+        _, _, lower_row, _ = self.start_and_end()
+        needle = app.bookmark.Bookmark(lower_row + 1, lower_row + 1, {})
         index = bisect.bisect_left(self.bookmarks, needle)
         self.bookmark_goto(self.bookmarks[index % len(self.bookmarks)])
 
@@ -285,8 +285,8 @@ class Actions(app.mutator.Mutator):
         if not len(self.bookmarks):
             self.set_message("No bookmarks to jump to")
             return
-        upperRow, _, _, _ = self.start_and_end()
-        needle = app.bookmark.Bookmark(upperRow, upperRow, {})
+        upper_row, _, _, _ = self.start_and_end()
+        needle = app.bookmark.Bookmark(upper_row, upper_row, {})
         index = bisect.bisect_left(self.bookmarks, needle)
         self.bookmark_goto(self.bookmarks[index - 1])
 
@@ -299,37 +299,37 @@ class Actions(app.mutator.Mutator):
         Returns:
           (boolean) Whether any bookmarks were removed.
         """
-        upperRow, _, lowerRow, _ = self.start_and_end()
-        rangeList = self.bookmarks
-        needle = app.bookmark.Bookmark(upperRow, lowerRow, {})
+        upper_row, _, lower_row, _ = self.start_and_end()
+        range_list = self.bookmarks
+        needle = app.bookmark.Bookmark(upper_row, lower_row, {})
         # Find the left-hand index.
-        begin = bisect.bisect_left(rangeList, needle)
-        if begin and needle.begin <= rangeList[begin - 1].end:
+        begin = bisect.bisect_left(range_list, needle)
+        if begin and needle.begin <= range_list[begin - 1].end:
             begin -= 1
         # Find the right-hand index.
         low = begin
         index = begin
-        high = len(rangeList)
+        high = len(range_list)
         offset = needle.end
         while True:
             index = (high + low) // 2
             if low == high:
                 break
-            if offset >= rangeList[index].end:
+            if offset >= range_list[index].end:
                 low = index + 1
-            elif offset < rangeList[index].begin:
+            elif offset < range_list[index].begin:
                 high = index
             else:
                 index += 1
                 break
         if begin == index:
             return False
-        self.bookmarks = rangeList[:begin] + rangeList[index:]
+        self.bookmarks = range_list[:begin] + range_list[index:]
         return True
 
     def backspace(self):
         # app.log.info('backspace', self.pen_row > self.marker_row)
-        if self.selectionMode != app.selectable.SELECTION_NONE:
+        if self.selection_mode != app.selectable.SELECTION_NONE:
             self.perform_delete()
         elif self.pen_col == 0:
             if self.pen_row > 0:
@@ -345,7 +345,7 @@ class Actions(app.mutator.Mutator):
             self.redo()
 
     def backspace_word(self):
-        if self.selectionMode != app.selectable.SELECTION_NONE:
+        if self.selection_mode != app.selectable.SELECTION_NONE:
             self.perform_delete()
         elif self.pen_col == 0:
             if self.pen_row > 0:
@@ -353,8 +353,8 @@ class Actions(app.mutator.Mutator):
                 self.join_lines()
         else:
             line = self.parser.row_text(self.pen_row)
-            colDelta = self.get_cursor_move_left_to(app.regex.RE_WORD_BOUNDARY)[1][1]
-            change = ("bw", line[self.pen_col + colDelta : self.pen_col])
+            col_delta = self.get_cursor_move_left_to(app.regex.RE_WORD_BOUNDARY)[1][1]
+            change = ("bw", line[self.pen_col + col_delta : self.pen_col])
             self.redo_add_change(change)
             self.redo()
 
@@ -363,24 +363,24 @@ class Actions(app.mutator.Mutator):
         grammar = self.parser.grammar_at(self.pen_row, self.pen_col)
         self.redo_add_change(("n", 1, self.get_cursor_move(1, -self.pen_col)))
         self.redo()
-        if not self.program.prefs.editor["autoIndent"]:
+        if not self.program.prefs.editor["auto_indent"]:
             self.update_basic_scroll_position()
             return
-        grammarIndent = grammar.get("indent")
-        if grammarIndent:
+        grammar_indent = grammar.get("indent")
+        if grammar_indent:
             # TODO(): Hack fix. Reconsider how it should be done.
             self.do_parse(self.pen_row - 1, self.pen_row + 1)
             line, width = self.parser.row_text_and_width(self.pen_row - 1)
-            # commonIndent = len(self.program.prefs.editor['indentation'])
+            # common_indent = len(self.program.prefs.editor['indentation'])
             nonSpace = 0
             while nonSpace < width and line[nonSpace].isspace():
                 nonSpace += 1
             indent = line[:nonSpace]
             if width:
-                lastChar = line.rstrip()[-1:]
-                if lastChar == ":":
-                    indent += grammarIndent
-                elif lastChar in ["[", "{"]:
+                last_char = line.rstrip()[-1:]
+                if last_char == ":":
+                    indent += grammar_indent
+                elif last_char in ["[", "{"]:
                     # Check whether a \n is inserted in {} or []; if so add
                     # another line and unindent the closing character.
                     split_line = self.parser.row_text(self.pen_row)
@@ -391,28 +391,28 @@ class Actions(app.mutator.Mutator):
                         self.redo()
                         self.redo_add_change(("n", 1, self.get_cursor_move(0, 0)))
                         self.redo()
-                    indent += grammarIndent
-                elif lastChar in ["=", "+", "-", "/", "*"]:
-                    indent += grammarIndent * 2
+                    indent += grammar_indent
+                elif last_char in ["=", "+", "-", "/", "*"]:
+                    indent += grammar_indent * 2
                 # Good idea or bad idea?
                 # elif indent >= 2 and line.lstrip()[:6] == 'return':
-                #  indent -= grammarIndent
+                #  indent -= grammar_indent
                 elif line.count("(") > line.count(")"):
-                    indent += grammarIndent * 2
+                    indent += grammar_indent * 2
             if indent:
                 self.redo_add_change(("i", indent))
                 self.redo()
         self.update_basic_scroll_position()
 
-    def cursor_col_delta(self, toRow):
+    def cursor_col_delta(self, to_row):
         if app.config.strict_debug:
-            assert isinstance(toRow, int)
-            assert 0 <= toRow < self.parser.row_count()
-        line, lineLen = self.parser.row_text_and_width(toRow)
-        if self.goal_col <= lineLen:
+            assert isinstance(to_row, int)
+            assert 0 <= to_row < self.parser.row_count()
+        line, line_len = self.parser.row_text_and_width(to_row)
+        if self.goal_col <= line_len:
             return app.curses_util.floor_col(self.goal_col, line) - self.pen_col
         else:
-            return lineLen - self.pen_col
+            return line_len - self.pen_col
 
     def cursor_down(self):
         self.selection_none()
@@ -426,122 +426,122 @@ class Actions(app.mutator.Mutator):
         self.selection_none()
         self.cursor_move_left()
 
-    def get_cursor_move(self, rowDelta, colDelta):
+    def get_cursor_move(self, row_delta, col_delta):
         if app.config.strict_debug:
-            assert isinstance(rowDelta, int)
-            assert isinstance(colDelta, int)
-        return self.get_cursor_move_and_mark(rowDelta, colDelta, 0, 0, 0)
+            assert isinstance(row_delta, int)
+            assert isinstance(col_delta, int)
+        return self.get_cursor_move_and_mark(row_delta, col_delta, 0, 0, 0)
 
-    def cursor_move(self, rowDelta, colDelta):
-        self.cursor_move_and_mark(rowDelta, colDelta, 0, 0, 0)
+    def cursor_move(self, row_delta, col_delta):
+        self.cursor_move_and_mark(row_delta, col_delta, 0, 0, 0)
 
     def get_cursor_move_and_mark(
-        self, rowDelta, colDelta, markRowDelta, markColDelta, selectionModeDelta
+        self, row_delta, col_delta, mark_row_delta, mark_col_delta, selection_mode_delta
     ):
         if app.config.strict_debug:
-            assert isinstance(rowDelta, int)
-            assert isinstance(colDelta, int)
-            assert isinstance(markRowDelta, int)
-            assert isinstance(markColDelta, int)
-            assert isinstance(selectionModeDelta, int)
-        if self.pen_col + colDelta < 0:  # Catch cursor at beginning of line.
-            colDelta = -self.pen_col
-        self.goal_col = self.pen_col + colDelta
+            assert isinstance(row_delta, int)
+            assert isinstance(col_delta, int)
+            assert isinstance(mark_row_delta, int)
+            assert isinstance(mark_col_delta, int)
+            assert isinstance(selection_mode_delta, int)
+        if self.pen_col + col_delta < 0:  # Catch cursor at beginning of line.
+            col_delta = -self.pen_col
+        self.goal_col = self.pen_col + col_delta
         return (
             "m",
-            (rowDelta, colDelta, markRowDelta, markColDelta, selectionModeDelta),
+            (row_delta, col_delta, mark_row_delta, mark_col_delta, selection_mode_delta),
         )
 
     def cursor_move_and_mark(
-        self, rowDelta, colDelta, markRowDelta, markColDelta, selectionModeDelta
+        self, row_delta, col_delta, mark_row_delta, mark_col_delta, selection_mode_delta
     ):
         if app.config.strict_debug:
-            assert isinstance(rowDelta, int)
-            assert isinstance(colDelta, int)
+            assert isinstance(row_delta, int)
+            assert isinstance(col_delta, int)
         change = self.get_cursor_move_and_mark(
-            rowDelta, colDelta, markRowDelta, markColDelta, selectionModeDelta
+            row_delta, col_delta, mark_row_delta, mark_col_delta, selection_mode_delta
         )
         self.redo_add_change(change)
         self.redo()
 
-    def cursor_move_scroll(self, rowDelta, colDelta, scrollRowDelta, scrollColDelta):
-        self.update_scroll_position(scrollRowDelta, scrollColDelta)
-        self.redo_add_change(("m", (rowDelta, colDelta, 0, 0, 0)))
+    def cursor_move_scroll(self, row_delta, col_delta, scroll_row_delta, scroll_col_delta):
+        self.update_scroll_position(scroll_row_delta, scroll_col_delta)
+        self.redo_add_change(("m", (row_delta, col_delta, 0, 0, 0)))
 
     def unused_____cursor_move_down(self):
         if self.pen_row == self.parser.row_count() - 1:
             self.set_message("Bottom of file")
             return
-        savedGoal = self.goal_col
+        saved_goal = self.goal_col
         self.cursor_move(1, self.cursor_col_delta(self.pen_row + 1))
-        self.goal_col = savedGoal
+        self.goal_col = saved_goal
         self.adjust_horizontal_scroll()
 
     def cursor_move_down_or_end(self):
-        savedGoal = self.goal_col
+        saved_goal = self.goal_col
         if self.pen_row == self.parser.row_count() - 1:
             self.set_message("End of file")
             self.cursor_end_of_line()
         else:
             self.cursor_move(1, self.cursor_col_delta(self.pen_row + 1))
-        self.goal_col = savedGoal
+        self.goal_col = saved_goal
         self.adjust_horizontal_scroll()
 
     def adjust_horizontal_scroll(self):
-        if self.view.scrollCol:
+        if self.view.scroll_col:
             width = self.parser.row_width(self.pen_row)
             if width < self.view.cols:
                 # The whole line fits on screen.
-                self.view.scrollCol = 0
-            elif self.view.scrollCol == self.pen_col and self.pen_col == width:
-                self.view.scrollCol = max(0, self.view.scrollCol - self.view.cols // 4)
+                self.view.scroll_col = 0
+            elif self.view.scroll_col == self.pen_col and self.pen_col == width:
+                self.view.scroll_col = max(0, self.view.scroll_col - self.view.cols // 4)
 
     def cursor_move_left(self):
         if not self.parser.row_count():
             return
-        rowCol = self.parser.prior_char_row_col(self.pen_row, self.pen_col)
-        if rowCol is None:
+        row_col = self.parser.prior_char_row_col(self.pen_row, self.pen_col)
+        if row_col is None:
             self.set_message("Top of file")
         else:
-            self.cursor_move(*rowCol)
+            self.cursor_move(*row_col)
 
     def cursor_move_right(self):
         if not self.parser.row_count():
             return
-        rowCol = self.parser.next_char_row_col(self.pen_row, self.pen_col)
-        if rowCol is None:
+        row_col = self.parser.next_char_row_col(self.pen_row, self.pen_col)
+        if row_col is None:
             self.set_message("Bottom of file")
         else:
-            self.cursor_move(*rowCol)
+            self.cursor_move(*row_col)
 
     def unused_____cursor_move_up(self):
         if self.pen_row <= 0:
             self.set_message("Top of file")
             return
-        savedGoal = self.goal_col
-        lineLen = self.parser.row_width(self.pen_row - 1)
-        if self.goal_col <= lineLen:
+        saved_goal = self.goal_col
+        line_len = self.parser.row_width(self.pen_row - 1)
+        if self.goal_col <= line_len:
             self.cursor_move(-1, self.goal_col - self.pen_col)
         else:
-            self.cursor_move(-1, lineLen - self.pen_col)
-        self.goal_col = savedGoal
+            self.cursor_move(-1, line_len - self.pen_col)
+        self.goal_col = saved_goal
         self.adjust_horizontal_scroll()
 
     def cursor_move_to_begin(self):
-        savedGoal = self.goal_col
+        saved_goal = self.goal_col
         self.set_message("Top of file")
         self.cursor_move(-self.pen_row, -self.pen_col)
-        self.goal_col = savedGoal
+        self.goal_col = saved_goal
         self.update_basic_scroll_position()
 
     def cursor_move_up_or_begin(self):
-        savedGoal = self.goal_col
+        saved_goal = self.goal_col
         if self.pen_row <= 0:
             self.set_message("Top of file")
             self.cursor_move(0, -self.pen_col)
         else:
             self.cursor_move(-1, self.cursor_col_delta(self.pen_row - 1))
-        self.goal_col = savedGoal
+        self.goal_col = saved_goal
         self.adjust_horizontal_scroll()
 
     def cursor_move_subword_left(self):
@@ -585,8 +585,8 @@ class Actions(app.mutator.Mutator):
     def do_cursor_move_right_to(self, boundary):
         if not self.parser.row_count():
             return
-        line, lineWidth = self.parser.row_text_and_width(self.pen_row)
-        if self.pen_col < lineWidth:
+        line, line_width = self.parser.row_text_and_width(self.pen_row)
+        if self.pen_col < line_width:
             pos = self.pen_col
             for segment in re.finditer(boundary, line):
                 if segment.start() <= pos < segment.end():
@@ -594,81 +594,81 @@ class Actions(app.mutator.Mutator):
                     break
             self.cursor_move(0, pos - self.pen_col)
         elif self.pen_row + 1 < self.parser.row_count():
-            self.cursor_move(1, -lineWidth)
+            self.cursor_move(1, -line_width)
 
     def cursor_right(self):
         self.selection_none()
         self.cursor_move_right()
 
     def cursor_select_down(self):
-        if self.selectionMode == app.selectable.SELECTION_NONE:
+        if self.selection_mode == app.selectable.SELECTION_NONE:
             self.selection_character()
         self.cursor_move_down_or_end()
 
     def cursor_select_down_scroll(self):
         """Move the line below the selection to above the selection."""
-        upperRow, _, lowerRow, _ = self.start_and_end()
-        if lowerRow + 1 >= self.parser.row_count():
+        upper_row, _, lower_row, _ = self.start_and_end()
+        if lower_row + 1 >= self.parser.row_count():
             return
-        begin = lowerRow + 1
-        end = lowerRow + 2
-        to = upperRow
+        begin = lower_row + 1
+        end = lower_row + 2
+        to = upper_row
         self.redo_add_change(("ml", (begin, end, to)))
         self.redo()
 
     def cursor_select_left(self):
-        if self.selectionMode == app.selectable.SELECTION_NONE:
+        if self.selection_mode == app.selectable.SELECTION_NONE:
             self.selection_character()
         self.cursor_move_left()
 
     def cursor_select_right(self):
-        if self.selectionMode == app.selectable.SELECTION_NONE:
+        if self.selection_mode == app.selectable.SELECTION_NONE:
             self.selection_character()
         self.cursor_move_right()
 
     def cursor_select_subword_left(self):
-        if self.selectionMode == app.selectable.SELECTION_NONE:
+        if self.selection_mode == app.selectable.SELECTION_NONE:
             self.selection_character()
         self.cursor_move_subword_left()
         self.cursor_move_and_mark(*self.extend_selection())
 
     def cursor_select_subword_right(self):
-        if self.selectionMode == app.selectable.SELECTION_NONE:
+        if self.selection_mode == app.selectable.SELECTION_NONE:
             self.selection_character()
         self.cursor_move_subword_right()
         self.cursor_move_and_mark(*self.extend_selection())
 
     def cursor_select_word_left(self):
-        if self.selectionMode == app.selectable.SELECTION_NONE:
+        if self.selection_mode == app.selectable.SELECTION_NONE:
             self.selection_character()
         self.do_cursor_move_left_to(app.regex.RE_WORD_BOUNDARY)
         self.cursor_move_and_mark(*self.extend_selection())
 
     def cursor_select_word_right(self):
-        if self.selectionMode == app.selectable.SELECTION_NONE:
+        if self.selection_mode == app.selectable.SELECTION_NONE:
             self.selection_character()
         self.do_cursor_move_right_to(app.regex.RE_WORD_BOUNDARY)
         self.cursor_move_and_mark(*self.extend_selection())
 
     def cursor_select_up(self):
-        if self.selectionMode == app.selectable.SELECTION_NONE:
+        if self.selection_mode == app.selectable.SELECTION_NONE:
             self.selection_character()
         self.cursor_move_up_or_begin()
 
     def cursor_select_up_scroll(self):
         """Move the line above the selection to below the selection."""
-        upperRow, _, lowerRow, _ = self.start_and_end()
-        if upperRow == 0:
+        upper_row, _, lower_row, _ = self.start_and_end()
+        if upper_row == 0:
             return
-        begin = upperRow - 1
-        end = upperRow
-        to = lowerRow + 1
+        begin = upper_row - 1
+        end = upper_row
+        to = lower_row + 1
         self.redo_add_change(("ml", (begin, end, to)))
         self.redo()
 
     def cursor_end_of_line(self):
-        lineLen = self.parser.row_width(self.pen_row)
-        self.cursor_move(0, lineLen - self.pen_col)
+        line_len = self.parser.row_width(self.pen_row)
+        self.cursor_move(0, line_len - self.pen_col)
 
     def cursor_select_to_start_of_line(self):
         self.selection_character()
@@ -691,20 +691,20 @@ class Actions(app.mutator.Mutator):
         if self.pen_row == self.parser.row_count() - 1:
             self.set_message("Bottom of file")
             return
-        maxRow = self.view.rows
-        penRowDelta = maxRow
-        scrollRowDelta = maxRow
-        numLines = self.parser.row_count()
-        if self.pen_row + maxRow >= numLines:
-            penRowDelta = numLines - self.pen_row - 1
-        if numLines <= maxRow:
-            scrollRowDelta = -self.view.scrollRow
-        elif numLines <= 2 * maxRow + self.view.scrollRow:
-            scrollRowDelta = numLines - self.view.scrollRow - maxRow
+        max_row = self.view.rows
+        pen_row_delta = max_row
+        scroll_row_delta = max_row
+        num_lines = self.parser.row_count()
+        if self.pen_row + max_row >= num_lines:
+            pen_row_delta = num_lines - self.pen_row - 1
+        if num_lines <= max_row:
+            scroll_row_delta = -self.view.scroll_row
+        elif num_lines <= 2 * max_row + self.view.scroll_row:
+            scroll_row_delta = num_lines - self.view.scroll_row - max_row
         self.cursor_move_scroll(
-            penRowDelta,
-            self.cursor_col_delta(self.pen_row + penRowDelta),
-            scrollRowDelta,
+            pen_row_delta,
+            self.cursor_col_delta(self.pen_row + pen_row_delta),
+            scroll_row_delta,
             0,
         )
         self.redo()
@@ -722,15 +722,15 @@ class Actions(app.mutator.Mutator):
         if self.pen_row == 0:
             self.set_message("Top of file")
             return
-        maxRow = self.view.rows
-        penRowDelta = -maxRow
-        scrollRowDelta = -maxRow
-        if self.pen_row < maxRow:
-            penRowDelta = -self.pen_row
-        if self.view.scrollRow + scrollRowDelta < 0:
-            scrollRowDelta = -self.view.scrollRow
-        cursor_col_delta = self.cursor_col_delta(self.pen_row + penRowDelta)
-        self.cursor_move_scroll(penRowDelta, cursor_col_delta, scrollRowDelta, 0)
+        max_row = self.view.rows
+        pen_row_delta = -max_row
+        scroll_row_delta = -max_row
+        if self.pen_row < max_row:
+            pen_row_delta = -self.pen_row
+        if self.view.scroll_row + scroll_row_delta < 0:
+            scroll_row_delta = -self.view.scroll_row
+        cursor_col_delta = self.cursor_col_delta(self.pen_row + pen_row_delta)
+        self.cursor_move_scroll(pen_row_delta, cursor_col_delta, scroll_row_delta, 0)
         self.redo()
 
     def cursor_select_none_page_down(self):
@@ -812,15 +812,15 @@ class Actions(app.mutator.Mutator):
         self.__cursor_page_up()
 
     def cursor_scroll_to_middle(self):
-        maxRow = self.view.rows
-        rowDelta = (
+        max_row = self.view.rows
+        row_delta = (
             min(
-                max(0, self.parser.row_count() - maxRow),
-                max(0, self.pen_row - maxRow // 2),
+                max(0, self.parser.row_count() - max_row),
+                max(0, self.pen_row - max_row // 2),
             )
-            - self.view.scrollRow
+            - self.view.scroll_row
         )
-        self.cursor_move_scroll(0, 0, rowDelta, 0)
+        self.cursor_move_scroll(0, 0, row_delta, 0)
 
     def cursor_start_of_line(self):
         self.cursor_move(0, -self.pen_col)
@@ -841,7 +841,7 @@ class Actions(app.mutator.Mutator):
 
     def delete(self):
         """Delete character to right of pen i.e. Del key."""
-        if self.selectionMode != app.selectable.SELECTION_NONE:
+        if self.selection_mode != app.selectable.SELECTION_NONE:
             self.perform_delete()
         elif self.pen_col == self.parser.row_width(self.pen_row):
             if self.pen_row + 1 < self.parser.row_count():
@@ -850,8 +850,8 @@ class Actions(app.mutator.Mutator):
             self.del_ch()
 
     def delete_to_end_of_line(self):
-        line, lineWidth = self.parser.row_text_and_width(self.pen_row)
-        if self.pen_col == lineWidth:
+        line, line_width = self.parser.row_text_and_width(self.pen_row)
+        if self.pen_col == line_width:
             if self.pen_row + 1 < self.parser.row_count():
                 self.join_lines()
         else:
@@ -886,16 +886,16 @@ class Actions(app.mutator.Mutator):
         self.edit_paste_lines(tuple(data.split("\n")))
 
     def edit_paste_lines(self, clip):
-        if self.selectionMode != app.selectable.SELECTION_NONE:
+        if self.selection_mode != app.selectable.SELECTION_NONE:
             self.perform_delete()
         self.redo_add_change(("v", clip))
         self.redo()
-        rowDelta = len(clip) - 1
-        if rowDelta == 0:
-            endCol = self.pen_col + app.curses_util.column_width(clip[0])
+        row_delta = len(clip) - 1
+        if row_delta == 0:
+            end_col = self.pen_col + app.curses_util.column_width(clip[0])
         else:
-            endCol = app.curses_util.column_width(clip[-1])
-        self.cursor_move(rowDelta, endCol - self.pen_col)
+            end_col = app.curses_util.column_width(clip[-1])
+        self.cursor_move(row_delta, end_col - self.pen_col)
 
     def edit_redo(self):
         """Undo a set of redo nodes."""
@@ -911,11 +911,11 @@ class Actions(app.mutator.Mutator):
 
     def file_filter(self, data):
         self.parser.data = data
-        self.saved_at_redo_index = self.redoIndex
+        self.saved_at_redo_index = self.redo_index
 
     def file_load(self):
         app.log.info("file_load", self.full_path)
-        inputFile = None
+        input_file = None
         self.is_read_only = os.path.isfile(self.full_path) and not os.access(
             self.full_path, os.W_OK
         )
@@ -924,17 +924,17 @@ class Actions(app.mutator.Mutator):
             self.set_message("Creating new file")
         else:
             try:
-                inputFile = open(self.full_path)
-                data = unicode(inputFile.read())
-                self.file_encoding = inputFile.encoding
+                input_file = open(self.full_path)
+                data = unicode(input_file.read())
+                self.file_encoding = input_file.encoding
                 self.set_message("Opened existing file")
                 self.is_binary = False
             except Exception as e:
                 # app.log.info(unicode(e))
                 try:
-                    inputFile = open(self.full_path, "rb")
+                    input_file = open(self.full_path, "rb")
                     if 1:
-                        binary_data = inputFile.read()
+                        binary_data = input_file.read()
                         long_hex = binascii.hexlify(binary_data).decode("utf-8")
                         hex_list = []
                         i = 0
@@ -944,7 +944,7 @@ class Actions(app.mutator.Mutator):
                             i += width
                         data = "".join(hex_list)
                     else:
-                        data = inputFile.read()
+                        data = input_file.read()
                     self.is_binary = True
                     self.file_encoding = None
                     app.log.info("Opened file as a binary file")
@@ -955,13 +955,13 @@ class Actions(app.mutator.Mutator):
                     self.set_message("error opening file", self.full_path)
                     return
             self.file_stat = os.stat(self.full_path)
-        self.relativePath = os.path.relpath(self.full_path, os.getcwd())
+        self.relative_path = os.path.relpath(self.full_path, os.getcwd())
         app.log.info("full_path", self.full_path)
         app.log.info("cwd", os.getcwd())
-        app.log.info("relativePath", self.relativePath)
+        app.log.info("relative_path", self.relative_path)
         self.file_filter(data)
-        if inputFile:
-            inputFile.close()
+        if input_file:
+            input_file.close()
         self.determine_file_type()
 
     def _determine_root_grammar(self, name, extension):
@@ -978,7 +978,7 @@ class Actions(app.mutator.Mutator):
                     extension = ".sh"
         if self.file_extension != extension:
             self.file_extension = extension
-            self.parser.resumeAtRow = 0
+            self.parser.resume_at_row = 0
         self.file_type = self.program.prefs.get_file_type(name + extension)
         return self.program.prefs.get_grammar(self.file_type)
 
@@ -1018,20 +1018,20 @@ class Actions(app.mutator.Mutator):
         self.goal_col = self.pen_col
         # Do not restore the scroll position here because the view may not be
         # set. the scroll position is handled in the InputWindow.set_text_buffer.
-        # self.view.scrollRow, self.view.scrollCol =
+        # self.view.scroll_row, self.view.scroll_col =
         #     self.file_history.setdefault(
         #     'scroll', (0, 0))
         self.do_selection_mode(
-            self.file_history.setdefault("selectionMode", app.selectable.SELECTION_NONE)
+            self.file_history.setdefault("selection_mode", app.selectable.SELECTION_NONE)
         )
         self.marker_row, self.marker_col = self.file_history.setdefault("marker", (0, 0))
-        if self.program.prefs.editor["saveUndo"]:
-            self.redo_chain = self.file_history.setdefault("redoChainCompound", [])
+        if self.program.prefs.editor["save_undo"]:
+            self.redo_chain = self.file_history.setdefault("redo_chain_compound", [])
             self.saved_at_redo_index = self.file_history.setdefault(
-                "savedAtRedoIndexCompound", 0
+                "saved_at_redo_index_compound", 0
             )
-            self.tempChange = self.file_history.setdefault("tempChange", None)
-            self.redoIndex = self.saved_at_redo_index
+            self.temp_change = self.file_history.setdefault("temp_change", None)
+            self.redo_index = self.saved_at_redo_index
             self.old_redo_index = self.saved_at_redo_index
         if app.config.strict_debug:
             assert self.pen_row < self.parser.row_count(), self.pen_row
@@ -1044,7 +1044,7 @@ class Actions(app.mutator.Mutator):
         self.last_checksum, self.last_file_size = app.history.get_file_info(self.full_path)
 
     def update_basic_scroll_position(self):
-        """Sets scrollRow, scrollCol to the closest values that the view's
+        """Sets scroll_row, scroll_col to the closest values that the view's
         position must be in order to see the cursor.
 
         Args:
@@ -1056,66 +1056,66 @@ class Actions(app.mutator.Mutator):
         if self.view is None:
             return
         # Row.
-        maxRow = self.view.rows
-        if self.view.scrollRow > self.pen_row:
-            self.view.scrollRow = self.pen_row
-        elif self.pen_row >= self.view.scrollRow + maxRow:
-            self.view.scrollRow = self.pen_row - maxRow + 1
+        max_row = self.view.rows
+        if self.view.scroll_row > self.pen_row:
+            self.view.scroll_row = self.pen_row
+        elif self.pen_row >= self.view.scroll_row + max_row:
+            self.view.scroll_row = self.pen_row - max_row + 1
         # Column.
-        maxCol = self.view.cols
-        if self.view.scrollCol > self.pen_col:
-            self.view.scrollCol = self.pen_col
-        elif self.pen_col >= self.view.scrollCol + maxCol:
-            self.view.scrollCol = self.pen_col - maxCol + 1
+        max_col = self.view.cols
+        if self.view.scroll_col > self.pen_col:
+            self.view.scroll_col = self.pen_col
+        elif self.pen_col >= self.view.scroll_col + max_col:
+            self.view.scroll_col = self.pen_col - max_col + 1
 
     def scroll_to_optimal_scroll_position(self):
         """Put the selection in the 'optimal' position in the view. What is
-        optimal is defined by the "optimalCursorRow" and "optimalCursorCol"
+        optimal is defined by the "optimal_cursor_row" and "optimal_cursor_col"
         preferences.
 
         Args:
           None.
 
         Returns:
-          A tuple of (scrollRow, scrollCol) representing where the view's
+          A tuple of (scroll_row, scroll_col) representing where the view's
           optimal position should be.
         """
         if self.view is None:
             return
         top, left, bottom, right = self.start_and_end()
         # Row.
-        maxRows = self.view.rows
-        scrollRow = self.view.scrollRow
+        max_rows = self.view.rows
+        scroll_row = self.view.scroll_row
         height = bottom - top + 1
-        extraRows = maxRows - height
-        if extraRows > 0:
-            optimalRowRatio = self.program.prefs.editor["optimalCursorRow"]
-            scrollRow = max(
+        extra_rows = max_rows - height
+        if extra_rows > 0:
+            optimal_row_ratio = self.program.prefs.editor["optimal_cursor_row"]
+            scroll_row = max(
                 0,
                 min(
                     self.parser.row_count() - 1,
-                    top - int(optimalRowRatio * (maxRows - 1)),
+                    top - int(optimal_row_ratio * (max_rows - 1)),
                 ),
             )
         else:
-            scrollRow = top
+            scroll_row = top
         # Column.
-        maxCols = self.view.cols
-        scrollCol = self.view.scrollCol
+        max_cols = self.view.cols
+        scroll_col = self.view.scroll_col
         length = right - left + 1
-        extraCols = maxCols - length
-        if extraCols > 0:
-            if right < maxCols:
-                scrollCol = 0
+        extra_cols = max_cols - length
+        if extra_cols > 0:
+            if right < max_cols:
+                scroll_col = 0
             else:
-                optimalColRatio = self.program.prefs.editor["optimalCursorCol"]
-                scrollCol = max(
-                    0, min(right, left - int(optimalColRatio * (maxCols - 1)))
+                optimal_col_ratio = self.program.prefs.editor["optimal_cursor_col"]
+                scroll_col = max(
+                    0, min(right, left - int(optimal_col_ratio * (max_cols - 1)))
                 )
         else:
-            scrollCol = left
-        self.view.scrollRow = scrollRow
-        self.view.scrollCol = scrollCol
+            scroll_col = left
+        self.view.scroll_row = scroll_row
+        self.view.scroll_col = scroll_col
 
     def is_selection_in_view(self):
         """If there is no selection, checks if the cursor is in the view.
@@ -1136,10 +1136,10 @@ class Actions(app.mutator.Mutator):
         if self.view is None:
             return False
         horizontally = (
-            self.view.scrollCol <= left and right < self.view.scrollCol + self.view.cols
+            self.view.scroll_col <= left and right < self.view.scroll_col + self.view.cols
         )
         vertically = (
-            self.view.scrollRow <= top and bottom < self.view.scrollRow + self.view.rows
+            self.view.scroll_row <= top and bottom < self.view.scroll_row + self.view.rows
         )
         return horizontally and vertically
 
@@ -1154,7 +1154,7 @@ class Actions(app.mutator.Mutator):
         self.fence_redo_chain()
         try:
             try:
-                if self.program.prefs.editor["onSaveStripTrailingSpaces"]:
+                if self.program.prefs.editor["on_save_strip_trailing_spaces"]:
                     self.strip_trailing_white_space()
                     self.compound_change_push()
                 # Save user data that applies to read-only files into history.
@@ -1162,43 +1162,43 @@ class Actions(app.mutator.Mutator):
                 self.file_history["pen"] = (self.pen_row, self.pen_col)
                 if self.view is not None:
                     self.file_history["scroll"] = (
-                        self.view.scrollRow,
-                        self.view.scrollCol,
+                        self.view.scroll_row,
+                        self.view.scroll_col,
                     )
                 self.file_history["marker"] = (self.marker_row, self.marker_col)
-                self.file_history["selectionMode"] = self.selectionMode
+                self.file_history["selection_mode"] = self.selection_mode
                 self.file_history["bookmarks"] = self.bookmarks
                 if self.is_binary:
-                    removeWhitespace = {
+                    remove_whitespace = {
                         ord(" "): None,
                         ord("\n"): None,
                         ord("\r"): None,
                         ord("\t"): None,
                     }
-                    outputData = binascii.unhexlify(
-                        self.parser.data.translate(removeWhitespace)
+                    output_data = binascii.unhexlify(
+                        self.parser.data.translate(remove_whitespace)
                     )
-                    outputFile = open(self.full_path, "wb+")
+                    output_file = open(self.full_path, "wb+")
                 elif self.file_encoding is None:
-                    outputData = self.parser.data
-                    outputFile = open(self.full_path, "w+", encoding="UTF-8")
+                    output_data = self.parser.data
+                    output_file = open(self.full_path, "w+", encoding="UTF-8")
                 else:
-                    outputData = self.parser.data
-                    outputFile = open(
+                    output_data = self.parser.data
+                    output_file = open(
                         self.full_path, "w+", encoding=self.file_encoding
                     )
-                outputFile.seek(0)
-                outputFile.truncate()
-                outputFile.write(outputData)
-                outputFile.close()
+                output_file.seek(0)
+                output_file.truncate()
+                output_file.write(output_data)
+                output_file.close()
                 # Save user data that applies to writable files.
-                self.saved_at_redo_index = self.redoIndex
-                if self.program.prefs.editor["saveUndo"]:
-                    self.file_history["redoChainCompound"] = self.redo_chain
+                self.saved_at_redo_index = self.redo_index
+                if self.program.prefs.editor["save_undo"]:
+                    self.file_history["redo_chain_compound"] = self.redo_chain
                     self.file_history[
-                        "savedAtRedoIndexCompound"
+                        "saved_at_redo_index_compound"
                     ] = self.saved_at_redo_index
-                    self.file_history["tempChange"] = self.tempChange
+                    self.file_history["temp_change"] = self.temp_change
                 self.program.history.save_user_history(
                     (self.full_path, self.last_checksum, self.last_file_size),
                     self.file_history,
@@ -1238,68 +1238,68 @@ class Actions(app.mutator.Mutator):
         row = max(0, min(row, self.parser.row_count() - 1))
         row_width = self.parser.row_width(row)
         col = max(0, min(col, row_width))
-        endCol = col + length
-        inView = self.is_in_view(row, endCol, row, endCol)
+        end_col = col + length
+        in_view = self.is_in_view(row, end_col, row, end_col)
         self.do_selection_mode(app.selectable.SELECTION_NONE)
-        self.cursor_move(row - self.pen_row, endCol - self.pen_col)
+        self.cursor_move(row - self.pen_row, end_col - self.pen_col)
         self.do_selection_mode(mode)
         self.cursor_move(0, -length)
-        if not inView:
+        if not in_view:
             self.scroll_to_optimal_scroll_position()
 
-    def find(self, searchFor, direction=0):
+    def find(self, search_for, direction=0):
         """direction is -1 for find_prior, 0 for at pen, 1 for find_next."""
         if app.config.strict_debug:
-            assert isinstance(searchFor, unicode)
+            assert isinstance(search_for, unicode)
             assert isinstance(direction, int)
-        app.log.info(searchFor, direction)
-        if not len(searchFor):
+        app.log.info(search_for, direction)
+        if not len(search_for):
             self.find_re = None
             self.do_selection_mode(app.selectable.SELECTION_NONE)
             return
-        editorPrefs = self.program.prefs.editor
+        editor_prefs = self.program.prefs.editor
         flags = 0
-        flags |= editorPrefs.get("findIgnoreCase") and re.IGNORECASE or 0
-        flags |= editorPrefs.get("findMultiLine") and re.MULTILINE or 0
-        flags |= editorPrefs.get("findLocale") and re.LOCALE or 0
-        flags |= editorPrefs.get("findDotAll") and re.DOTALL or 0
-        flags |= editorPrefs.get("findVerbose") and re.VERBOSE or 0
-        flags |= editorPrefs.get("findUnicode") and re.UNICODE or 0
-        if not editorPrefs.get("findUseRegex"):
-            searchFor = re.escape(searchFor)
-        if editorPrefs.get("findWholeWord"):
-            searchFor = r"\b%s\b" % searchFor
-        # app.log.info(searchFor, flags)
+        flags |= editor_prefs.get("find_ignore_case") and re.IGNORECASE or 0
+        flags |= editor_prefs.get("find_multi_line") and re.MULTILINE or 0
+        flags |= editor_prefs.get("find_locale") and re.LOCALE or 0
+        flags |= editor_prefs.get("find_dot_all") and re.DOTALL or 0
+        flags |= editor_prefs.get("find_verbose") and re.VERBOSE or 0
+        flags |= editor_prefs.get("find_unicode") and re.UNICODE or 0
+        if not editor_prefs.get("find_use_regex"):
+            search_for = re.escape(search_for)
+        if editor_prefs.get("find_whole_word"):
+            search_for = r"\b%s\b" % search_for
+        # app.log.info(search_for, flags)
         with warnings.catch_warnings():
             # Ignore future warning with '[[' regex.
             warnings.simplefilter("ignore")
             # The saved re is also used for highlighting.
-            self.find_re = re.compile(searchFor, flags)
+            self.find_re = re.compile(search_for, flags)
             self.find_back_re = re.compile(
-                f"{searchFor}(?!.*{searchFor}.*)", flags
+                f"{search_for}(?!.*{search_for}.*)", flags
             )
         self.find_current_pattern(direction)
 
-    def replace_found(self, replaceWith):
+    def replace_found(self, replace_with):
         """direction is -1 for find_prior, 0 for at pen, 1 for find_next."""
         if app.config.strict_debug:
-            assert isinstance(replaceWith, unicode)
+            assert isinstance(replace_with, unicode)
         if not self.find_re:
             return
-        if self.program.prefs.editor.get("findUseRegex"):
+        if self.program.prefs.editor.get("find_use_regex"):
             toReplace = "\n".join(self.get_selected_text())
             try:
-                toReplace = self.find_re.sub(replaceWith, toReplace)
+                toReplace = self.find_re.sub(replace_with, toReplace)
             except re.error as e:
                 # TODO(dschuyler): This is stomped by another set_message().
                 self.set_message(str(e))
             self.edit_paste_data(toReplace)
         else:
-            self.edit_paste_data(replaceWith)
+            self.edit_paste_data(replace_with)
 
     def find_plain_text(self, text):
-        searchFor = re.escape(text)
-        self.find_re = re.compile("()^" + searchFor)
+        search_for = re.escape(text)
+        self.find_re = re.compile("()^" + search_for)
         self.find_current_pattern(0)
 
     def find_replace_flags(self, tokens):
@@ -1342,11 +1342,11 @@ class Actions(app.mutator.Mutator):
         if not len(cmd):
             return
         separator = cmd[0]
-        splitCmd = cmd.split(separator, 3)
-        if len(splitCmd) < 4:
+        split_cmd = cmd.split(separator, 3)
+        if len(split_cmd) < 4:
             self.set_message("An exchange needs three " + separator + " separators")
             return
-        _, find, replace, flags = splitCmd
+        _, find, replace, flags = split_cmd
         data = self.find_replace_text(find, replace, flags, self.parser.data)
         self.apply_document_update(data)
 
@@ -1355,8 +1355,8 @@ class Actions(app.mutator.Mutator):
         return re.sub(find, replace, text, flags=flags)
 
     def apply_document_update(self, data):
-        lines = self.doDataToLines(self.parser.data)
-        diff = difflib.ndiff(lines, self.doDataToLines(data))
+        lines = self.do_data_to_lines(self.parser.data)
+        diff = difflib.ndiff(lines, self.do_data_to_lines(data))
         ndiff = []
         counter = 0
         for i in diff:
@@ -1382,12 +1382,12 @@ class Actions(app.mutator.Mutator):
         self.redo()
 
     def find_current_pattern(self, direction):
-        localRe = self.find_re
+        local_re = self.find_re
         offset = self.pen_col + direction
         if direction < 0:
-            localRe = self.find_back_re
-        if localRe is None:
-            app.log.info("localRe is None")
+            local_re = self.find_back_re
+        if local_re is None:
+            app.log.info("local_re is None")
             return
         # Check part of current line.
         text = self.parser.row_text(self.pen_row)
@@ -1397,36 +1397,36 @@ class Actions(app.mutator.Mutator):
             text = text[: self.pen_col]
             offset = 0
         # app.log.info('find() searching', repr(text))
-        found = localRe.search(text)
-        rowFound = self.pen_row
+        found = local_re.search(text)
+        row_found = self.pen_row
         if not found:
             offset = 0
             row_count = self.parser.row_count()
             # To end of file.
             if direction >= 0:
-                theRange = range(self.pen_row + 1, row_count)
+                the_range = range(self.pen_row + 1, row_count)
             else:
-                theRange = range(self.pen_row - 1, -1, -1)
-            for i in theRange:
-                found = localRe.search(self.parser.row_text(i))
+                the_range = range(self.pen_row - 1, -1, -1)
+            for i in the_range:
+                found = local_re.search(self.parser.row_text(i))
                 if found:
                     if 0:
                         for k in found.regs:
                             app.log.info("AAA", k[0], k[1])
                         app.log.info("b found on line", i, repr(found))
-                    rowFound = i
+                    row_found = i
                     break
             if not found:
                 # Wrap around to the opposite side of the file.
                 self.set_message("Find wrapped around.")
                 if direction >= 0:
-                    theRange = range(self.pen_row)
+                    the_range = range(self.pen_row)
                 else:
-                    theRange = range(row_count - 1, self.pen_row, -1)
-                for i in theRange:
-                    found = localRe.search(self.parser.row_text(i))
+                    the_range = range(row_count - 1, self.pen_row, -1)
+                for i in the_range:
+                    found = local_re.search(self.parser.row_text(i))
                     if found:
-                        rowFound = i
+                        row_found = i
                         break
                 if not found:
                     # Check the rest of the current line
@@ -1435,14 +1435,14 @@ class Actions(app.mutator.Mutator):
                     else:
                         text = self.parser.row_text(self.pen_row)[self.pen_col :]
                         offset = self.pen_col
-                    found = localRe.search(text)
-                    rowFound = self.pen_row
+                    found = local_re.search(text)
+                    row_found = self.pen_row
         if found:
-            # app.log.info('c found on line', rowFound, repr(found.regs))
+            # app.log.info('c found on line', row_found, repr(found.regs))
             start = found.regs[0][0]
             end = found.regs[0][1]
             self.select_text(
-                rowFound,
+                row_found,
                 offset + start,
                 end - start,
                 app.selectable.SELECTION_CHARACTER,
@@ -1459,25 +1459,25 @@ class Actions(app.mutator.Mutator):
         """Find the current pattern, searching up the document."""
         self.find_current_pattern(-1)
 
-    def find_next(self, searchFor):
+    def find_next(self, search_for):
         """Find a new pattern, searching down the document."""
-        self.find(searchFor, 1)
+        self.find(search_for, 1)
 
-    def find_prior(self, searchFor):
+    def find_prior(self, search_for):
         """Find a new pattern, searching up the document."""
-        self.find(searchFor, -1)
+        self.find(search_for, -1)
 
     def indent(self):
         grammar = self.parser.grammar_at(self.pen_row, self.pen_col)
         indentation = (
             grammar.get("indent") or self.program.prefs.editor["indentation"]
         )
-        indentationLength = len(indentation)
-        if self.selectionMode == app.selectable.SELECTION_NONE:
+        indentation_length = len(indentation)
+        if self.selection_mode == app.selectable.SELECTION_NONE:
             self.vertical_insert(self.pen_row, self.pen_row, self.pen_col, indentation)
         else:
             self.indent_lines()
-        self.cursor_move_and_mark(0, indentationLength, 0, indentationLength, 0)
+        self.cursor_move_and_mark(0, indentation_length, 0, indentation_length, 0)
 
     def indent_lines(self):
         """Indents all selected lines.
@@ -1488,20 +1488,20 @@ class Actions(app.mutator.Mutator):
         """
         col = 0
         row = min(self.marker_row, self.pen_row)
-        endRow = max(self.marker_row, self.pen_row)
+        end_row = max(self.marker_row, self.pen_row)
         indentation = self.program.prefs.editor["indentation"]
-        self.vertical_insert(row, endRow, col, indentation)
+        self.vertical_insert(row, end_row, col, indentation)
 
-    def vertical_delete(self, row, endRow, col, text):
-        self.redo_add_change(("vd", (text, row, endRow, col)))
+    def vertical_delete(self, row, end_row, col, text):
+        self.redo_add_change(("vd", (text, row, end_row, col)))
         self.redo()
-        if row <= self.marker_row <= endRow:
+        if row <= self.marker_row <= end_row:
             self.cursor_move_and_mark(0, 0, 0, -len(text), 0)
-        if row <= self.pen_row <= endRow:
+        if row <= self.pen_row <= end_row:
             self.cursor_move_and_mark(0, -len(text), 0, 0, 0)
 
-    def vertical_insert(self, row, endRow, col, text):
-        self.redo_add_change(("vi", (text, row, endRow, col)))
+    def vertical_insert(self, row, end_row, col, text):
+        self.redo_add_change(("vi", (text, row, end_row, col)))
         self.redo()
 
     def insert(self, text):
@@ -1524,7 +1524,7 @@ class Actions(app.mutator.Mutator):
     def insert_printable_with_pairing(self, ch, meta):
         # app.log.info(ch, meta)
         if type(ch) is int and curses.ascii.isprint(ch):
-            if self.program.prefs.editor["autoInsertClosingCharacter"]:
+            if self.program.prefs.editor["auto_insert_closing_character"]:
                 pairs = {
                     ord("'"): "'",
                     ord('"'): '"',
@@ -1534,10 +1534,10 @@ class Actions(app.mutator.Mutator):
                 }
                 skips = pairs.values()
                 mate = pairs.get(ch)
-                nextChr = self.parser.char_at(self.pen_row, self.pen_col)
-                if unichr(ch) in skips and unichr(ch) == nextChr:
+                next_chr = self.parser.char_at(self.pen_row, self.pen_col)
+                if unichr(ch) in skips and unichr(ch) == next_chr:
                     self.cursor_move(0, 1)
-                elif mate is not None and (nextChr is None or nextChr.isspace()):
+                elif mate is not None and (next_chr is None or next_chr.isspace()):
                     self.insert(unichr(ch) + mate)
                     self.compound_change_push()
                     self.cursor_move(0, -1)
@@ -1564,11 +1564,11 @@ class Actions(app.mutator.Mutator):
         )
         self.redo()
 
-    def mouse_click(self, paneRow, paneCol, shift, ctrl, alt):
+    def mouse_click(self, pane_row, pane_col, shift, ctrl, alt):
         if 0:
             if ctrl:
-                app.log.info("click at", paneRow, paneCol)
-                self.view.present_modal(self.view.contextMenu, paneRow, paneCol)
+                app.log.info("click at", pane_row, pane_col)
+                self.view.present_modal(self.view.context_menu, pane_row, pane_col)
                 return
         if shift:
             if alt:
@@ -1577,38 +1577,38 @@ class Actions(app.mutator.Mutator):
                 self.selection_character()
         else:
             self.selection_none()
-        self.mouse_release(paneRow, paneCol, shift, ctrl, alt)
+        self.mouse_release(pane_row, pane_col, shift, ctrl, alt)
 
-    def mouse_double_click(self, paneRow, paneCol, shift, ctrl, alt):
-        app.log.info("double click", paneRow, paneCol)
-        row = self.view.scrollRow + paneRow
+    def mouse_double_click(self, pane_row, pane_col, shift, ctrl, alt):
+        app.log.info("double click", pane_row, pane_col)
+        row = self.view.scroll_row + pane_row
         if row < self.parser.row_count() and self.parser.row_width(row):
-            self.select_word_at(row, self.view.scrollCol + paneCol)
+            self.select_word_at(row, self.view.scroll_col + pane_col)
 
-    def mouse_moved(self, paneRow, paneCol, shift, ctrl, alt):
-        app.log.info(" mouse_moved", paneRow, paneCol, shift, ctrl, alt)
+    def mouse_moved(self, pane_row, pane_col, shift, ctrl, alt):
+        app.log.info(" mouse_moved", pane_row, pane_col, shift, ctrl, alt)
         if alt:
             self.selection_block()
-        elif self.selectionMode == app.selectable.SELECTION_NONE:
+        elif self.selection_mode == app.selectable.SELECTION_NONE:
             self.selection_character()
-        self.mouse_release(paneRow, paneCol, shift, ctrl, alt)
+        self.mouse_release(pane_row, pane_col, shift, ctrl, alt)
 
-    def mouse_release(self, paneRow, paneCol, shift, ctrl, alt):
-        app.log.info(" mouse release", paneRow, paneCol)
+    def mouse_release(self, pane_row, pane_col, shift, ctrl, alt):
+        app.log.info(" mouse release", pane_row, pane_col)
         if not self.parser.row_count():
             return
-        virtualRow = self.view.scrollRow + paneRow
+        virtual_row = self.view.scroll_row + pane_row
         row_count = self.parser.row_count()
-        if virtualRow >= row_count:
+        if virtual_row >= row_count:
             # Off the bottom of document.
-            lastLine = row_count - 1
+            last_line = row_count - 1
             self.cursor_move(
-                lastLine - self.pen_row, self.parser.row_width(lastLine) - self.pen_col
+                last_line - self.pen_row, self.parser.row_width(last_line) - self.pen_col
             )
             return
-        row = max(0, min(virtualRow, row_count))
-        col = max(0, self.view.scrollCol + paneCol)
-        if self.selectionMode == app.selectable.SELECTION_BLOCK:
+        row = max(0, min(virtual_row, row_count))
+        col = max(0, self.view.scroll_col + pane_col)
+        if self.selection_mode == app.selectable.SELECTION_BLOCK:
             self.cursor_move_and_mark(
                 0, 0, row - self.marker_row, col - self.marker_col, 0
             )
@@ -1620,12 +1620,12 @@ class Actions(app.mutator.Mutator):
         # Adjust the marker column delta when the pen and marker positions
         # cross over each other.
         marker_col = 0
-        if self.selectionMode == app.selectable.SELECTION_LINE:
+        if self.selection_mode == app.selectable.SELECTION_LINE:
             if self.pen_row + 1 == self.marker_row and row > self.pen_row:
                 marker_row = -1
             elif self.pen_row == self.marker_row + 1 and row < self.pen_row:
                 marker_row = 1
-        elif self.selectionMode == app.selectable.SELECTION_WORD:
+        elif self.selection_mode == app.selectable.SELECTION_WORD:
             if self.pen_row == self.marker_row:
                 if row == self.pen_row:
                     if self.pen_col > self.marker_col and col < self.marker_col:
@@ -1645,20 +1645,20 @@ class Actions(app.mutator.Mutator):
         self.cursor_move_and_mark(
             row - self.pen_row, col - self.pen_col, marker_row, marker_col, 0
         )
-        if self.selectionMode == app.selectable.SELECTION_LINE:
+        if self.selection_mode == app.selectable.SELECTION_LINE:
             self.cursor_move_and_mark(*self.extend_selection())
-        elif self.selectionMode == app.selectable.SELECTION_WORD:
+        elif self.selection_mode == app.selectable.SELECTION_WORD:
             if self.pen_row < self.marker_row or (
                 self.pen_row == self.marker_row and self.pen_col < self.marker_col
             ):
                 self.cursor_select_word_left()
-            elif paneCol < row_width:
+            elif pane_col < row_width:
                 self.cursor_select_word_right()
 
-    def mouse_triple_click(self, paneRow, paneCol, shift, ctrl, alt):
-        app.log.info("triple click", paneRow, paneCol)
-        self.mouse_release(paneRow, paneCol, shift, ctrl, alt)
-        self.select_line_at(self.view.scrollRow + paneRow)
+    def mouse_triple_click(self, pane_row, pane_col, shift, ctrl, alt):
+        app.log.info("triple click", pane_row, pane_col)
+        self.mouse_release(pane_row, pane_col, shift, ctrl, alt)
+        self.select_line_at(self.view.scroll_row + pane_row)
 
     def scroll_window(self, rows, cols):
         self.cursor_move_scroll(rows, self.cursor_col_delta(self.pen_row - rows), -1, 0)
@@ -1667,46 +1667,46 @@ class Actions(app.mutator.Mutator):
     def mouse_wheel_down(self, shift, ctrl, alt):
         if not shift:
             self.selection_none()
-        if self.program.prefs.editor["naturalScrollDirection"]:
+        if self.program.prefs.editor["natural_scroll_direction"]:
             self.scroll_up()
         else:
             self.scroll_down()
 
     def scroll_up(self):
-        if self.view.scrollRow == 0:
+        if self.view.scroll_row == 0:
             self.set_message("Top of file")
             return
-        maxRow = self.view.rows
-        cursorDelta = 0
-        if self.pen_row >= self.view.scrollRow + maxRow - 2:
-            cursorDelta = self.view.scrollRow + maxRow - 2 - self.pen_row
+        max_row = self.view.rows
+        cursor_delta = 0
+        if self.pen_row >= self.view.scroll_row + max_row - 2:
+            cursor_delta = self.view.scroll_row + max_row - 2 - self.pen_row
         self.update_scroll_position(-1, 0)
-        if self.view.hasCaptiveCursor:
+        if self.view.has_captive_cursor:
             self.cursor_move_scroll(
-                cursorDelta, self.cursor_col_delta(self.pen_row + cursorDelta), 0, 0
+                cursor_delta, self.cursor_col_delta(self.pen_row + cursor_delta), 0, 0
             )
             self.redo()
 
     def mouse_wheel_up(self, shift, ctrl, alt):
         if not shift:
             self.selection_none()
-        if self.program.prefs.editor["naturalScrollDirection"]:
+        if self.program.prefs.editor["natural_scroll_direction"]:
             self.scroll_down()
         else:
             self.scroll_up()
 
     def scroll_down(self):
-        maxRow = self.view.rows
-        if self.view.scrollRow + maxRow >= self.parser.row_count():
+        max_row = self.view.rows
+        if self.view.scroll_row + max_row >= self.parser.row_count():
             self.set_message("Bottom of file")
             return
-        cursorDelta = 0
-        if self.pen_row <= self.view.scrollRow + 1:
-            cursorDelta = self.view.scrollRow - self.pen_row + 1
+        cursor_delta = 0
+        if self.pen_row <= self.view.scroll_row + 1:
+            cursor_delta = self.view.scroll_row - self.pen_row + 1
         self.update_scroll_position(1, 0)
-        if self.view.hasCaptiveCursor:
+        if self.view.has_captive_cursor:
             self.cursor_move_scroll(
-                cursorDelta, self.cursor_col_delta(self.pen_row + cursorDelta), 0, 0
+                cursor_delta, self.cursor_col_delta(self.pen_row + cursor_delta), 0, 0
             )
             self.redo()
 
@@ -1716,17 +1716,17 @@ class Actions(app.mutator.Mutator):
         """
 
         def open_file(path):
-            textBuffer = self.view.program.buffer_manager.load_text_buffer(path)
-            inputWindow = self.view.controller.current_input_window()
-            inputWindow.set_text_buffer(textBuffer)
-            self.change_to(inputWindow)
+            text_buffer = self.view.program.buffer_manager.load_text_buffer(path)
+            input_window = self.view.controller.current_input_window()
+            input_window.set_text_buffer(text_buffer)
+            self.change_to(input_window)
             self.set_message(f"Opened file {path}")
 
-        text, linkType = self.parser.grammar_text_at(self.pen_row, self.pen_col)
-        if linkType is None:
+        text, link_type = self.parser.grammar_text_at(self.pen_row, self.pen_col)
+        if link_type is None:
             self.set_message("Text is not a recognized file.")
             return
-        if linkType in ("c<", 'c"'):
+        if link_type in ("c<", 'c"'):
             # These link types include the outer quotes or brackets.
             text = text[1:-1]
         # Give the raw text a try (current working directory or a full path).
@@ -1742,10 +1742,10 @@ class Actions(app.mutator.Mutator):
         self.set_message(f'No readable file "{text}"')
 
     def next_selection_mode(self):
-        nextMode = self.selectionMode + 1
-        nextMode %= app.selectable.SELECTION_MODE_COUNT
-        self.do_selection_mode(nextMode)
-        app.log.info("next_selection_mode", self.selectionMode)
+        next_mode = self.selection_mode + 1
+        next_mode %= app.selectable.SELECTION_MODE_COUNT
+        self.do_selection_mode(next_mode)
+        app.log.info("next_selection_mode", self.selection_mode)
 
     def no_op(self, ignored):
         pass
@@ -1759,8 +1759,8 @@ class Actions(app.mutator.Mutator):
         self.view.normalize()
 
     def parse_screen_maybe(self):
-        begin = self.parser.resumeAtRow
-        end = self.view.scrollRow + self.view.rows + 1
+        begin = self.parser.resume_at_row
+        end = self.view.scroll_row + self.view.rows + 1
         if end > begin + 100:
             # Call do_parse with an empty range.
             end = begin
@@ -1769,15 +1769,15 @@ class Actions(app.mutator.Mutator):
     def parse_grammars(self):
         if not self.view:
             return
-        scrollRow = self.view.scrollRow
+        scroll_row = self.view.scroll_row
         # If there is a gap, leave it to the background parsing.
-        if self.parser.resumeAtRow < scrollRow:
+        if self.parser.resume_at_row < scroll_row:
             return
-        end = self.view.scrollRow + self.view.rows + 1
-        self.do_parse(self.parser.resumeAtRow, end)
+        end = self.view.scroll_row + self.view.rows + 1
+        self.do_parse(self.parser.resume_at_row, end)
 
     def do_selection_mode(self, mode):
-        if self.selectionMode != mode:
+        if self.selection_mode != mode:
             self.redo_add_change(
                 (
                     "m",
@@ -1786,7 +1786,7 @@ class Actions(app.mutator.Mutator):
                         0,
                         self.pen_row - self.marker_row,
                         self.pen_col - self.marker_col,
-                        mode - self.selectionMode,
+                        mode - self.selection_mode,
                     ),
                 )
             )
@@ -1797,7 +1797,7 @@ class Actions(app.mutator.Mutator):
 
         Consecutive calls to this function will select subsequent lines.
         """
-        if self.selectionMode != app.selectable.SELECTION_LINE:
+        if self.selection_mode != app.selectable.SELECTION_LINE:
             self.selection_line()
         self.select_line_at(self.pen_row)
 
@@ -1839,7 +1839,7 @@ class Actions(app.mutator.Mutator):
                 -self.pen_col,
                 0,
                 -self.marker_col,
-                app.selectable.SELECTION_LINE - self.selectionMode,
+                app.selectable.SELECTION_LINE - self.selection_mode,
             )
         else:
             self.cursor_move_and_mark(
@@ -1847,7 +1847,7 @@ class Actions(app.mutator.Mutator):
                 self.parser.row_width(row) - self.pen_col,
                 0,
                 -self.marker_col,
-                app.selectable.SELECTION_LINE - self.selectionMode,
+                app.selectable.SELECTION_LINE - self.selection_mode,
             )
 
     def select_word_at(self, row, col):
@@ -1888,27 +1888,27 @@ class Actions(app.mutator.Mutator):
                 self._perform_delete_range(i, found.regs[0][0], i, found.regs[0][1])
 
     def unindent(self):
-        if self.selectionMode != app.selectable.SELECTION_NONE:
+        if self.selection_mode != app.selectable.SELECTION_NONE:
             self.unindent_lines()
         else:
             indentation = self.program.prefs.editor["indentation"]
-            indentationLength = len(indentation)
+            indentation_length = len(indentation)
             line = self.parser.row_text(self.pen_row)
-            start = self.pen_col - indentationLength
+            start = self.pen_col - indentation_length
             if indentation == line[start : self.pen_col]:
                 self.vertical_delete(self.pen_row, self.pen_row, start, indentation)
 
     def unindent_lines(self):
         indentation = self.program.prefs.editor["indentation"]
-        indentationLength = len(indentation)
+        indentation_length = len(indentation)
         row = min(self.marker_row, self.pen_row)
-        endRow = max(self.marker_row, self.pen_row)
+        end_row = max(self.marker_row, self.pen_row)
         # Collect a run of lines that can be unindented as a group.
         begin = 0
         i = 0
-        for i in range(endRow + 1 - row):
-            line, lineWidth = self.parser.row_text_and_width(row + i)
-            if lineWidth < indentationLength or line[:indentationLength] != indentation:
+        for i in range(end_row + 1 - row):
+            line, line_width = self.parser.row_text_and_width(row + i)
+            if line_width < indentation_length or line[:indentation_length] != indentation:
                 if begin < i:
                     # There is a run of lines that should be unindented.
                     self.vertical_delete(row + begin, row + i - 1, 0, indentation)
@@ -1918,16 +1918,16 @@ class Actions(app.mutator.Mutator):
             # There is one last run of lines that should be unindented.
             self.vertical_delete(row + begin, row + i, 0, indentation)
 
-    def update_scroll_position(self, scrollRowDelta, scrollColDelta):
+    def update_scroll_position(self, scroll_row_delta, scroll_col_delta):
         """This function updates the view's scroll position using the optional
-        scrollRowDelta and scrollColDelta arguments.
+        scroll_row_delta and scroll_col_delta arguments.
 
         Args:
-          scrollRowDelta (int): The number of rows down to move the view.
-          scrollColDelta (int): The number of rows right to move the view.
+          scroll_row_delta (int): The number of rows down to move the view.
+          scroll_col_delta (int): The number of rows right to move the view.
 
         Returns:
           None
         """
-        self.view.scrollRow += scrollRowDelta
-        self.view.scrollCol += scrollColDelta
+        self.view.scroll_row += scroll_row_delta
+        self.view.scroll_col += scroll_col_delta

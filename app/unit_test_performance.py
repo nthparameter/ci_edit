@@ -139,22 +139,22 @@ class PerformanceTestCases(unittest.TestCase):
             # could by using different assumptions.
             #
             # With frequent splitting the performance reverses.
-            for lineCount in (100, 1000, 5000):
-                half = lineCount // 2
+            for line_count in (100, 1000, 5000):
+                half = line_count // 2
                 a = timeit(
                     r"""data2 = data1.split('\n'); \
                 data2[%s] = data2[%s][:50] + "x" + data2[%s][50:]; \
                 """
                     % (half, half, half),
-                    setup=r"""data1 = ("a" * 100 + '\n') * %s""" % (lineCount,),
+                    setup=r"""data1 = ("a" * 100 + '\n') * %s""" % (line_count,),
                     number=10000,
                 )
                 b = timeit(
                     f'data1 = data1[:{half}] + "x" + data1[{half}:]',
-                    setup=r"""data1 = ("a" * 100 + '\n') * %s""" % (lineCount,),
+                    setup=r"""data1 = ("a" * 100 + '\n') * %s""" % (line_count,),
                     number=10000,
                 )
-                print("\n%9s: %s %s" % (lineCount, a, b))
+                print("\n%9s: %s %s" % (line_count, a, b))
                 self.assertGreater(a, b)
 
     def test_split_insert_balance(self):
@@ -165,8 +165,8 @@ class PerformanceTestCases(unittest.TestCase):
             # could by using different assumptions.
             #
             # With 5 inserts between splits, the performance is nearly the same.
-            for lineCount in (100, 1000, 5000):
-                half = lineCount // 2
+            for line_count in (100, 1000, 5000):
+                half = line_count // 2
                 a = timeit(
                     r"""data2 = data1.split('\n');"""
                     + (
@@ -175,15 +175,15 @@ class PerformanceTestCases(unittest.TestCase):
                         % (half, half, half)
                     )
                     * 5,
-                    setup=r"""data1 = ("a" * 100 + '\n') * %s""" % (lineCount,),
+                    setup=r"""data1 = ("a" * 100 + '\n') * %s""" % (line_count,),
                     number=10000,
                 )
                 b = timeit(
                     f'data1 = data1[:{half}] + "x" + data1[{half}:]; ' * 5,
-                    setup=r"""data1 = ("a" * 100 + '\n') * %s""" % (lineCount,),
+                    setup=r"""data1 = ("a" * 100 + '\n') * %s""" % (line_count,),
                     number=10000,
                 )
-                print("\n%9s: %s %s" % (lineCount, a, b))
+                print("\n%9s: %s %s" % (line_count, a, b))
 
     def test_instance_vs_tuple(self):
         # Disabled due to running time.
@@ -191,7 +191,7 @@ class PerformanceTestCases(unittest.TestCase):
             # This tests a performance assumption. If this test fails, the
             # program should still work fine, but it may not run as fast as it
             # could by using different assumptions.
-            for lineCount in (100, 1000, 5000):
+            for line_count in (100, 1000, 5000):
                 a = timeit(
                     r"""
 a = Node()
@@ -220,4 +220,4 @@ foo = []
 """,
                     number=10000,
                 )
-                print("\n%9s: %s %s" % (lineCount, a, b))
+                print("\n%9s: %s %s" % (line_count, a, b))

@@ -22,14 +22,14 @@ if not os.getenv("CI_EDIT_USE_REAL_CURSES"):
     sys.path = [os.path.join(os.path.dirname(__file__), "test_fake")] + sys.path
     import app.log
 
-    app.log.enabledChannels = {
+    app.log.enabled_channels = {
         "error": True,
         "info": True,
         "meta": True,
         "mouse": True,
         "startup": True,
     }
-    app.log.shouldWritePrintLog = True
+    app.log.should_write_print_log = True
 
 import unittest
 

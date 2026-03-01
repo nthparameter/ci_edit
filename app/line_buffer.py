@@ -39,7 +39,7 @@ class LineBuffer:
         self.file_type = file_type
         self.root_grammar = self.program.prefs.get_grammar(self.file_type)
         # Parse from the beginning.
-        self.parser.resumeAtRow = 0
+        self.parser.resume_at_row = 0
 
     def escape_binary_chars(self, data):
         if app.config.strict_debug:
@@ -49,8 +49,8 @@ class LineBuffer:
         data = data.replace("\r\n", "\n")
         data = data.replace("\r", "\n")
         if self.program.prefs.tabs_to_spaces(self.file_type):
-            tabSize = self.program.prefs.editor.get("tabSize", 8)
-            data = data.expandtabs(tabSize)
+            tab_size = self.program.prefs.editor.get("tab_size", 8)
+            data = data.expandtabs(tab_size)
 
         def parse(sre):
             return f"\x01{ord(sre.groups()[0]):02x}"
@@ -73,14 +73,14 @@ class LineBuffer:
         self.parser.parse(
             self.program.bg, self.parser.data, self.root_grammar, begin, end
         )
-        self.debug_upper_changed_row = self.parser.resumeAtRow
+        self.debug_upper_changed_row = self.parser.resume_at_row
         self.parser_time = time.time() - start
 
     def is_empty(self):
         return len(self.parser.data) == 0
 
     def parse_document(self):
-        self.do_parse(self.parser.resumeAtRow, sys.maxsize)
+        self.do_parse(self.parser.resume_at_row, sys.maxsize)
 
     def set_message(self, *args, **kwargs):
         if not len(args):

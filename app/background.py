@@ -59,11 +59,11 @@ class InstructionQueue(queue.Queue):
         queue.Queue.put(self, (instruction, message))
 
 class BackgroundThread(threading.Thread):
-    def __init__(self, programWindow, toBackground, fromBackground, *args, **keywords):
+    def __init__(self, program_window, to_background, from_background, *args, **keywords):
         threading.Thread.__init__(self, *args, **keywords)
-        self._programWindow = programWindow
-        self._toBackground = toBackground
-        self._fromBackground = fromBackground
+        self._programWindow = program_window
+        self._toBackground = to_background
+        self._fromBackground = from_background
 
     def get(self):
         return self._fromBackground.get()
@@ -78,11 +78,11 @@ class BackgroundThread(threading.Thread):
         self._toBackground.put(instruction, message)
 
     def run(self):
-        cmdCount = 0
+        cmd_count = 0
         block = True
         pid = os.getpid()
-        signalNumber = signal.SIGUSR1
-        programWindow = self._programWindow
+        signal_number = signal.SIGUSR1
+        program_window = self._programWindow
         while True:
             try:
                 try:
@@ -91,51 +91,51 @@ class BackgroundThread(threading.Thread):
                     if instruction == "quit":
                         app.log.info("bg received quit message")
                         return
-                    elif instruction == "cmdList":
-                        app.log.info(programWindow, message)
-                        programWindow.execute_command_list(message)
+                    elif instruction == "cmd_list":
+                        app.log.info(program_window, message)
+                        program_window.execute_command_list(message)
                     else:
                         assert False, instruction
-                    block = programWindow.short_time_slice()
-                    programWindow.render()
-                    # debugging only: programWindow.show_window_hierarchy()
-                    cmdCount += len(message)
-                    programWindow.program.backgroundFrame.set_cmd_count(cmdCount)
+                    block = program_window.short_time_slice()
+                    program_window.render()
+                    # debugging only: program_window.show_window_hierarchy()
+                    cmd_count += len(message)
+                    program_window.program.background_frame.set_cmd_count(cmd_count)
                     self._fromBackground.put(
-                        "render", programWindow.program.backgroundFrame.grab_frame()
+                        "render", program_window.program.background_frame.grab_frame()
                     )
-                    os.kill(pid, signalNumber)
+                    os.kill(pid, signal_number)
                     # app.profile.end_python_profile(profile)
                     time.sleep(0)  # See note in has_message().
                     if block or not self._toBackground.empty():
                         continue
                 except queue.Empty:
                     pass
-                block = programWindow.long_time_slice()
+                block = program_window.long_time_slice()
                 if block:
-                    programWindow.render()
-                    programWindow.program.backgroundFrame.set_cmd_count(cmdCount)
+                    program_window.render()
+                    program_window.program.background_frame.set_cmd_count(cmd_count)
                     self._fromBackground.put(
-                        "render", programWindow.program.backgroundFrame.grab_frame()
+                        "render", program_window.program.background_frame.grab_frame()
                     )
-                    os.kill(pid, signalNumber)
+                    os.kill(pid, signal_number)
             except Exception as e:
                 app.log.exception(e)
                 app.log.error("bg thread exception", e)
-                errorType, value, tracebackInfo = sys.exc_info()
-                out = traceback.format_exception(errorType, value, tracebackInfo)
+                error_type, value, traceback_info = sys.exc_info()
+                out = traceback.format_exception(error_type, value, traceback_info)
                 self._fromBackground.put("exception", out)
-                os.kill(pid, signalNumber)
+                os.kill(pid, signal_number)
                 while True:
                     instruction, message = self._toBackground.get()
                     if instruction == "quit":
                         app.log.info("bg received quit message")
                         return
 
-def startup_background(programWindow):
-    toBackground = InstructionQueue()
-    fromBackground = InstructionQueue()
-    bg = BackgroundThread(programWindow, toBackground, fromBackground)
+def startup_background(program_window):
+    to_background = InstructionQueue()
+    from_background = InstructionQueue()
+    bg = BackgroundThread(program_window, to_background, from_background)
     bg.setName("ci_edit_bg")
     bg.setDaemon(True)
     bg.start()

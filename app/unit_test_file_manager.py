@@ -89,7 +89,7 @@ class FileManagerTestCases(app.fake_curses_testing.FakeCursesTestCase):
 
     def test_mouse_scroll(self):
         # self.set_movie_mode(True)
-        dirList = [
+        dir_list = [
             "./     ",
             "../     ",
             "._ A name with cr\\r/",
@@ -102,19 +102,19 @@ class FileManagerTestCases(app.fake_curses_testing.FakeCursesTestCase):
                 self.display_check(0, 0, [" ci    Open File  "]),
                 CTRL_A,
                 self.write_text(self.path_to_sample("")),
-                self.display_check(3, 0, dirList[0:3]),
+                self.display_check(3, 0, dir_list[0:3]),
                 self.mouse_event(0, 5, 0, curses.REPORT_MOUSE_POSITION),
-                self.display_check(3, 0, dirList[0:3]),
+                self.display_check(3, 0, dir_list[0:3]),
                 self.mouse_event(1, 5, 0, curses.REPORT_MOUSE_POSITION),
-                self.display_check(3, 0, dirList[1:3]),
+                self.display_check(3, 0, dir_list[1:3]),
                 self.mouse_event(2, 5, 0, curses.REPORT_MOUSE_POSITION),
-                self.display_check(3, 0, dirList[2:3]),
+                self.display_check(3, 0, dir_list[2:3]),
                 self.mouse_event(0, 5, 0, curses.BUTTON4_PRESSED),
-                self.display_check(3, 0, dirList[1:3]),
+                self.display_check(3, 0, dir_list[1:3]),
                 self.mouse_event(1, 5, 0, curses.BUTTON4_PRESSED),
-                self.display_check(3, 0, dirList[0:3]),
+                self.display_check(3, 0, dir_list[0:3]),
                 self.mouse_event(2, 5, 0, curses.BUTTON4_PRESSED),
-                self.display_check(3, 0, dirList[0:3]),
+                self.display_check(3, 0, dir_list[0:3]),
                 CTRL_Q,
                 CTRL_Q,
             ]
@@ -190,7 +190,7 @@ class FileManagerTestCases(app.fake_curses_testing.FakeCursesTestCase):
         # self.set_movie_mode(True)
         self.run_with_fake_inputs(
             [
-                self.pref_check("editor", "filesShowSizes", True),
+                self.pref_check("editor", "files_show_sizes", True),
                 self.display_check(0, 0, [" ci     "]),
                 CTRL_O,
                 self.display_check(0, 0, [" ci    Open"]),

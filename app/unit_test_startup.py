@@ -21,7 +21,7 @@ from app.curses_util import *
 import app.ci_program
 import app.fake_curses_testing
 
-kTestFile = "#startup_test_file_with_unlikely_file_name~"
+TEST_FILE = "#startup_test_file_with_unlikely_file_name~"
 
 class StartupTestCases(app.fake_curses_testing.FakeCursesTestCase):
     def setUp(self):

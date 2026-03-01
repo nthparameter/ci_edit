@@ -28,7 +28,7 @@ class Clipboard:
         self.set_os_handlers(clipboard.copy, clipboard.paste)
 
     def copy(self, text):
-        """Add text onto clipList. Empty |text| is not stored."""
+        """Add text onto clip_list. Empty |text| is not stored."""
         if app.config.strict_debug:
             assert isinstance(text, unicode), type(text)
         if text and len(text):
@@ -36,19 +36,19 @@ class Clipboard:
             if self._copy:
                 self._copy(text)
 
-    def paste(self, clipIndex=None):
-        """Fetch top of clipList; or clip at index |clipIndex|. The |clipIndex|
-        will wrap around if it's larger than the clipList length."""
+    def paste(self, clip_index=None):
+        """Fetch top of clip_list; or clip at index |clip_index|. The |clip_index|
+        will wrap around if it's larger than the clip_list length."""
         if app.config.strict_debug:
-            assert clipIndex is None or isinstance(clipIndex, int)
-        if clipIndex is None:
-            osClip = self._paste and self._paste()
-            if osClip:
-                return osClip
-            # Get the top of the clipList instead.
-            clipIndex = -1
+            assert clip_index is None or isinstance(clip_index, int)
+        if clip_index is None:
+            os_clip = self._paste and self._paste()
+            if os_clip:
+                return os_clip
+            # Get the top of the clip_list instead.
+            clip_index = -1
         if len(self._clipList):
-            return self._clipList[clipIndex % len(self._clipList)]
+            return self._clipList[clip_index % len(self._clipList)]
         return None
 
     def set_os_handlers(self, copy, paste):

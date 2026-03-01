@@ -96,9 +96,9 @@ class InteractivePrompt(app.controller.Controller):
     def __init__(self, view):
         app.controller.Controller.__init__(self, view, "prompt")
 
-    def set_text_buffer(self, textBuffer):
-        app.controller.Controller.set_text_buffer(self, textBuffer)
-        self.textBuffer = textBuffer
+    def set_text_buffer(self, text_buffer):
+        app.controller.Controller.set_text_buffer(self, text_buffer)
+        self.text_buffer = text_buffer
         self.commands = {
             "bm": self.bookmark_command,
             "build": self.build_command,
@@ -112,7 +112,7 @@ class InteractivePrompt(app.controller.Controller):
         self.filters = {
             "format": self.format_command,
             "lower": self.lower_selected_lines,
-            "numEnum": self.assign_index_to_selected_lines,
+            "num_enum": self.assign_index_to_selected_lines,
             "s": self.substitute_text,
             "sort": self.sort_selected_lines,
             "sub": self.substitute_text,
@@ -124,135 +124,135 @@ class InteractivePrompt(app.controller.Controller):
             "|": self.pipe_execute,
         }
 
-    def bookmark_command(self, cmdLine, view):
-        args = RE_SPLIT_CMD_LINE.findall(cmdLine)
+    def bookmark_command(self, cmd_line, view):
+        args = RE_SPLIT_CMD_LINE.findall(cmd_line)
         if len(args) > 1 and args[1][0] == "-":
-            if self.view.host.textBuffer.bookmark_remove():
+            if self.view.host.text_buffer.bookmark_remove():
                 return {}, "Removed bookmark"
             else:
                 return {}, "No bookmarks to remove"
         else:
-            self.view.host.textBuffer.bookmark_add()
+            self.view.host.text_buffer.bookmark_add()
             return {}, "Added bookmark"
 
-    def build_command(self, cmdLine, view):
+    def build_command(self, cmd_line, view):
         return {}, "building things"
 
-    def change_to_cua_mode(self, cmdLine, view):
+    def change_to_cua_mode(self, cmd_line, view):
         return {}, "CUA mode"
 
-    def change_to_emacs_mode(self, cmdLine, view):
+    def change_to_emacs_mode(self, cmd_line, view):
         return {}, "Emacs mode"
 
-    def change_to_vim_normal_mode(self, cmdLine, view):
+    def change_to_vim_normal_mode(self, cmd_line, view):
         return {}, "Vim normal mode"
 
     def focus(self):
         app.log.info("InteractivePrompt.focus")
-        self.textBuffer.selection_all()
+        self.text_buffer.selection_all()
 
-    def format_command(self, cmdLine, lines):
+    def format_command(self, cmd_line, lines):
         formatters = {
             # ".js": app.format_javascript.format
             # ".html": app.format_html.format,
             ".py": app.formatter.format_python
         }
 
-        fileName, ext = os.path.splitext(self.view.host.textBuffer.full_path)
+        file_name, ext = os.path.splitext(self.view.host.text_buffer.full_path)
 
-        app.log.info(fileName, ext)
+        app.log.info(file_name, ext)
         formatter = formatters.get(ext)
 
         if not formatter:
             return lines, f"No formatter for extension {ext}"
 
         try:
-            formattedText = formatter(self.view.host.textBuffer.parser.data)
+            formatted_text = formatter(self.view.host.text_buffer.parser.data)
         except RuntimeError as err:
             return lines, str(err)
 
-        lines = formattedText.split("\n")
+        lines = formatted_text.split("\n")
         return lines, f"Changed {len(lines)} lines"
 
-    def make_command(self, cmdLine, view):
+    def make_command(self, cmd_line, view):
         return {}, "making stuff"
 
-    def open_command(self, cmdLine, view):
+    def open_command(self, cmd_line, view):
         """
         Opens the file under cursor.
         """
-        args = RE_ARG_CHAIN.findall(cmdLine)
+        args = RE_ARG_CHAIN.findall(cmd_line)
         app.log.info(args)
         if len(args) == 1:
             # If no args are provided, look for a path at the cursor position.
-            view.textBuffer.open_file_at_cursor()
-            return {}, view.textBuffer.message[0]
+            view.text_buffer.open_file_at_cursor()
+            return {}, view.text_buffer.message[0]
         # Try the raw path.
         path = args[1]
         if os.access(path, os.R_OK):
             return self.open_file(path, view)
         # Look in the same directory as the current file.
-        path = os.path.join(os.path.dirname(view.textBuffer.full_path), args[1])
+        path = os.path.join(os.path.dirname(view.text_buffer.full_path), args[1])
         if os.access(path, os.R_OK):
             return self.open_file(path, view)
         return {}, "Unable to open " + args[1]
 
     def open_file(self, path, view):
-        textBuffer = view.program.buffer_manager.load_text_buffer(path)
-        inputWindow = self.current_input_window()
-        inputWindow.set_text_buffer(textBuffer)
-        self.change_to(inputWindow)
-        inputWindow.set_message(f"Opened file {path}")
+        text_buffer = view.program.buffer_manager.load_text_buffer(path)
+        input_window = self.current_input_window()
+        input_window.set_text_buffer(text_buffer)
+        self.change_to(input_window)
+        input_window.set_message(f"Opened file {path}")
 
-    def split_command(self, cmdLine, view):
+    def split_command(self, cmd_line, view):
         view.split_window()
         return {}, "Split window"
 
     def execute(self):
         try:
-            cmdLine = self.textBuffer.parser.data
-            if not len(cmdLine):
+            cmd_line = self.text_buffer.parser.data
+            if not len(cmd_line):
                 self.change_to_host_window()
                 return
-            tb = self.view.host.textBuffer
+            tb = self.view.host.text_buffer
             lines = list(tb.get_selected_text())
-            if cmdLine[0] in self.sub_execute:
+            if cmd_line[0] in self.sub_execute:
                 data = "\n".join(lines).encode("utf-8")
-                output, message = self.sub_execute.get(cmdLine[0])(cmdLine[1:], data)
+                output, message = self.sub_execute.get(cmd_line[0])(cmd_line[1:], data)
                 if app.config.strict_debug:
                     assert isinstance(output, bytes)
                     assert isinstance(message, unicode)
                 tb.edit_paste_lines(tuple(output.decode("utf-8").split("\n")))
                 tb.set_message(message)
             else:
-                cmd = re.split("\\W", cmdLine)[0]
-                dataFilter = self.filters.get(cmd)
-                if dataFilter:
+                cmd = re.split("\\W", cmd_line)[0]
+                data_filter = self.filters.get(cmd)
+                if data_filter:
                     if not len(lines):
                         tb.set_message(f"The {cmd} filter needs a selection.")
                     else:
-                        lines, message = dataFilter(cmdLine, lines)
+                        lines, message = data_filter(cmd_line, lines)
                         tb.set_message(message)
                         if not len(lines):
                             lines.append("")
                         tb.edit_paste_lines(tuple(lines))
                 else:
                     command = self.commands.get(cmd, self.unknown_command)
-                    message = command(cmdLine, self.view.host)[1]
+                    message = command(cmd_line, self.view.host)[1]
                     tb.set_message(message)
         except Exception as e:
             app.log.exception(e)
             tb.set_message("Execution threw an error.")
         self.change_to_host_window()
 
-    def shell_execute(self, commands, cmdInput):
+    def shell_execute(self, commands, cmd_input):
         """
-        cmdInput is in bytes (not unicode).
+        cmd_input is in bytes (not unicode).
         return tuple: output as bytes (not unicode), message as unicode.
         """
         if app.config.strict_debug:
             assert isinstance(commands, unicode), type(commands)
-            assert isinstance(cmdInput, bytes), type(cmdInput)
+            assert isinstance(cmd_input, bytes), type(cmd_input)
         try:
             process = subprocess.Popen(
                 commands,
@@ -261,18 +261,18 @@ class InteractivePrompt(app.controller.Controller):
                 stderr=subprocess.STDOUT,
                 shell=True,
             )
-            return process.communicate(cmdInput)[0], ""
+            return process.communicate(cmd_input)[0], ""
         except Exception as e:
             return "", "Error running shell command\n" + e
 
-    def pipe_execute(self, commands, cmdInput):
+    def pipe_execute(self, commands, cmd_input):
         """
-        cmdInput is in bytes (not unicode).
+        cmd_input is in bytes (not unicode).
         return tuple: output as bytes (not unicode), message as unicode.
         """
         if app.config.strict_debug:
             assert isinstance(commands, unicode), type(commands)
-            assert isinstance(cmdInput, bytes), type(cmdInput)
+            assert isinstance(cmd_input, bytes), type(cmd_input)
         chain = RE_PIPE_CHAIN.findall(commands)
         try:
             process = subprocess.Popen(
@@ -282,7 +282,7 @@ class InteractivePrompt(app.controller.Controller):
                 stderr=subprocess.STDOUT,
             )
             if len(chain) == 1:
-                return process.communicate(cmdInput)[0], ""
+                return process.communicate(cmd_input)[0], ""
             else:
                 chain.reverse()
                 prior = process
@@ -293,7 +293,7 @@ class InteractivePrompt(app.controller.Controller):
                         stdout=prior.stdin,
                         stderr=subprocess.STDOUT,
                     )
-                prior.communicate(cmdInput)
+                prior.communicate(cmd_input)
                 return process.communicate()[0], ""
         except Exception as e:
             app.log.exception(e)
@@ -302,58 +302,58 @@ class InteractivePrompt(app.controller.Controller):
     def info(self):
         app.log.info("InteractivePrompt command set")
 
-    def lower_selected_lines(self, cmdLine, lines):
+    def lower_selected_lines(self, cmd_line, lines):
         lines = [line.lower() for line in lines]
         return lines, f"Changed {len(lines)} lines"
 
-    def assign_index_to_selected_lines(self, cmdLine, lines):
+    def assign_index_to_selected_lines(self, cmd_line, lines):
         output = []
         for i, line in enumerate(lines):
             output.append("%s = %d" % (line, i))
         return output, f"Changed {len(output)} lines"
 
-    def sort_selected_lines(self, cmdLine, lines):
+    def sort_selected_lines(self, cmd_line, lines):
         lines.sort()
         return lines, f"Changed {len(lines)} lines"
 
-    def substitute_text(self, cmdLine, lines):
-        if len(cmdLine) < 2:
+    def substitute_text(self, cmd_line, lines):
+        if len(cmd_line) < 2:
             return (
                 lines,
-                f"""tip: {cmdLine}/foo/bar/ to replace 'foo' with 'bar'.""",
+                f"""tip: {cmd_line}/foo/bar/ to replace 'foo' with 'bar'.""",
             )
         if not lines:
             return lines, "No text was selected."
-        sre = re.match("\w+(\W)", cmdLine)
+        sre = re.match("\w+(\W)", cmd_line)
         if not sre:
             return (
                 lines,
-                f"""Separator punctuation missing, example: {cmdLine}/foo/bar/""",
+                f"""Separator punctuation missing, example: {cmd_line}/foo/bar/""",
             )
         separator = sre.groups()[0]
         try:
-            _, find, replace, flags = cmdLine.split(separator, 3)
+            _, find, replace, flags = cmd_line.split(separator, 3)
         except ValueError:
             return (
                 lines,
                 """Separator punctuation missing, there should be"""
                 """ three '%s'.""" % (separator,),
             )
-        data = self.view.host.textBuffer.parser.data
-        output = self.view.host.textBuffer.find_replace_text(find, replace, flags, data)
+        data = self.view.host.text_buffer.parser.data
+        output = self.view.host.text_buffer.find_replace_text(find, replace, flags, data)
         lines = output.split("\n")
         return lines, f"Changed {len(lines)} lines"
 
-    def upper_selected_lines(self, cmdLine, lines):
+    def upper_selected_lines(self, cmd_line, lines):
         lines = [line.upper() for line in lines]
         return lines, f"Changed {len(lines)} lines"
 
-    def unknown_command(self, cmdLine, view):
-        self.view.host.textBuffer.set_message("Unknown command")
-        return {}, f"Unknown command {cmdLine}"
+    def unknown_command(self, cmd_line, view):
+        self.view.host.text_buffer.set_message("Unknown command")
+        return {}, f"Unknown command {cmd_line}"
 
-    def wrap_selected_lines(self, cmdLine, lines):
-        tokens = cmdLine.split()
+    def wrap_selected_lines(self, cmd_line, lines):
+        tokens = cmd_line.split()
         app.log.info("tokens", tokens)
         width = 80 if len(tokens) == 1 else int(tokens[1])
         indent = len(lines[0]) - len(lines[0].lstrip())

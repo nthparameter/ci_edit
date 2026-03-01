@@ -23,7 +23,7 @@ import app.ci_program
 import app.curses_util
 import app.fake_curses_testing
 
-kTestFile = "#application_test_file_with_unlikely_file_name~"
+TEST_FILE = "#application_test_file_with_unlikely_file_name~"
 
 class CopyPasteTestCases(app.fake_curses_testing.FakeCursesTestCase):
     def setUp(self):

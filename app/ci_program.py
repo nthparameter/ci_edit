@@ -61,14 +61,14 @@ import app.render
 import app.spelling
 import app.window
 
-userConsoleMessage = None
+user_console_message = None
 
 def user_message(*args):
-    global userConsoleMessage
-    if not userConsoleMessage:
-        userConsoleMessage = ""
+    global user_console_message
+    if not user_console_message:
+        user_console_message = ""
     args = [str(i) for i in args]
-    userConsoleMessage += " ".join(args) + "\n"
+    user_console_message += " ".join(args) + "\n"
 
 class CiProgram:
     """This is the main editor program. It holds top level information and runs
@@ -87,18 +87,18 @@ class CiProgram:
         # completed it becomes the new front frame that will be drawn on the
         # screen. This frees up the background frame to begin drawing the next
         # frame (similar to, but not exactly like double buffering video).
-        self.backgroundFrame = app.render.Frame()
-        self.frontFrame = None
-        self.history = app.history.History(self.prefs.user_data.get("historyPath"))
+        self.background_frame = app.render.Frame()
+        self.front_frame = None
+        self.history = app.history.History(self.prefs.user_data.get("history_path"))
         self.buffer_manager = app.buffer_manager.BufferManager(self, self.prefs)
-        self.cursesScreen = None
-        self.debugMouseEvent = (0, 0, 0, 0, 0)
+        self.curses_screen = None
+        self.debug_mouse_event = (0, 0, 0, 0, 0)
         self.exiting = False
         self.ch = 0
         self.bg = None
 
-    def set_up_curses(self, cursesScreen):
-        self.cursesScreen = cursesScreen
+    def set_up_curses(self, curses_screen):
+        self.curses_screen = curses_screen
         curses.mousemask(-1)
         curses.mouseinterval(0)
         # Enable mouse tracking in xterm.
@@ -135,24 +135,24 @@ class CiProgram:
             for i in range(0, curses.COLORS):
                 app.log.detail("color", i, ": ", curses.color_content(i))
         if 1:
-            # rows, cols = self.cursesScreen.getmaxyx()
-            cursesWindow = self.cursesScreen
-            cursesWindow.leaveok(1)  # Don't update cursor position.
-            cursesWindow.scrollok(0)
-            cursesWindow.timeout(10)
-            cursesWindow.keypad(1)
-            app.window.mainCursesWindow = cursesWindow
+            # rows, cols = self.curses_screen.getmaxyx()
+            curses_window = self.curses_screen
+            curses_window.leaveok(1)  # Don't update cursor position.
+            curses_window.scrollok(0)
+            curses_window.timeout(10)
+            curses_window.keypad(1)
+            app.window.main_curses_window = curses_window
 
     def command_loop(self):
         # Cache the thread setting.
         useBgThread = self.prefs.editor["useBgThread"]
-        cmdCount = 0
+        cmd_count = 0
         # Track the time needed to handle commands and render the UI.
         # (A performance measurement).
-        self.mainLoopTime = 0
-        self.mainLoopTimePeak = 0
-        self.cursesWindowGetCh = app.window.mainCursesWindow.getch
-        if self.prefs.startup["timeStartup"]:
+        self.main_loop_time = 0
+        self.main_loop_time_peak = 0
+        self.curses_window_get_ch = app.window.main_curses_window.getch
+        if self.prefs.startup["time_startup"]:
             # When running a timing of the application startup, push a CTRL_Q
             # onto the curses event messages to simulate a full startup with a
             # GUI render.
@@ -160,44 +160,44 @@ class CiProgram:
         start = time.time()
         # The first render, to get something on the screen.
         if useBgThread:
-            self.bg.put("cmdList", [])
+            self.bg.put("cmd_list", [])
         else:
-            self.programWindow.short_time_slice()
-            self.programWindow.render()
-            self.backgroundFrame.set_cmd_count(0)
+            self.program_window.short_time_slice()
+            self.program_window.render()
+            self.background_frame.set_cmd_count(0)
         # This is the 'main loop'. Execution doesn't leave this loop until the
         # application is closing down.
         while not self.exiting:
             if 0:
                 profile = cProfile.Profile()
                 profile.enable()
-                self.refresh(drawList, cursor, cmdCount)
+                self.refresh(draw_list, cursor, cmd_count)
                 profile.disable()
                 output = io.StringIO()
                 stats = pstats.Stats(profile, stream=output).sort_stats("cumulative")
                 stats.print_stats()
                 app.log.info(output.getvalue())
-            self.mainLoopTime = time.time() - start
-            if self.mainLoopTime > self.mainLoopTimePeak:
-                self.mainLoopTimePeak = self.mainLoopTime
+            self.main_loop_time = time.time() - start
+            if self.main_loop_time > self.main_loop_time_peak:
+                self.main_loop_time_peak = self.main_loop_time
             # Gather several commands into a batch before doing a redraw.
             # (A performance optimization).
-            cmdList = []
-            while not len(cmdList):
+            cmd_list = []
+            while not len(cmd_list):
                 if not useBgThread:
                     (
-                        drawList,
+                        draw_list,
                         cursor,
-                        frameCmdCount,
-                    ) = self.backgroundFrame.grab_frame()
-                    if frameCmdCount is not None:
-                        self.frontFrame = (drawList, cursor, frameCmdCount)
-                if self.frontFrame is not None:
-                    drawList, cursor, frameCmdCount = self.frontFrame
-                    self.refresh(drawList, cursor, frameCmdCount)
-                    self.frontFrame = None
+                        frame_cmd_count,
+                    ) = self.background_frame.grab_frame()
+                    if frame_cmd_count is not None:
+                        self.front_frame = (draw_list, cursor, frame_cmd_count)
+                if self.front_frame is not None:
+                    draw_list, cursor, frame_cmd_count = self.front_frame
+                    self.refresh(draw_list, cursor, frame_cmd_count)
+                    self.front_frame = None
                 for _ in range(5):
-                    eventInfo = None
+                    event_info = None
                     if self.exiting:
                         return
                     ch = self.get_ch()
@@ -208,31 +208,31 @@ class CiProgram:
                         # reason about these events (and apply event handler
                         # callback functions) the sequence is converted into
                         # tuple.
-                        keySequence = []
+                        key_sequence = []
                         n = self.get_ch()
                         while n != curses.ERR:
-                            keySequence.append(n)
+                            key_sequence.append(n)
                             n = self.get_ch()
-                        # app.log.info('sequence\n', keySequence)
+                        # app.log.info('sequence\n', key_sequence)
                         # Check for Bracketed Paste Mode begin.
                         paste_begin = app.curses_util.BRACKETED_PASTE_BEGIN
-                        if tuple(keySequence[: len(paste_begin)]) == paste_begin:
+                        if tuple(key_sequence[: len(paste_begin)]) == paste_begin:
                             ch = app.curses_util.BRACKETED_PASTE
-                            keySequence = keySequence[len(paste_begin) :]
+                            key_sequence = key_sequence[len(paste_begin) :]
                             paste_end = (
                                 curses.ascii.ESC,
                             ) + app.curses_util.BRACKETED_PASTE_END
-                            while tuple(keySequence[-len(paste_end) :]) != paste_end:
+                            while tuple(key_sequence[-len(paste_end) :]) != paste_end:
                                 # app.log.info('waiting in paste mode')
                                 n = self.get_ch()
                                 if n != curses.ERR:
-                                    keySequence.append(n)
-                            keySequence = keySequence[: -(len(paste_end))]
-                            eventInfo = struct.pack(
-                                "B" * len(keySequence), *keySequence
+                                    key_sequence.append(n)
+                            key_sequence = key_sequence[: -(len(paste_end))]
+                            event_info = struct.pack(
+                                "B" * len(key_sequence), *key_sequence
                             ).decode("utf-8")
                         else:
-                            ch = tuple(keySequence)
+                            ch = tuple(key_sequence)
                         if not ch:
                             # The sequence was empty, so it looks like this
                             # Escape wasn't really the start of a sequence and
@@ -258,7 +258,7 @@ class CiProgram:
                             d = self.get_ch()
                             u = bytes_to_unicode((ch, b, c, d))
                         assert u is not None
-                        eventInfo = u
+                        event_info = u
                         ch = app.curses_util.UNICODE_INPUT
                     if ch != curses.ERR:
                         self.ch = ch
@@ -267,20 +267,20 @@ class CiProgram:
                             # only be called once for each KEY_MOUSE. Subsequent
                             # calls will throw an exception. So getmouse is
                             # (only) called here and other parts of the code use
-                            # the eventInfo list instead of calling getmouse.
-                            self.debugMouseEvent = curses.getmouse()
-                            eventInfo = (self.debugMouseEvent, time.time())
-                        cmdList.append((ch, eventInfo))
+                            # the event_info list instead of calling getmouse.
+                            self.debug_mouse_event = curses.getmouse()
+                            event_info = (self.debug_mouse_event, time.time())
+                        cmd_list.append((ch, event_info))
             start = time.time()
-            if len(cmdList):
+            if len(cmd_list):
                 if useBgThread:
-                    self.bg.put("cmdList", cmdList)
+                    self.bg.put("cmd_list", cmd_list)
                 else:
-                    self.programWindow.execute_command_list(cmdList)
-                    self.programWindow.short_time_slice()
-                    self.programWindow.render()
-                    cmdCount += len(cmdList)
-                    self.backgroundFrame.set_cmd_count(cmdCount)
+                    self.program_window.execute_command_list(cmd_list)
+                    self.program_window.short_time_slice()
+                    self.program_window.render()
+                    cmd_count += len(cmd_list)
+                    self.background_frame.set_cmd_count(cmd_count)
 
     def process_background_messages(self):
         while self.bg.has_message():
@@ -294,7 +294,7 @@ class CiProgram:
                 # It's unlikely that more than one frame would be present in the
                 # queue. If/when it happens, only the las/most recent frame
                 # matters.
-                self.frontFrame = message
+                self.front_frame = message
             else:
                 assert False
 
@@ -302,7 +302,7 @@ class CiProgram:
         """Get an input character (or event) from curses."""
         if self.exiting:
             return -1
-        ch = self.cursesWindowGetCh()
+        ch = self.curses_window_get_ch()
         # The background thread can send a notice at any getch call.
         while ch == 0:
             if self.bg is not None:
@@ -310,7 +310,7 @@ class CiProgram:
                 self.process_background_messages()
             if self.exiting:
                 return -1
-            ch = self.cursesWindowGetCh()
+            ch = self.curses_window_get_ch()
         return ch
 
     def startup(self):
@@ -318,38 +318,38 @@ class CiProgram:
         parsed."""
         if app.config.strict_debug:
             assert issubclass(self.__class__, app.ci_program.CiProgram), self
-        self.programWindow = app.program_window.ProgramWindow(self)
-        top, left = app.window.mainCursesWindow.getyx()
-        rows, cols = app.window.mainCursesWindow.getmaxyx()
-        self.programWindow.reshape(top, left, rows, cols)
-        self.programWindow.inputWindow.startup()
-        self.programWindow.focus()
+        self.program_window = app.program_window.ProgramWindow(self)
+        top, left = app.window.main_curses_window.getyx()
+        rows, cols = app.window.main_curses_window.getmaxyx()
+        self.program_window.reshape(top, left, rows, cols)
+        self.program_window.input_window.startup()
+        self.program_window.focus()
 
     def parse_args(self):
         """Interpret the command line arguments."""
         app.log.startup("isatty", sys.stdin.isatty())
         debug_redo = False
-        showLogWindow = False
-        cliFiles = []
-        openToLine = None
+        show_log_window = False
+        cli_files = []
+        open_to_line = None
         profile = False
         read_stdin = not sys.stdin.isatty()
-        takeAll = False  # Take all args as file paths.
-        timeStartup = False
-        numColors = min(curses.COLORS, 256)
+        take_all = False  # Take all args as file paths.
+        time_startup = False
+        num_colors = min(curses.COLORS, 256)
         if os.getenv("CI_EDIT_SINGLE_THREAD"):
             self.prefs.editor["useBgThread"] = False
         for i in sys.argv[1:]:
-            if not takeAll and i[:1] == "+":
-                openToLine = int(i[1:])
+            if not take_all and i[:1] == "+":
+                open_to_line = int(i[1:])
                 continue
-            if not takeAll and i[:2] == "--":
+            if not take_all and i[:2] == "--":
                 if i == "--debug_redo":
                     debug_redo = True
                 elif i == "--profile":
                     profile = True
                 elif i == "--log":
-                    showLogWindow = True
+                    show_log_window = True
                 elif i == "--d":
                     app.log.channel_enable("debug", True)
                 elif i == "--m":
@@ -361,26 +361,26 @@ class CiProgram:
                     app.log.channel_enable("error", True)
                 elif i == "--parser":
                     app.log.channel_enable("parser", True)
-                elif i == "--singleThread":
+                elif i == "--single_thread":
                     self.prefs.editor["useBgThread"] = False
                 elif i == "--startup":
                     app.log.channel_enable("startup", True)
-                elif i == "--timeStartup":
-                    timeStartup = True
+                elif i == "--time_startup":
+                    time_startup = True
                 elif i == "--":
                     # All remaining args are file paths.
-                    takeAll = True
+                    take_all = True
                 elif i == "--help":
                     user_message(app.help.docs["command line"])
                     self.quit_now()
                 elif i == "--keys":
                     user_message(app.help.docs["key bindings"])
                     self.quit_now()
-                elif i == "--clearHistory":
+                elif i == "--clear_history":
                     self.history.clear_user_history()
                     self.quit_now()
-                elif i == "--eightColors":
-                    numColors = 8
+                elif i == "--eight_colors":
+                    num_colors = 8
                 elif i == "--version":
                     user_message(app.help.docs["version"])
                     self.quit_now()
@@ -391,29 +391,29 @@ class CiProgram:
             if i == "-":
                 read_stdin = True
             else:
-                cliFiles.append({"path": unicode(i)})
+                cli_files.append({"path": unicode(i)})
         # If there's no line specified, try to reinterpret the paths.
-        if openToLine is None:
-            decodedPaths = []
-            for file in cliFiles:
-                path, openToRow, openToColumn = app.buffer_file.path_row_column(
-                    file["path"], self.prefs.editor["baseDirEnv"]
+        if open_to_line is None:
+            decoded_paths = []
+            for file in cli_files:
+                path, open_to_row, open_to_column = app.buffer_file.path_row_column(
+                    file["path"], self.prefs.editor["base_dir_env"]
                 )
-                decodedPaths.append(
-                    {"path": path, "row": openToRow, "col": openToColumn}
+                decoded_paths.append(
+                    {"path": path, "row": open_to_row, "col": open_to_column}
                 )
-            cliFiles = decodedPaths
+            cli_files = decoded_paths
         self.prefs.startup = {
             "debug_redo": debug_redo,
-            "showLogWindow": showLogWindow,
-            "cliFiles": cliFiles,
-            "openToLine": openToLine,
+            "show_log_window": show_log_window,
+            "cli_files": cli_files,
+            "open_to_line": open_to_line,
             "profile": profile,
             "read_stdin": read_stdin,
-            "timeStartup": timeStartup,
-            "numColors": numColors,
+            "time_startup": time_startup,
+            "num_colors": num_colors,
         }
-        self.showLogWindow = showLogWindow
+        self.show_log_window = show_log_window
 
     def quit_now(self):
         """Set the intent to exit the program. The actual exit will occur a bit
@@ -421,61 +421,61 @@ class CiProgram:
         app.log.info()
         self.exiting = True
 
-    def refresh(self, drawList, cursor, cmdCount):
-        """Paint the drawList to the screen in the main thread."""
-        cursesWindow = app.window.mainCursesWindow
+    def refresh(self, draw_list, cursor, cmd_count):
+        """Paint the draw_list to the screen in the main thread."""
+        curses_window = app.window.main_curses_window
         # Ask curses to hold the back buffer until curses refresh().
-        cursesWindow.noutrefresh()
+        curses_window.noutrefresh()
         curses.curs_set(0)  # Hide cursor.
-        for i in drawList:
+        for i in draw_list:
             try:
-                cursesWindow.addstr(*i)
+                curses_window.addstr(*i)
             except curses.error:
                 app.log.error("failed to draw", repr(i))
                 pass
         if cursor is not None:
             curses.curs_set(1)  # Show cursor.
             try:
-                cursesWindow.leaveok(0)  # Do update cursor position.
-                cursesWindow.move(cursor[0], cursor[1])  # Move cursor.
+                curses_window.leaveok(0)  # Do update cursor position.
+                curses_window.move(cursor[0], cursor[1])  # Move cursor.
                 # Calling refresh will draw the cursor.
-                cursesWindow.refresh()
-                cursesWindow.leaveok(1)  # Don't update cursor position.
+                curses_window.refresh()
+                curses_window.leaveok(1)  # Don't update cursor position.
             except curses.error:
                 app.log.error("failed to move cursor", repr(i))
                 pass
         # This is a workaround to allow background processing (and parser screen
         # redraw) to interact well with the test harness. The intent is to tell
         # the test that the screen includes all commands executed up to N.
-        if hasattr(cursesWindow, "test_rendered_command_count"):
-            cursesWindow.test_rendered_command_count(cmdCount)
+        if hasattr(curses_window, "test_rendered_command_count"):
+            curses_window.test_rendered_command_count(cmd_count)
 
-    def make_home_dirs(self, homePath):
+    def make_home_dirs(self, home_path):
         try:
-            if not os.path.isdir(homePath):
-                os.makedirs(homePath)
-            self.dirBackups = os.path.join(homePath, "backups")
-            if not os.path.isdir(self.dirBackups):
-                os.makedirs(self.dirBackups)
-            self.dirPrefs = os.path.join(homePath, "prefs")
-            if not os.path.isdir(self.dirPrefs):
-                os.makedirs(self.dirPrefs)
-            userDictionaries = os.path.join(homePath, "dictionaries")
-            if not os.path.isdir(userDictionaries):
-                os.makedirs(userDictionaries)
+            if not os.path.isdir(home_path):
+                os.makedirs(home_path)
+            self.dir_backups = os.path.join(home_path, "backups")
+            if not os.path.isdir(self.dir_backups):
+                os.makedirs(self.dir_backups)
+            self.dir_prefs = os.path.join(home_path, "prefs")
+            if not os.path.isdir(self.dir_prefs):
+                os.makedirs(self.dir_prefs)
+            user_dictionaries = os.path.join(home_path, "dictionaries")
+            if not os.path.isdir(user_dictionaries):
+                os.makedirs(user_dictionaries)
         except Exception as e:
             app.log.exception(e)
 
     def run(self):
         self.parse_args()
         self.set_up_palette()
-        homePath = self.prefs.user_data.get("homePath")
-        self.make_home_dirs(homePath)
+        home_path = self.prefs.user_data.get("home_path")
+        self.make_home_dirs(home_path)
         self.history.load_user_history()
         app.curses_util.hack_curses_fixes()
         self.startup()
         if self.prefs.editor["useBgThread"]:
-            self.bg = app.background.startup_background(self.programWindow)
+            self.bg = app.background.startup_background(self.program_window)
         if self.prefs.startup.get("profile"):
             profile = cProfile.Profile()
             profile.enable()
@@ -494,9 +494,9 @@ class CiProgram:
     def set_up_palette(self):
         def apply_palette(name):
             palette = self.prefs.palette[name]
-            foreground = palette["foregroundIndexes"]
-            background = palette["backgroundIndexes"]
-            for i in range(1, self.prefs.startup["numColors"]):
+            foreground = palette["foreground_indexes"]
+            background = palette["background_indexes"]
+            for i in range(1, self.prefs.startup["num_colors"]):
                 curses.init_pair(i, foreground[i], background[i])
 
         def two_tries(primary, fallback):
@@ -510,49 +510,49 @@ class CiProgram:
                 except curses.error:
                     app.log.startup("No color scheme applied")
 
-        self.color.colors = self.prefs.startup["numColors"]
-        if self.prefs.startup["numColors"] == 0:
+        self.color.colors = self.prefs.startup["num_colors"]
+        if self.prefs.startup["num_colors"] == 0:
             app.log.startup("using no colors")
-        elif self.prefs.startup["numColors"] == 8:
+        elif self.prefs.startup["num_colors"] == 8:
             self.prefs.color = self.prefs.color8
             app.log.startup("using 8 colors")
             two_tries(self.prefs.editor["palette8"], "default8")
-        elif self.prefs.startup["numColors"] == 16:
+        elif self.prefs.startup["num_colors"] == 16:
             self.prefs.color = self.prefs.color16
             app.log.startup("using 16 colors")
             two_tries(self.prefs.editor["palette16"], "default16")
-        elif self.prefs.startup["numColors"] == 256:
+        elif self.prefs.startup["num_colors"] == 256:
             self.prefs.color = self.prefs.color256
             app.log.startup("using 256 colors")
             two_tries(self.prefs.editor["palette"], "default")
         else:
             raise Exception(
-                "unknown palette color count " + repr(self.prefs.startup["numColors"])
+                "unknown palette color count " + repr(self.prefs.startup["num_colors"])
             )
 
     if 1:  # For unit tests/debugging.
 
         def get_document_selection(self):
             """This is primarily for testing."""
-            tb = self.programWindow.inputWindow.textBuffer
-            return (tb.pen_row, tb.pen_col, tb.marker_row, tb.marker_col, tb.selectionMode)
+            tb = self.program_window.input_window.text_buffer
+            return (tb.pen_row, tb.pen_col, tb.marker_row, tb.marker_col, tb.selection_mode)
 
         def get_selection(self):
             """This is primarily for testing."""
-            tb = self.programWindow.focusedWindow.textBuffer
-            return (tb.pen_row, tb.pen_col, tb.marker_row, tb.marker_col, tb.selectionMode)
+            tb = self.program_window.focused_window.text_buffer
+            return (tb.pen_row, tb.pen_col, tb.marker_row, tb.marker_col, tb.selection_mode)
 
-def wrapped_ci(cursesScreen):
+def wrapped_ci(curses_screen):
     try:
         prg = CiProgram()
-        prg.set_up_curses(cursesScreen)
+        prg.set_up_curses(curses_screen)
         prg.run()
     except Exception:
         user_message("---------------------------------------")
         user_message("Super sorry, something went very wrong.")
         user_message("Please create a New Issue and paste this info there.\n")
-        errorType, value, tracebackInfo = sys.exc_info()
-        out = traceback.format_exception(errorType, value, tracebackInfo)
+        error_type, value, traceback_info = sys.exc_info()
+        out = traceback.format_exception(error_type, value, traceback_info)
         for i in out:
             user_message(i[:-1])
             # app.log.error(i[:-1])
@@ -565,17 +565,17 @@ def run_ci():
         curses.wrapper(wrapped_ci)
     finally:
         app.log.flush()
-        app.log.write_to_file("~/.ci_edit/recentLog")
+        app.log.write_to_file("~/.ci_edit/recent_log")
         # Disable Bracketed Paste Mode.
         sys.stdout.write("\033[?2004l")
         # Disable mouse tracking in xterm.
         sys.stdout.write("\033[?1002;l")
         sys.stdout.flush()
-    if userConsoleMessage:
-        full_path = app.buffer_file.expand_full_path("~/.ci_edit/userConsoleMessage")
+    if user_console_message:
+        full_path = app.buffer_file.expand_full_path("~/.ci_edit/user_console_message")
         with open(full_path, "w+") as f:
-            f.write(userConsoleMessage)
-        sys.stdout.write(userConsoleMessage + "\n")
+            f.write(user_console_message)
+        sys.stdout.write(user_console_message + "\n")
         sys.stdout.flush()
 
 if __name__ == "__main__":

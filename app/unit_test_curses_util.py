@@ -39,10 +39,10 @@ class CursesUtilTestCases(unittest.TestCase):
         self.assertRaises(OverflowError, test3)
 
     def test_rendered_find_iter(self):
-        def test(line, startCol, endCol, matches):
+        def test(line, start_col, end_col, matches):
             matches.reverse()
             for s, column, length, index in app.curses_util.rendered_find_iter(
-                line, startCol, endCol, ("[]{}()",), True, True
+                line, start_col, end_col, ("[]{}()",), True, True
             ):
                 self.assertEqual(matches.pop(), (s, column, length, index))
 

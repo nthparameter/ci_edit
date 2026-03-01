@@ -36,44 +36,44 @@ class TextBuffer(app.actions.Actions):
 
     def check_scroll_to_cursor(self, window):
         """Move the selected view rectangle so that the cursor is visible."""
-        maxRow, maxCol = window.rows, window.cols
-        #     self.pen_row >= self.view.scrollRow + maxRow 1 0
+        max_row, max_col = window.rows, window.cols
+        #     self.pen_row >= self.view.scroll_row + max_row 1 0
         rows = 0
-        if self.view.scrollRow > self.pen_row:
-            rows = self.pen_row - self.view.scrollRow
+        if self.view.scroll_row > self.pen_row:
+            rows = self.pen_row - self.view.scroll_row
             app.log.error(
-                "AAA self.view.scrollRow > self.pen_row",
-                self.view.scrollRow,
+                "AAA self.view.scroll_row > self.pen_row",
+                self.view.scroll_row,
                 self.pen_row,
                 self,
             )
-        elif self.pen_row >= self.view.scrollRow + maxRow:
-            rows = self.pen_row - (self.view.scrollRow + maxRow - 1)
+        elif self.pen_row >= self.view.scroll_row + max_row:
+            rows = self.pen_row - (self.view.scroll_row + max_row - 1)
             app.log.error(
-                "BBB self.pen_row >= self.view.scrollRow + maxRow cRow",
+                "BBB self.pen_row >= self.view.scroll_row + max_row cRow",
                 self.pen_row,
                 "sRow",
-                self.view.scrollRow,
-                "maxRow",
-                maxRow,
+                self.view.scroll_row,
+                "max_row",
+                max_row,
                 self,
             )
         cols = 0
-        if self.view.scrollCol > self.pen_col:
-            cols = self.pen_col - self.view.scrollCol
+        if self.view.scroll_col > self.pen_col:
+            cols = self.pen_col - self.view.scroll_col
             app.log.error(
-                "CCC self.view.scrollCol > self.pen_col",
-                self.view.scrollCol,
+                "CCC self.view.scroll_col > self.pen_col",
+                self.view.scroll_col,
                 self.pen_col,
                 self,
             )
-        elif self.pen_col >= self.view.scrollCol + maxCol:
-            cols = self.pen_col - (self.view.scrollCol + maxCol - 1)
+        elif self.pen_col >= self.view.scroll_col + max_col:
+            cols = self.pen_col - (self.view.scroll_col + max_col - 1)
             app.log.error(
-                "DDD self.pen_col >= self.scrollCol + maxCol",
+                "DDD self.pen_col >= self.scroll_col + max_col",
                 self.pen_col,
-                self.view.scrollCol,
-                maxCol,
+                self.view.scroll_col,
+                max_col,
                 self,
             )
         assert not rows
@@ -87,12 +87,12 @@ class TextBuffer(app.actions.Actions):
             if self.should_reparse:
                 self.parse_grammars()
                 self.should_reparse = False
-        if self.view.hasCaptiveCursor:
+        if self.view.has_captive_cursor:
             self.check_scroll_to_cursor(window)
         rows, cols = window.rows, window.cols
         color_pref = self.view.color_pref
-        colorDelta = 32 * 4
-        # colorDelta = 4
+        color_delta = 32 * 4
+        # color_delta = 4
         if 0:
             for i in range(rows):
                 window.add_str(i, 0, "?" * cols, color_pref(120))
@@ -100,167 +100,167 @@ class TextBuffer(app.actions.Actions):
             # Draw window with no concern for sub-rectangles.
             self.draw_text_area(window, 0, 0, rows, cols, 0)
         elif 1:
-            splitRow = rows
-            splitCol = max(0, self.line_limit_indicator - self.view.scrollCol)
-            if self.line_limit_indicator <= 0 or splitCol >= cols:
+            split_row = rows
+            split_col = max(0, self.line_limit_indicator - self.view.scroll_col)
+            if self.line_limit_indicator <= 0 or split_col >= cols:
                 # Draw only left side.
-                self.draw_text_area(window, 0, 0, splitRow, cols, 0)
-            elif 0 < splitCol < cols:
+                self.draw_text_area(window, 0, 0, split_row, cols, 0)
+            elif 0 < split_col < cols:
                 # Draw both sides.
-                self.draw_text_area(window, 0, 0, splitRow, splitCol, 0)
+                self.draw_text_area(window, 0, 0, split_row, split_col, 0)
                 self.draw_text_area(
-                    window, 0, splitCol, splitRow, cols - splitCol, colorDelta
+                    window, 0, split_col, split_row, cols - split_col, color_delta
                 )
             else:
                 # Draw only right side.
-                assert splitCol <= 0
+                assert split_col <= 0
                 self.draw_text_area(
-                    window, 0, splitCol, splitRow, cols - splitCol, colorDelta
+                    window, 0, split_col, split_row, cols - split_col, color_delta
                 )
         else:
             # Draw debug checker board.
-            splitRow = rows // 2
-            splitCol = 17
-            self.draw_text_area(window, 0, 0, splitRow, splitCol, 0)
+            split_row = rows // 2
+            split_col = 17
+            self.draw_text_area(window, 0, 0, split_row, split_col, 0)
             self.draw_text_area(
-                window, 0, splitCol, splitRow, cols - splitCol, colorDelta
+                window, 0, split_col, split_row, cols - split_col, color_delta
             )
             self.draw_text_area(
-                window, splitRow, 0, rows - splitRow, splitCol, colorDelta
+                window, split_row, 0, rows - split_row, split_col, color_delta
             )
             self.draw_text_area(
-                window, splitRow, splitCol, rows - splitRow, cols - splitCol, 0
+                window, split_row, split_col, rows - split_row, cols - split_col, 0
             )
         # Blank screen past the end of the buffer.
         color = color_pref("outside_document")
-        endOfText = min(max(self.parser.row_count() - self.view.scrollRow, 0), rows)
-        for i in range(endOfText, rows):
+        end_of_text = min(max(self.parser.row_count() - self.view.scroll_row, 0), rows)
+        for i in range(end_of_text, rows):
             window.add_str(i, 0, " " * cols, color)
 
-    def draw_text_area(self, window, top, left, rows, cols, colorDelta):
-        startRow = self.view.scrollRow + top
-        endRow = startRow + rows
-        startCol = self.view.scrollCol + left
-        endCol = startCol + cols
+    def draw_text_area(self, window, top, left, rows, cols, color_delta):
+        start_row = self.view.scroll_row + top
+        end_row = start_row + rows
+        start_col = self.view.scroll_col + left
+        end_col = start_col + cols
         app_prefs = self.view.program.prefs
-        defaultColor = app_prefs.color["default"]
-        spellChecking = app_prefs.editor.get("spellChecking", True)
+        default_color = app_prefs.color["default"]
+        spell_checking = app_prefs.editor.get("spell_checking", True)
         color_pref = self.view.color_pref
         spelling = self.program.dictionary
         spelling.set_up_words_for_path(self.full_path)
         if self.parser:
             # Highlight grammar.
-            rowLimit = min(max(self.parser.row_count() - startRow, 0), rows)
-            for i in range(rowLimit):
-                line, renderedWidth = self.parser.row_text_and_width(startRow + i)
-                k = startCol
+            row_limit = min(max(self.parser.row_count() - start_row, 0), rows)
+            for i in range(row_limit):
+                line, rendered_width = self.parser.row_text_and_width(start_row + i)
+                k = start_col
                 if k == 0:
                     # When rendering from column 0 the grammar index is always
                     # zero.
-                    grammarIndex = 0
+                    grammar_index = 0
                 else:
                     # When starting mid-line, find starting grammar index.
-                    grammarIndex = self.parser.grammar_index_from_row_col(
-                        startRow + i, k
+                    grammar_index = self.parser.grammar_index_from_row_col(
+                        start_row + i, k
                     )
-                while k < endCol:
+                while k < end_col:
                     (node, preceding, remaining, eol) = self.parser.grammar_at_index(
-                        startRow + i, k, grammarIndex
+                        start_row + i, k, grammar_index
                     )
-                    grammarIndex += 1
+                    grammar_index += 1
                     if remaining == 0 and not eol:
                         continue
-                    remaining = min(renderedWidth - k, remaining)
-                    length = min(endCol - k, remaining)
+                    remaining = min(rendered_width - k, remaining)
+                    length = min(end_col - k, remaining)
                     color = color_pref(
-                        node.grammar.get("colorIndex", defaultColor), colorDelta
+                        node.grammar.get("color_index", default_color), color_delta
                     )
                     if eol or length <= 0:
                         window.add_str(
-                            top + i, left + k - startCol, " " * (endCol - k), color
+                            top + i, left + k - start_col, " " * (end_col - k), color
                         )
                         break
                     window.add_str(
                         top + i,
-                        left + k - startCol,
+                        left + k - start_col,
                         app.curses_util.rendered_sub_str(line, k, k + length),
                         color,
                     )
-                    subStart = k - preceding
-                    subEnd = k + remaining
-                    subLine = line[subStart:subEnd]
-                    if spellChecking and node.grammar.get("spelling", True):
+                    sub_start = k - preceding
+                    sub_end = k + remaining
+                    sub_line = line[sub_start:sub_end]
+                    if spell_checking and node.grammar.get("spelling", True):
                         # Highlight spelling errors
-                        grammarName = node.grammar.get("name", "unknown")
-                        misspellingColor = color_pref("misspelling", colorDelta)
-                        for found in re.finditer(app.regex.RE_SUBWORDS, subLine):
+                        grammar_name = node.grammar.get("name", "unknown")
+                        misspelling_color = color_pref("misspelling", color_delta)
+                        for found in re.finditer(app.regex.RE_SUBWORDS, sub_line):
                             reg = found.regs[0]  # Mispelllled word
-                            offsetStart = subStart + reg[0]
-                            offsetEnd = subStart + reg[1]
-                            if startCol < offsetEnd and offsetStart < endCol:
-                                word = line[offsetStart:offsetEnd]
-                                if not spelling.is_correct(word, grammarName):
-                                    if startCol > offsetStart:
-                                        offsetStart += startCol - offsetStart
-                                    wordFragment = line[
-                                        offsetStart : min(endCol, offsetEnd)
+                            offset_start = sub_start + reg[0]
+                            offset_end = sub_start + reg[1]
+                            if start_col < offset_end and offset_start < end_col:
+                                word = line[offset_start:offset_end]
+                                if not spelling.is_correct(word, grammar_name):
+                                    if start_col > offset_start:
+                                        offset_start += start_col - offset_start
+                                    word_fragment = line[
+                                        offset_start : min(end_col, offset_end)
                                     ]
                                     window.add_str(
                                         top + i,
-                                        left + offsetStart - startCol,
-                                        wordFragment,
-                                        misspellingColor,
+                                        left + offset_start - start_col,
+                                        word_fragment,
+                                        misspelling_color,
                                     )
                     k += length
         else:
             # For testing, draw without parser.
-            rowLimit = min(max(self.parser.row_count() - startRow, 0), rows)
-            for i in range(rowLimit):
-                line = self.parser.row_text(startRow + i)[startCol:endCol]
+            row_limit = min(max(self.parser.row_count() - start_row, 0), rows)
+            for i in range(row_limit):
+                line = self.parser.row_text(start_row + i)[start_col:end_col]
                 window.add_str(
                     top + i,
                     left,
                     line + " " * (cols - len(line)),
-                    color_pref("default", colorDelta),
+                    color_pref("default", color_delta),
                 )
-        self.draw_overlays(window, top, left, rows, cols, colorDelta)
+        self.draw_overlays(window, top, left, rows, cols, color_delta)
         if 0:  # Experiment: draw our own cursor.
-            if startRow <= self.pen_row < endRow and startCol <= self.pen_col < endCol:
+            if start_row <= self.pen_row < end_row and start_col <= self.pen_col < end_col:
                 window.add_str(
-                    self.pen_row - startRow, self.pen_col - startCol, "X", 200
+                    self.pen_row - start_row, self.pen_col - start_col, "X", 200
                 )
 
-    def draw_overlays(self, window, top, left, maxRow, maxCol, colorDelta):
-        startRow = self.view.scrollRow + top
-        endRow = self.view.scrollRow + top + maxRow
-        startCol = self.view.scrollCol + left
-        endCol = self.view.scrollCol + left + maxCol
-        rowLimit = min(max(self.parser.row_count() - startRow, 0), maxRow)
+    def draw_overlays(self, window, top, left, max_row, max_col, color_delta):
+        start_row = self.view.scroll_row + top
+        end_row = self.view.scroll_row + top + max_row
+        start_col = self.view.scroll_col + left
+        end_col = self.view.scroll_col + left + max_col
+        row_limit = min(max(self.parser.row_count() - start_row, 0), max_row)
         color_pref = self.view.color_pref
         if 1:
             # Highlight brackets.
             # Highlight numbers.
             # Highlight space ending lines.
             colors = (
-                color_pref("bracket", colorDelta),
-                color_pref("number", colorDelta),
-                color_pref("trailing_space", colorDelta),
+                color_pref("bracket", color_delta),
+                color_pref("number", color_delta),
+                color_pref("trailing_space", color_delta),
             )
-            for i in range(rowLimit):
-                line = self.parser.row_text(startRow + i)
+            for i in range(row_limit):
+                line = self.parser.row_text(start_row + i)
                 highlight_trailing_whitespace = self.highlight_trailing_whitespace and not (
-                    startRow + i == self.pen_row and self.pen_col == len(line)
+                    start_row + i == self.pen_row and self.pen_col == len(line)
                 )
                 for s, column, _, index in app.curses_util.rendered_find_iter(
                     line,
-                    startCol,
-                    endCol,
+                    start_col,
+                    end_col,
                     ("[]{}()",),
                     True,
                     highlight_trailing_whitespace,
                 ):
                     window.add_str(
-                        top + i, column - self.view.scrollCol, s, colors[index]
+                        top + i, column - self.view.scroll_col, s, colors[index]
                     )
         if 1:
             # Match brackets.
@@ -271,17 +271,17 @@ class TextBuffer(app.actions.Actions):
                 ch = app.curses_util.char_at_column(
                     self.pen_col, self.parser.row_text(self.pen_row)
                 )
-                matchingBracketRowCol = self.get_matching_bracket_row_col()
-                if matchingBracketRowCol is not None:
-                    matchingBracketRow = matchingBracketRowCol[0]
-                    matchingBracketCol = matchingBracketRowCol[1]
+                matching_bracket_row_col = self.get_matching_bracket_row_col()
+                if matching_bracket_row_col is not None:
+                    matching_bracket_row = matching_bracket_row_col[0]
+                    matching_bracket_col = matching_bracket_row_col[1]
                     window.add_str(
-                        top + self.pen_row - startRow,
-                        self.pen_col - self.view.scrollCol,
+                        top + self.pen_row - start_row,
+                        self.pen_col - self.view.scroll_col,
                         ch,
-                        color_pref("matching_bracket", colorDelta),
+                        color_pref("matching_bracket", color_delta),
                     )
-                    characterFinder = {
+                    character_finder = {
                         "(": ")",
                         "[": "]",
                         "{": "}",
@@ -289,27 +289,27 @@ class TextBuffer(app.actions.Actions):
                         "]": "[",
                         "}": "{",
                     }
-                    oppCharacter = characterFinder[ch]
+                    opp_character = character_finder[ch]
                     window.add_str(
-                        top + matchingBracketRow - startRow,
-                        matchingBracketCol - self.view.scrollCol,
-                        oppCharacter,
-                        color_pref("matching_bracket", colorDelta),
+                        top + matching_bracket_row - start_row,
+                        matching_bracket_col - self.view.scroll_col,
+                        opp_character,
+                        color_pref("matching_bracket", color_delta),
                     )
         if self.highlight_cursor_line:
             # Highlight the whole line at the cursor location.
-            if self.view.hasFocus and startRow <= self.pen_row < startRow + rowLimit:
-                line = self.parser.row_text(self.pen_row)[startCol:endCol]
+            if self.view.has_focus and start_row <= self.pen_row < start_row + row_limit:
+                line = self.parser.row_text(self.pen_row)[start_col:end_col]
                 window.add_str(
-                    top + self.pen_row - startRow,
+                    top + self.pen_row - start_row,
                     left,
                     line,
-                    color_pref("current_line", colorDelta),
+                    color_pref("current_line", color_delta),
                 )
         if self.find_re is not None:
             # Highlight find.
-            for i in range(rowLimit):
-                line = self.parser.row_text(startRow + i)[startCol:endCol]
+            for i in range(row_limit):
+                line = self.parser.row_text(start_row + i)[start_col:end_col]
                 for k in self.find_re.finditer(line):
                     reg = k.regs[0]
                     # for ref in k.regs[1:]:
@@ -317,70 +317,70 @@ class TextBuffer(app.actions.Actions):
                         top + i,
                         left + reg[0],
                         line[reg[0] : reg[1]],
-                        color_pref("found_find", colorDelta),
+                        color_pref("found_find", color_delta),
                     )
-        if rowLimit and self.selectionMode != app.selectable.SELECTION_NONE:
+        if row_limit and self.selection_mode != app.selectable.SELECTION_NONE:
             # Highlight selected text.
-            colorSelected = color_pref("selected")
-            upperRow, upperCol, lowerRow, lowerCol = self.start_and_end()
+            color_selected = color_pref("selected")
+            upper_row, upper_col, lower_row, lower_col = self.start_and_end()
             if 1:
-                selStartCol = max(upperCol, startCol)
-                selEndCol = min(lowerCol, endCol)
-                start = max(0, min(upperRow - startRow, maxRow))
-                end = max(0, min(lowerRow - startRow, maxRow))
-                if self.selectionMode == app.selectable.SELECTION_BLOCK:
+                sel_start_col = max(upper_col, start_col)
+                sel_end_col = min(lower_col, end_col)
+                start = max(0, min(upper_row - start_row, max_row))
+                end = max(0, min(lower_row - start_row, max_row))
+                if self.selection_mode == app.selectable.SELECTION_BLOCK:
                     if not (
-                        lowerRow < startRow
-                        or upperRow >= endRow
-                        or lowerCol < startCol
-                        or upperCol >= endCol
+                        lower_row < start_row
+                        or upper_row >= end_row
+                        or lower_col < start_col
+                        or upper_col >= end_col
                     ):
                         # There is an overlap.
                         for i in range(start, end + 1):
-                            line = self.parser.row_text(startRow + i)[
-                                selStartCol:selEndCol
+                            line = self.parser.row_text(start_row + i)[
+                                sel_start_col:sel_end_col
                             ]
-                            window.add_str(top + i, selStartCol, line, colorSelected)
+                            window.add_str(top + i, sel_start_col, line, color_selected)
                 elif (
-                    self.selectionMode == app.selectable.SELECTION_ALL
-                    or self.selectionMode == app.selectable.SELECTION_CHARACTER
-                    or self.selectionMode == app.selectable.SELECTION_LINE
-                    or self.selectionMode == app.selectable.SELECTION_WORD
+                    self.selection_mode == app.selectable.SELECTION_ALL
+                    or self.selection_mode == app.selectable.SELECTION_CHARACTER
+                    or self.selection_mode == app.selectable.SELECTION_LINE
+                    or self.selection_mode == app.selectable.SELECTION_WORD
                 ):
-                    if not (lowerRow < startRow or upperRow >= endRow):
+                    if not (lower_row < start_row or upper_row >= end_row):
                         # There is an overlap.
                         # Go one row past the selection or to the last line.
                         for i in range(
-                            start, min(end + 1, self.parser.row_count() - startRow)
+                            start, min(end + 1, self.parser.row_count() - start_row)
                         ):
-                            line = self.parser.row_text(startRow + i)
+                            line = self.parser.row_text(start_row + i)
                             line += " "  # Maybe do: "\\n".
                             # TODO(dschuyler): This is essentially
-                            # left + (upperCol or (scrollCol + left)) -
-                            #    scrollCol - left
+                            # left + (upper_col or (scroll_col + left)) -
+                            #    scroll_col - left
                             # which seems like it could be simplified.
-                            paneCol = left + selStartCol - startCol
-                            if i == lowerRow - startRow and i == upperRow - startRow:
+                            pane_col = left + sel_start_col - start_col
+                            if i == lower_row - start_row and i == upper_row - start_row:
                                 # Selection entirely on one line.
                                 text = app.curses_util.rendered_sub_str(
-                                    line, selStartCol, selEndCol
+                                    line, sel_start_col, sel_end_col
                                 )
-                                window.add_str(top + i, paneCol, text, colorSelected)
-                            elif i == lowerRow - startRow:
+                                window.add_str(top + i, pane_col, text, color_selected)
+                            elif i == lower_row - start_row:
                                 # End of multi-line selection.
                                 text = app.curses_util.rendered_sub_str(
-                                    line, startCol, selEndCol
+                                    line, start_col, sel_end_col
                                 )
-                                window.add_str(top + i, left, text, colorSelected)
-                            elif i == upperRow - startRow:
+                                window.add_str(top + i, left, text, color_selected)
+                            elif i == upper_row - start_row:
                                 # Start of multi-line selection.
                                 text = app.curses_util.rendered_sub_str(
-                                    line, selStartCol, endCol
+                                    line, sel_start_col, end_col
                                 )
-                                window.add_str(top + i, paneCol, text, colorSelected)
+                                window.add_str(top + i, pane_col, text, color_selected)
                             else:
                                 # Middle of multi-line selection.
                                 text = app.curses_util.rendered_sub_str(
-                                    line, startCol, endCol
+                                    line, start_col, end_col
                                 )
-                                window.add_str(top + i, left, text, colorSelected)
+                                window.add_str(top + i, left, text, color_selected)

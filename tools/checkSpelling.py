@@ -46,17 +46,17 @@ kReIncludeFiles = re.compile(r"""\.(cc)$""")
 assert kReIgnoreDirs.search("/apple/.git/orange")
 assert kReIgnoreFiles.search("/apple.pyc")
 
-dictionaryList = glob.glob(os.path.join(ciEditDir, "app/dictionary.*.words"))
-dictionaryList = [os.path.basename(i)[11:-6] for i in dictionaryList]
-print(pprint.pprint(dictionaryList))
+dictionary_list = glob.glob(os.path.join(ciEditDir, "app/dictionary.*.words"))
+dictionary_list = [os.path.basename(i)[11:-6] for i in dictionary_list]
+print(pprint.pprint(dictionary_list))
 path_prefs = []
-dictionary = app.spelling.Dictionary(dictionaryList, path_prefs)
+dictionary = app.spelling.Dictionary(dictionary_list, path_prefs)
 assert dictionary.is_correct("has", "cpp")
 
-def handle_file(fileName, unrecognizedWords):
-    # print(fileName, end="")
+def handle_file(file_name, unrecognizedWords):
+    # print(file_name, end="")
     try:
-        with open(fileName, "r") as f:
+        with open(file_name, "r") as f:
             data = f.read()
             if not data:
                 return
@@ -68,20 +68,20 @@ def handle_file(fileName, unrecognizedWords):
                         print(word, end=",")
                     unrecognizedWords.add(word)
     except UnicodeDecodeError:
-        print("Error decoding:", fileName)
+        print("Error decoding:", file_name)
 
 def walk_tree(root):
     unrecognizedWords = set()
-    for (dirPath, dirNames, fileNames) in os.walk(root):
-        if kReIgnoreDirs.search(dirPath):
+    for (dir_path, dirNames, fileNames) in os.walk(root):
+        if kReIgnoreDirs.search(dir_path):
             continue
-        for fileName in filter(lambda x: fnmatch(x, filePattern), fileNames):
-            if kReIgnoreFiles.search(fileName):
+        for file_name in filter(lambda x: fnmatch(x, filePattern), fileNames):
+            if kReIgnoreFiles.search(file_name):
                 continue
-            if kReIncludeFiles.search(fileName):
-                handle_file(os.path.join(dirPath, fileName), unrecognizedWords)
+            if kReIncludeFiles.search(file_name):
+                handle_file(os.path.join(dir_path, file_name), unrecognizedWords)
     if unrecognizedWords:
-        print("found", fileName)
+        print("found", file_name)
         print(unrecognizedWords)
         print()
     return unrecognizedWords

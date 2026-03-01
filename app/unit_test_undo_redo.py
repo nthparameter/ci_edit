@@ -22,20 +22,20 @@ from app.curses_util import *
 import app.ci_program
 import app.fake_curses_testing
 
-kTestFile = "#undo_redo_test_file_with_unlikely_file_name~"
+TEST_FILE = "#undo_redo_test_file_with_unlikely_file_name~"
 
 class UndoRedoTestCases(app.fake_curses_testing.FakeCursesTestCase):
     def setUp(self):
         self.longMessage = True
-        if os.path.isfile(kTestFile):
-            os.unlink(kTestFile)
-        self.assertFalse(os.path.isfile(kTestFile))
+        if os.path.isfile(TEST_FILE):
+            os.unlink(TEST_FILE)
+        self.assertFalse(os.path.isfile(TEST_FILE))
         app.fake_curses_testing.FakeCursesTestCase.set_up(self)
 
     def test_undo_bracketed_paste(self):
         # self.set_movie_mode(True)
         self.run_with_test_file(
-            kTestFile,
+            TEST_FILE,
             [
                 self.display_check(2, 7, ["      "]),
                 curses.ascii.ESC,
@@ -55,7 +55,7 @@ class UndoRedoTestCases(app.fake_curses_testing.FakeCursesTestCase):
     def test_basic_undo(self):
         # self.set_movie_mode(True)
         self.run_with_test_file(
-            kTestFile,
+            TEST_FILE,
             [
                 self.display_check(2, 7, ["      "]),
                 self.write_text("sand"),
@@ -94,7 +94,7 @@ class UndoRedoTestCases(app.fake_curses_testing.FakeCursesTestCase):
     def test_undo_words(self):
         # self.set_movie_mode(True)
         self.run_with_test_file(
-            kTestFile,
+            TEST_FILE,
             [
                 self.display_check(2, 7, ["      "]),
                 self.write_text("one two "),

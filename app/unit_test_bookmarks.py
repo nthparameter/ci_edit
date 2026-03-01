@@ -23,20 +23,20 @@ import app.prefs
 import app.text_buffer
 import app.window
 
-kTestFile = "#bookmarks_test_file_with_unlikely_file_name~"
+TEST_FILE = "#bookmarks_test_file_with_unlikely_file_name~"
 
 class BookmarkTestCases(app.fake_curses_testing.FakeCursesTestCase):
     def setUp(self):
         self.prg = app.ci_program.CiProgram()
-        self.fakeHost = app.window.ViewWindow(self.prg, None)
-        self.textBuffer = app.text_buffer.TextBuffer(self.prg)
-        self.textBuffer.lines = 50
-        self.lineNumbers = app.window.LineNumbers(self.prg, self.fakeHost)
-        self.lineNumbers.rows = 30
-        self.lineNumbers.parent = self.fakeHost
-        self.fakeHost.lineNumberColumn = self.lineNumbers
-        self.fakeHost.textBuffer = self.textBuffer
-        self.fakeHost.scrollRow = self.fakeHost.cursorRow = 0
+        self.fake_host = app.window.ViewWindow(self.prg, None)
+        self.text_buffer = app.text_buffer.TextBuffer(self.prg)
+        self.text_buffer.lines = 50
+        self.line_numbers = app.window.LineNumbers(self.prg, self.fake_host)
+        self.line_numbers.rows = 30
+        self.line_numbers.parent = self.fake_host
+        self.fake_host.line_number_column = self.line_numbers
+        self.fake_host.text_buffer = self.text_buffer
+        self.fake_host.scroll_row = self.fake_host.cursorRow = 0
         app.fake_curses_testing.FakeCursesTestCase.set_up(self)
 
     def tearDown(self):
@@ -281,43 +281,43 @@ class BookmarkTestCases(app.fake_curses_testing.FakeCursesTestCase):
         try:
             import mock
         except ImportError:
-            startYellow = "\033[93m"
-            disableColor = "\033[0m"
-            startBlue = "\033[94m"
-            exceptionMessage = (
-                startYellow
+            start_yellow = "\033[93m"
+            disable_color = "\033[0m"
+            start_blue = "\033[94m"
+            exception_message = (
+                start_yellow
                 + "This test could "
                 + "not execute because the 'mock' module could not be found. If "
                 + "you would like to run this test, please install the mock "
                 + "module for python 2.7. You can visit their website at "
-                + startBlue
+                + start_blue
                 + "https://pypi.python.org/pypi/mock "
-                + startYellow
+                + start_yellow
                 + "or you can "
                 + "try running "
-                + startBlue
+                + start_blue
                 + "pip install mock."
-                + disableColor
+                + disable_color
             )
-            # raise Exception(exceptionMessage)
-            print(exceptionMessage)
+            # raise Exception(exception_message)
+            print(exception_message)
             return
 
         def test_with_an_x_colored_terminal(x):
-            mock.patch.dict(self.prg.prefs.startup, {"numColors": x}, clear=True)
+            mock.patch.dict(self.prg.prefs.startup, {"num_colors": x}, clear=True)
             colors = set()
-            expectedNumberOfColors = 5
-            for _ in range(expectedNumberOfColors):
-                color = self.textBuffer.get_bookmark_color()
+            expected_number_of_colors = 5
+            for _ in range(expected_number_of_colors):
+                color = self.text_buffer.get_bookmark_color()
                 # Make sure that a color index is returned.
                 self.assertEqual(type(color), int)
                 colors.add(color)
             # Test that all colors were different.
-            self.assertEqual(len(colors), expectedNumberOfColors)
-            color = self.textBuffer.get_bookmark_color()
+            self.assertEqual(len(colors), expected_number_of_colors)
+            color = self.text_buffer.get_bookmark_color()
             colors.add(color)
             # Test that the function rotates 5 colors.
-            self.assertEqual(len(colors), expectedNumberOfColors)
+            self.assertEqual(len(colors), expected_number_of_colors)
 
             # Test for 8-colored mode
             test_with_an_x_colored_terminal(8)
@@ -327,83 +327,83 @@ class BookmarkTestCases(app.fake_curses_testing.FakeCursesTestCase):
 
     def test_get_visible_bookmarks(self):
         # Set up the fake objects to test the LineNumbers methods.
-        self.textBuffer.bookmarks = [
+        self.text_buffer.bookmarks = [
             Bookmark(0, 0, {}),
             Bookmark(10, 10, {}),
             Bookmark(20, 20, {}),
             Bookmark(30, 30, {}),
             Bookmark(40, 40, {}),
         ]
-        visibleBookmarks = self.lineNumbers.get_visible_bookmarks(
-            self.fakeHost.scrollRow, self.fakeHost.scrollRow + self.lineNumbers.rows
+        visible_bookmarks = self.line_numbers.get_visible_bookmarks(
+            self.fake_host.scroll_row, self.fake_host.scroll_row + self.line_numbers.rows
         )
-        expectedBookmarks = {
+        expected_bookmarks = {
             Bookmark(0, 0, {}),
             Bookmark(10, 10, {}),
             Bookmark(20, 20, {}),
         }
 
-        # Check that visibleBookmarks contains all the correct bookmarks
-        self.assertEqual(set(visibleBookmarks), expectedBookmarks)
+        # Check that visible_bookmarks contains all the correct bookmarks
+        self.assertEqual(set(visible_bookmarks), expected_bookmarks)
         # Check that the number of bookmarks is the same, as set removes
         # duplicates.
-        self.assertEqual(len(visibleBookmarks), len(expectedBookmarks))
+        self.assertEqual(len(visible_bookmarks), len(expected_bookmarks))
 
-        self.fakeHost.scrollRow = 20
-        visibleBookmarks = self.lineNumbers.get_visible_bookmarks(
-            self.fakeHost.scrollRow, 20 + self.lineNumbers.rows
+        self.fake_host.scroll_row = 20
+        visible_bookmarks = self.line_numbers.get_visible_bookmarks(
+            self.fake_host.scroll_row, 20 + self.line_numbers.rows
         )
-        expectedBookmarks = {
+        expected_bookmarks = {
             Bookmark(20, 20, {}),
             Bookmark(30, 30, {}),
             Bookmark(40, 40, {}),
         }
-        self.assertEqual(set(visibleBookmarks), expectedBookmarks)
-        self.assertEqual(len(visibleBookmarks), len(expectedBookmarks))
+        self.assertEqual(set(visible_bookmarks), expected_bookmarks)
+        self.assertEqual(len(visible_bookmarks), len(expected_bookmarks))
 
-        self.fakeHost.scrollRow = 21
-        visibleBookmarks = self.lineNumbers.get_visible_bookmarks(
-            self.fakeHost.scrollRow, self.fakeHost.scrollRow + self.lineNumbers.rows
+        self.fake_host.scroll_row = 21
+        visible_bookmarks = self.line_numbers.get_visible_bookmarks(
+            self.fake_host.scroll_row, self.fake_host.scroll_row + self.line_numbers.rows
         )
-        expectedBookmarks = {Bookmark(30, 30, {}), Bookmark(40, 40, {})}
-        self.assertEqual(set(visibleBookmarks), expectedBookmarks)
-        self.assertEqual(len(visibleBookmarks), len(expectedBookmarks))
+        expected_bookmarks = {Bookmark(30, 30, {}), Bookmark(40, 40, {})}
+        self.assertEqual(set(visible_bookmarks), expected_bookmarks)
+        self.assertEqual(len(visible_bookmarks), len(expected_bookmarks))
 
-        self.fakeHost.scrollRow = 21
-        self.lineNumbers.rows = 10
-        visibleBookmarks = self.lineNumbers.get_visible_bookmarks(
-            self.fakeHost.scrollRow, self.fakeHost.scrollRow + self.lineNumbers.rows
+        self.fake_host.scroll_row = 21
+        self.line_numbers.rows = 10
+        visible_bookmarks = self.line_numbers.get_visible_bookmarks(
+            self.fake_host.scroll_row, self.fake_host.scroll_row + self.line_numbers.rows
         )
-        expectedBookmarks = {Bookmark(30, 30, {})}
-        self.assertEqual(set(visibleBookmarks), expectedBookmarks)
-        self.assertEqual(len(visibleBookmarks), len(expectedBookmarks))
+        expected_bookmarks = {Bookmark(30, 30, {})}
+        self.assertEqual(set(visible_bookmarks), expected_bookmarks)
+        self.assertEqual(len(visible_bookmarks), len(expected_bookmarks))
 
-        self.lineNumbers.rows = 9
-        visibleBookmarks = self.lineNumbers.get_visible_bookmarks(
-            self.fakeHost.scrollRow, self.fakeHost.scrollRow + self.lineNumbers.rows
+        self.line_numbers.rows = 9
+        visible_bookmarks = self.line_numbers.get_visible_bookmarks(
+            self.fake_host.scroll_row, self.fake_host.scroll_row + self.line_numbers.rows
         )
-        expectedBookmarks = {}
-        self.assertEqual(visibleBookmarks, [])
+        expected_bookmarks = {}
+        self.assertEqual(visible_bookmarks, [])
 
-        self.fakeHost.scrollRow = 10
-        self.textBuffer.bookmarks = [
+        self.fake_host.scroll_row = 10
+        self.text_buffer.bookmarks = [
             Bookmark(0, 10, {}),
             Bookmark(11, 29, {}),
             Bookmark(30, 45, {}),
             Bookmark(46, 49, {}),
         ]
-        self.lineNumbers.rows = 15
-        visibleBookmarks = self.lineNumbers.get_visible_bookmarks(
-            self.fakeHost.scrollRow, self.fakeHost.scrollRow + self.lineNumbers.rows
+        self.line_numbers.rows = 15
+        visible_bookmarks = self.line_numbers.get_visible_bookmarks(
+            self.fake_host.scroll_row, self.fake_host.scroll_row + self.line_numbers.rows
         )
-        expectedBookmarks = {Bookmark(0, 10, {}), Bookmark(11, 29, {})}
-        self.assertEqual(set(visibleBookmarks), expectedBookmarks)
-        self.assertEqual(len(visibleBookmarks), len(expectedBookmarks))
+        expected_bookmarks = {Bookmark(0, 10, {}), Bookmark(11, 29, {})}
+        self.assertEqual(set(visible_bookmarks), expected_bookmarks)
+        self.assertEqual(len(visible_bookmarks), len(expected_bookmarks))
 
     def test_bookmarks_jump(self):
         # self.set_movie_mode(True)
         self.run_with_test_file(
-            kTestFile,
+            TEST_FILE,
             [
                 self.display_check(
                     0,

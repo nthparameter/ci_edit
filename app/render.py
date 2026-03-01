@@ -16,22 +16,22 @@ class Frame:
     def __init__(self):
         # Track the total number of commands processed to create this frame.
         # This is used to match a point in the command stream to a frame.
-        self.cmdCount = None
+        self.cmd_count = None
         self.cursor = None
-        self.drawList = []
+        self.draw_list = []
 
     def add_str(self, row, col, text, style):
-        self.drawList.append((row, col, text, style))
+        self.draw_list.append((row, col, text, style))
 
     def set_cmd_count(self, count):
-        self.cmdCount = count
+        self.cmd_count = count
 
     def set_cursor(self, cursor):
         self.cursor = cursor
 
     def grab_frame(self):
-        r = self.drawList, self.cursor, self.cmdCount
-        self.drawList = []
+        r = self.draw_list, self.cursor, self.cmd_count
+        self.draw_list = []
         self.cursor = None
-        self.cmdCount = None
+        self.cmd_count = None
         return r

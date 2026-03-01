@@ -64,7 +64,7 @@ class Selectable(app.line_buffer.LineBuffer):
         self.pen_col = 0
         self.marker_row = 0
         self.marker_col = 0
-        self.selectionMode = SELECTION_NONE
+        self.selection_mode = SELECTION_NONE
 
     def count_selected(self):
         lines = self.get_selected_text()
@@ -77,197 +77,197 @@ class Selectable(app.line_buffer.LineBuffer):
         return (self.pen_row, self.pen_col, self.marker_row, self.marker_col)
 
     def selection_mode_name(self):
-        return SELECTION_MODE_NAMES[self.selectionMode]
+        return SELECTION_MODE_NAMES[self.selection_mode]
 
     def get_selected_text(self):
-        upperRow, upperCol, lowerRow, lowerCol = self.start_and_end()
-        return self.get_text(upperRow, upperCol, lowerRow, lowerCol, self.selectionMode)
+        upper_row, upper_col, lower_row, lower_col = self.start_and_end()
+        return self.get_text(upper_row, upper_col, lower_row, lower_col, self.selection_mode)
 
     def get_text(
-        self, upperRow, upperCol, lowerRow, lowerCol, selectionMode=SELECTION_CHARACTER
+        self, upper_row, upper_col, lower_row, lower_col, selection_mode=SELECTION_CHARACTER
     ):
         if app.config.strict_debug:
-            assert isinstance(upperRow, int)
-            assert isinstance(upperCol, int)
-            assert isinstance(lowerRow, int)
-            assert isinstance(lowerCol, int)
-            assert isinstance(selectionMode, int)
-            assert upperRow <= lowerRow
-            assert upperRow != lowerRow or upperCol <= lowerCol
-            assert SELECTION_NONE <= selectionMode < SELECTION_MODE_COUNT
+            assert isinstance(upper_row, int)
+            assert isinstance(upper_col, int)
+            assert isinstance(lower_row, int)
+            assert isinstance(lower_col, int)
+            assert isinstance(selection_mode, int)
+            assert upper_row <= lower_row
+            assert upper_row != lower_row or upper_col <= lower_col
+            assert SELECTION_NONE <= selection_mode < SELECTION_MODE_COUNT
         lines = []
-        if selectionMode == SELECTION_BLOCK:
-            if lowerRow + 1 < self.parser.row_count():
-                lowerRow += 1
-            for i in range(upperRow, lowerRow):
-                lines.append(self.parser.row_text(i, upperCol, lowerCol))
+        if selection_mode == SELECTION_BLOCK:
+            if lower_row + 1 < self.parser.row_count():
+                lower_row += 1
+            for i in range(upper_row, lower_row):
+                lines.append(self.parser.row_text(i, upper_col, lower_col))
         elif (
-            selectionMode == SELECTION_ALL
-            or selectionMode == SELECTION_CHARACTER
-            or selectionMode == SELECTION_LINE
-            or selectionMode == SELECTION_WORD
+            selection_mode == SELECTION_ALL
+            or selection_mode == SELECTION_CHARACTER
+            or selection_mode == SELECTION_LINE
+            or selection_mode == SELECTION_WORD
         ):
-            if upperRow == lowerRow:
-                lines.append(self.parser.row_text(upperRow, upperCol, lowerCol))
+            if upper_row == lower_row:
+                lines.append(self.parser.row_text(upper_row, upper_col, lower_col))
             else:
-                for i in range(upperRow, lowerRow + 1):
-                    if i == upperRow:
-                        lines.append(self.parser.row_text(i, upperCol))
-                    elif i == lowerRow:
-                        lines.append(self.parser.row_text(i, 0, lowerCol))
+                for i in range(upper_row, lower_row + 1):
+                    if i == upper_row:
+                        lines.append(self.parser.row_text(i, upper_col))
+                    elif i == lower_row:
+                        lines.append(self.parser.row_text(i, 0, lower_col))
                     else:
                         lines.append(self.parser.row_text(i))
         return tuple(lines)
 
     def do_delete_selection(self):
         """Call do_delete() with current pen and marker values."""
-        upperRow, upperCol, lowerRow, lowerCol = self.start_and_end()
-        self.do_delete(upperRow, upperCol, lowerRow, lowerCol)
+        upper_row, upper_col, lower_row, lower_col = self.start_and_end()
+        self.do_delete(upper_row, upper_col, lower_row, lower_col)
 
-    def do_delete(self, upperRow, upperCol, lowerRow, lowerCol):
-        """Delete characters from (upperRow, upperCol) up to (lowerRow,
-        lowerCol) using the current selection mode."""
+    def do_delete(self, upper_row, upper_col, lower_row, lower_col):
+        """Delete characters from (upper_row, upper_col) up to (lower_row,
+        lower_col) using the current selection mode."""
         if app.config.strict_debug:
-            assert isinstance(upperRow, int)
-            assert isinstance(upperCol, int)
-            assert isinstance(lowerRow, int)
-            assert isinstance(lowerCol, int)
-            assert upperRow <= lowerRow
-            assert upperRow != lowerRow or upperCol <= lowerCol
-        if self.selectionMode == SELECTION_BLOCK:
-            self.parser.delete_block(upperRow, upperCol, lowerRow, lowerCol)
+            assert isinstance(upper_row, int)
+            assert isinstance(upper_col, int)
+            assert isinstance(lower_row, int)
+            assert isinstance(lower_col, int)
+            assert upper_row <= lower_row
+            assert upper_row != lower_row or upper_col <= lower_col
+        if self.selection_mode == SELECTION_BLOCK:
+            self.parser.delete_block(upper_row, upper_col, lower_row, lower_col)
         elif (
-            self.selectionMode == SELECTION_NONE
-            or self.selectionMode == SELECTION_ALL
-            or self.selectionMode == SELECTION_CHARACTER
-            or self.selectionMode == SELECTION_LINE
-            or self.selectionMode == SELECTION_WORD
+            self.selection_mode == SELECTION_NONE
+            or self.selection_mode == SELECTION_ALL
+            or self.selection_mode == SELECTION_CHARACTER
+            or self.selection_mode == SELECTION_LINE
+            or self.selection_mode == SELECTION_WORD
         ):
-            self.parser.delete_range(upperRow, upperCol, lowerRow, lowerCol)
+            self.parser.delete_range(upper_row, upper_col, lower_row, lower_col)
 
     def insert_lines(self, lines):
         if app.config.strict_debug:
             assert isinstance(lines, tuple)
-        self.insert_lines_at(self.pen_row, self.pen_col, lines, self.selectionMode)
+        self.insert_lines_at(self.pen_row, self.pen_col, lines, self.selection_mode)
 
-    def insert_lines_at(self, row, col, lines, selectionMode):
+    def insert_lines_at(self, row, col, lines, selection_mode):
         if app.config.strict_debug:
             assert isinstance(row, int)
             assert isinstance(col, int)
             assert isinstance(lines, tuple)
-            assert isinstance(selectionMode, int)
+            assert isinstance(selection_mode, int)
         if len(lines) <= 1:
             if len(lines) == 0 or len(lines[0]) == 0:
                 # Optimization. There's nothing to insert.
                 return
         lines = list(lines)
-        if selectionMode == SELECTION_BLOCK:
+        if selection_mode == SELECTION_BLOCK:
             self.parser.insert_block(row, col, lines)
         elif (
-            selectionMode == SELECTION_NONE
-            or selectionMode == SELECTION_ALL
-            or selectionMode == SELECTION_CHARACTER
-            or selectionMode == SELECTION_LINE
-            or selectionMode == SELECTION_WORD
+            selection_mode == SELECTION_NONE
+            or selection_mode == SELECTION_ALL
+            or selection_mode == SELECTION_CHARACTER
+            or selection_mode == SELECTION_LINE
+            or selection_mode == SELECTION_WORD
         ):
             if len(lines) == 1:
                 self.parser.insert(row, col, lines[0])
             else:
                 self.parser.insert_lines(row, col, lines)
         else:
-            app.log.info("selection mode not recognized", selectionMode)
+            app.log.info("selection mode not recognized", selection_mode)
 
-    def __extend_words(self, upperRow, upperCol, lowerRow, lowerCol):
+    def __extend_words(self, upper_row, upper_col, lower_row, lower_col):
         """Extends and existing selection to the nearest word boundaries. The
         pen and marker will be extended away from each other. The extension may
         occur in one, both, or neither direction.
 
-        Returns: tuple of (upperCol, lowerCol).
+        Returns: tuple of (upper_col, lower_col).
         """
-        line = self.parser.row_text(upperRow)
+        line = self.parser.row_text(upper_row)
         for segment in re.finditer(app.regex.RE_WORD_BOUNDARY, line):
-            if segment.start() <= upperCol < segment.end():
-                upperCol = segment.start()
+            if segment.start() <= upper_col < segment.end():
+                upper_col = segment.start()
                 break
-        line = self.parser.row_text(lowerRow)
+        line = self.parser.row_text(lower_row)
         for segment in re.finditer(app.regex.RE_WORD_BOUNDARY, line):
-            if segment.start() < lowerCol < segment.end():
-                lowerCol = segment.end()
+            if segment.start() < lower_col < segment.end():
+                lower_col = segment.end()
                 break
-        return upperCol, lowerCol
+        return upper_col, lower_col
 
     def extend_selection(self):
         """Expand the current selection to fit the selection mode. E.g. if the
         pen in the middle of a word, selection word will extend the selection to
         the left and right so that the whole word is selected.
 
-        Returns: tuple of (pen_row, pen_col, marker_row, marker_col, selectionMode)
+        Returns: tuple of (pen_row, pen_col, marker_row, marker_col, selection_mode)
             which are the delta values to accomplish the selection mode.
         """
-        if self.selectionMode == SELECTION_NONE:
+        if self.selection_mode == SELECTION_NONE:
             return (0, 0, -self.marker_row, -self.marker_col, 0)
-        elif self.selectionMode == SELECTION_ALL:
-            lowerRow = self.parser.row_count() - 1
-            lowerCol = self.parser.row_width(-1)
+        elif self.selection_mode == SELECTION_ALL:
+            lower_row = self.parser.row_count() - 1
+            lower_col = self.parser.row_width(-1)
             return (
-                lowerRow - self.pen_row,
-                lowerCol - self.pen_col,
+                lower_row - self.pen_row,
+                lower_col - self.pen_col,
                 -self.marker_row,
                 -self.marker_col,
                 0,
             )
-        elif self.selectionMode == SELECTION_LINE:
+        elif self.selection_mode == SELECTION_LINE:
             return (0, -self.pen_col, 0, -self.marker_col, 0)
-        elif self.selectionMode == SELECTION_WORD:
+        elif self.selection_mode == SELECTION_WORD:
             if self.pen_row > self.marker_row or (
                 self.pen_row == self.marker_row and self.pen_col > self.marker_col
             ):
-                upperCol, lowerCol = self.__extend_words(
+                upper_col, lower_col = self.__extend_words(
                     self.marker_row, self.marker_col, self.pen_row, self.pen_col
                 )
-                return (0, lowerCol - self.pen_col, 0, upperCol - self.marker_col, 0)
+                return (0, lower_col - self.pen_col, 0, upper_col - self.marker_col, 0)
             else:
-                upperCol, lowerCol = self.__extend_words(
+                upper_col, lower_col = self.__extend_words(
                     self.pen_row, self.pen_col, self.marker_row, self.marker_col
                 )
-                return (0, upperCol - self.pen_col, 0, lowerCol - self.marker_col, 0)
+                return (0, upper_col - self.pen_col, 0, lower_col - self.marker_col, 0)
         return (0, 0, 0, 0, 0)
 
     def start_and_end(self):
         """Get the marker and pen pair as the earlier of the two then the later
         of the two. The result accounts for the current selection mode."""
-        upperRow = 0
-        upperCol = 0
-        lowerRow = 0
-        lowerCol = 0
-        if self.selectionMode == SELECTION_NONE:
-            upperRow = self.pen_row
-            upperCol = self.pen_col
-            lowerRow = self.pen_row
-            lowerCol = self.pen_col
-        elif self.selectionMode == SELECTION_ALL:
-            upperRow = 0
-            upperCol = 0
-            lowerRow = self.parser.row_count() - 1
-            lowerCol = self.parser.row_width(-1)
-        elif self.selectionMode == SELECTION_BLOCK:
-            upperRow = min(self.marker_row, self.pen_row)
-            upperCol = min(self.marker_col, self.pen_col)
-            lowerRow = max(self.marker_row, self.pen_row)
-            lowerCol = max(self.marker_col, self.pen_col)
+        upper_row = 0
+        upper_col = 0
+        lower_row = 0
+        lower_col = 0
+        if self.selection_mode == SELECTION_NONE:
+            upper_row = self.pen_row
+            upper_col = self.pen_col
+            lower_row = self.pen_row
+            lower_col = self.pen_col
+        elif self.selection_mode == SELECTION_ALL:
+            upper_row = 0
+            upper_col = 0
+            lower_row = self.parser.row_count() - 1
+            lower_col = self.parser.row_width(-1)
+        elif self.selection_mode == SELECTION_BLOCK:
+            upper_row = min(self.marker_row, self.pen_row)
+            upper_col = min(self.marker_col, self.pen_col)
+            lower_row = max(self.marker_row, self.pen_row)
+            lower_col = max(self.marker_col, self.pen_col)
         elif (
-            self.selectionMode == SELECTION_CHARACTER
-            or self.selectionMode == SELECTION_LINE
-            or self.selectionMode == SELECTION_WORD
+            self.selection_mode == SELECTION_CHARACTER
+            or self.selection_mode == SELECTION_LINE
+            or self.selection_mode == SELECTION_WORD
         ):
-            upperRow = self.marker_row
-            upperCol = self.marker_col
-            lowerRow = self.pen_row
-            lowerCol = self.pen_col
-            if upperRow == lowerRow and upperCol > lowerCol:
-                upperCol, lowerCol = lowerCol, upperCol
-            elif upperRow > lowerRow:
-                upperRow, lowerRow = lowerRow, upperRow
-                upperCol, lowerCol = lowerCol, upperCol
-        # app.log.detail('start and end', upperRow, upperCol, lowerRow, lowerCol)
-        return (upperRow, upperCol, lowerRow, lowerCol)
+            upper_row = self.marker_row
+            upper_col = self.marker_col
+            lower_row = self.pen_row
+            lower_col = self.pen_col
+            if upper_row == lower_row and upper_col > lower_col:
+                upper_col, lower_col = lower_col, upper_col
+            elif upper_row > lower_row:
+                upper_row, lower_row = lower_row, upper_row
+                upper_col, lower_col = lower_col, upper_col
+        # app.log.detail('start and end', upper_row, upper_col, lower_row, lower_col)
+        return (upper_row, upper_col, lower_row, lower_col)
