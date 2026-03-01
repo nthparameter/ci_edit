@@ -95,7 +95,7 @@ class DebugWindow(app.window.ActiveWindow):
             color,
         )
         self.write_line(
-            "b_state %s %d" % (app.curses_util.mouse_button_name(b_state), b_state), color
+            f"b_state {app.curses_util.mouse_button_name(b_state)} {b_state}", color
         )
         self.write_line(f"start_and_end {text_buffer.start_and_end()!r}", color)
 

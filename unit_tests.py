@@ -63,6 +63,7 @@ import app.unit_test_string
 import app.unit_test_text_buffer
 import app.unit_test_ui
 import app.unit_test_undo_redo
+import app.unit_test_vi_editor
 
 # Add new test cases here.
 TESTS = {
@@ -95,6 +96,7 @@ TESTS = {
     "draw": app.unit_test_text_buffer.DrawTestCases,
     "ui": app.unit_test_ui.UiBasicsTestCases,
     "undo": app.unit_test_undo_redo.UndoRedoTestCases,
+    "vi_editor": app.unit_test_vi_editor.ViEditorTestCases,
 }
 
 def run_tests(tests, stopOnFailure=False):

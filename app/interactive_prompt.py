@@ -309,7 +309,7 @@ class InteractivePrompt(app.controller.Controller):
     def assign_index_to_selected_lines(self, cmd_line, lines):
         output = []
         for i, line in enumerate(lines):
-            output.append("%s = %d" % (line, i))
+            output.append(f"{line} = {i}")
         return output, f"Changed {len(output)} lines"
 
     def sort_selected_lines(self, cmd_line, lines):
@@ -336,8 +336,7 @@ class InteractivePrompt(app.controller.Controller):
         except ValueError:
             return (
                 lines,
-                """Separator punctuation missing, there should be"""
-                """ three '%s'.""" % (separator,),
+                f"Separator punctuation missing, there should be three '{separator}'.",
             )
         data = self.view.host.text_buffer.parser.data
         output = self.view.host.text_buffer.find_replace_text(find, replace, flags, data)

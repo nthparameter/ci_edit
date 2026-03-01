@@ -146,15 +146,15 @@ class PerformanceTestCases(unittest.TestCase):
                 data2[%s] = data2[%s][:50] + "x" + data2[%s][50:]; \
                 """
                     % (half, half, half),
-                    setup=r"""data1 = ("a" * 100 + '\n') * %s""" % (line_count,),
+                    setup=rf"""data1 = ("a" * 100 + '\n') * {line_count}""",
                     number=10000,
                 )
                 b = timeit(
                     f'data1 = data1[:{half}] + "x" + data1[{half}:]',
-                    setup=r"""data1 = ("a" * 100 + '\n') * %s""" % (line_count,),
+                    setup=rf"""data1 = ("a" * 100 + '\n') * {line_count}""",
                     number=10000,
                 )
-                print("\n%9s: %s %s" % (line_count, a, b))
+                print(f"\n{line_count:9}: {a} {b}")
                 self.assertGreater(a, b)
 
     def test_split_insert_balance(self):
@@ -175,15 +175,15 @@ class PerformanceTestCases(unittest.TestCase):
                         % (half, half, half)
                     )
                     * 5,
-                    setup=r"""data1 = ("a" * 100 + '\n') * %s""" % (line_count,),
+                    setup=rf"""data1 = ("a" * 100 + '\n') * {line_count}""",
                     number=10000,
                 )
                 b = timeit(
                     f'data1 = data1[:{half}] + "x" + data1[{half}:]; ' * 5,
-                    setup=r"""data1 = ("a" * 100 + '\n') * %s""" % (line_count,),
+                    setup=rf"""data1 = ("a" * 100 + '\n') * {line_count}""",
                     number=10000,
                 )
-                print("\n%9s: %s %s" % (line_count, a, b))
+                print(f"\n{line_count:9}: {a} {b}")
 
     def test_instance_vs_tuple(self):
         # Disabled due to running time.
@@ -220,4 +220,4 @@ foo = []
 """,
                     number=10000,
                 )
-                print("\n%9s: %s %s" % (line_count, a, b))
+                print(f"\n{line_count:9}: {a} {b}")

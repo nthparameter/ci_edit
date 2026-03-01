@@ -401,7 +401,7 @@ class Mutator(app.selectable.Selectable):
         if self.debug_redo:
             app.log.info("--- redo_index", self.redo_index)
             for i, c in enumerate(self.redo_chain):
-                app.log.info("%2d:" % i, repr(c))
+                app.log.info(f"{i:2d}:", repr(c))
             app.log.info("temp_change", repr(self.temp_change))
 
     def __undo_move(self, change):

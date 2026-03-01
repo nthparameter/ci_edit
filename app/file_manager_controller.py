@@ -109,7 +109,7 @@ class DirectoryListController(app.controller.Controller):
                     "%-40s  %16s  %24s"
                     % (
                         i[0],
-                        "%s bytes" % (i[1],) if i[1] is not None else "",
+                        f"{i[1]} bytes" if i[1] is not None else "",
                         time.strftime("%c", time.localtime(i[2])) if i[2] else "",
                     )
                     for i in file_lines

@@ -98,6 +98,12 @@ Tests use Python's `unittest` framework. Test files live in `app/` and are named
 
 `fake_curses_testing.py` provides a headless curses harness (`FakeCursesTestCase`) that lets integration tests inject keyboard and mouse events and verify rendered output — no real terminal required. Use this base class for any test that exercises the full UI stack.
 
+## Python String Gotchas
+
+- **No escaping needed inside `"""`** — a single `"` inside a triple-quoted string does not need a backslash. Only three consecutive quotes (`"""`) would close the string. This matters especially when writing or converting f-strings: `rf"""data = ("a" * 100)"""` is correct; `rf"""data = (\"a\" * 100)"""` is wrong — in a raw string the backslash is literal, producing `\"a\"` in the output.
+
+- **`RE_NON_MATCHING` must stay a string** — `app.regex.RE_NON_MATCHING` is used as a plain string in `markers` lists that are later compiled by `join_re_list()`. Do not compile it at module level. The compiled versions of regex constants live separately.
+
 ## Key Design Decisions
 
 - **Inheritance over composition** for the data model — the chain from `LineBuffer` to `TextBuffer` is intentional; don't flatten it without a strong reason.

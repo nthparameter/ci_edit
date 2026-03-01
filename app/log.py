@@ -50,7 +50,7 @@ def parse_lines(frame, log_channel, *args):
 def channel_enable(log_channel, is_enabled):
     global full_log, should_write_print_log
     full_log += [
-        "%10s %10s: %s %r" % ("logging", "channel_enable", log_channel, is_enabled)
+        f"{'logging':>10} {'channel_enable':>10}: {log_channel} {is_enabled!r}"
     ]
     if is_enabled:
         enabled_channels[log_channel] = is_enabled

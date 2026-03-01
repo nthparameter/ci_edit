@@ -36,10 +36,7 @@ def check_row(test, text_buffer, row, expected):
     text_buffer.parse_document()
     if not (expected == text_buffer.parser.row_text(row)):
         test.fail(
-            "\n\nExpected these to match: "
-            "row {}: expected {}, parser {}".format(
-                row, repr(expected), repr(text_buffer.parser.data)
-            )
+            f"\n\nExpected these to match: row {row}: expected {repr(expected)}, parser {repr(text_buffer.parser.data)}"
         )
 
 class ActionsTestCase(unittest.TestCase):

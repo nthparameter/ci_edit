@@ -1268,7 +1268,7 @@ class Actions(app.mutator.Mutator):
         if not editor_prefs.get("find_use_regex"):
             search_for = re.escape(search_for)
         if editor_prefs.get("find_whole_word"):
-            search_for = r"\b%s\b" % search_for
+            search_for = rf"\b{search_for}\b"
         # app.log.info(search_for, flags)
         with warnings.catch_warnings():
             # Ignore future warning with '[[' regex.

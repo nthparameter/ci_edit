@@ -56,7 +56,7 @@ class Prefs:
                     category.update(additional_prefs)
                     app.log.startup("Updated editor prefs from", prefs_path)
                     app.log.startup("as", category)
-                except Exception as e:
+                except (json.JSONDecodeError, ValueError) as e:
                     app.log.startup("failed to parse", prefs_path)
                     app.log.startup("error", e)
         return category
@@ -125,7 +125,7 @@ class Prefs:
         with open(prefs_path, "w", encoding="utf-8") as f:
             try:
                 f.write(json.dumps(prefs[category]))
-            except Exception as e:
+            except (OSError, TypeError) as e:
                 app.log.error("error writing prefs")
                 app.log.exception(e)
 
