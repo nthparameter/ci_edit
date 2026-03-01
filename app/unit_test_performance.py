@@ -146,12 +146,12 @@ class PerformanceTestCases(unittest.TestCase):
                 data2[%s] = data2[%s][:50] + "x" + data2[%s][50:]; \
                 """
                     % (half, half, half),
-                    setup=rf"""data1 = (\"a\" * 100 + '\\n') * {line_count}""",
+                    setup=rf"""data1 = ("a" * 100 + '\n') * {line_count}""",
                     number=10000,
                 )
                 b = timeit(
                     f'data1 = data1[:{half}] + "x" + data1[{half}:]',
-                    setup=rf"""data1 = (\"a\" * 100 + '\\n') * {line_count}""",
+                    setup=rf"""data1 = ("a" * 100 + '\n') * {line_count}""",
                     number=10000,
                 )
                 print(f"\n{line_count:9}: {a} {b}")
@@ -175,12 +175,12 @@ class PerformanceTestCases(unittest.TestCase):
                         % (half, half, half)
                     )
                     * 5,
-                    setup=rf"""data1 = (\"a\" * 100 + '\\n') * {line_count}""",
+                    setup=rf"""data1 = ("a" * 100 + '\n') * {line_count}""",
                     number=10000,
                 )
                 b = timeit(
                     f'data1 = data1[:{half}] + "x" + data1[{half}:]; ' * 5,
-                    setup=rf"""data1 = (\"a\" * 100 + '\\n') * {line_count}""",
+                    setup=rf"""data1 = ("a" * 100 + '\n') * {line_count}""",
                     number=10000,
                 )
                 print(f"\n{line_count:9}: {a} {b}")
