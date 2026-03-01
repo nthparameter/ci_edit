@@ -63,17 +63,17 @@ class FakeInput:
 
     def set_inputs(self, cmdList):
         self.inputs = cmdList
-        self.inputsIndex = -1
+        self.inputs_index = -1
         self.inBracketedPaste = False
         self.tupleIndex = -1
         self.waitingForRefresh = True
-        self.isVerbose = False
+        self.is_verbose = False
         self.bgCounter = 1
-        if self.isVerbose:
+        if self.is_verbose:
             print("")
 
     def log(self, *msg):
-        if not self.isVerbose:
+        if not self.is_verbose:
             return
         functionLine = inspect.stack()[1][2]
         function = inspect.stack()[1][3]
@@ -96,12 +96,12 @@ class FakeInput:
             return -1
         self.bgCounter = 1
         if not self.waitingForRefresh:
-            while self.inputsIndex + 1 < len(self.inputs):
+            while self.inputs_index + 1 < len(self.inputs):
                 assert not self.waitingForRefresh
-                self.inputsIndex += 1
-                cmd = self.inputs[self.inputsIndex]
+                self.inputs_index += 1
+                cmd = self.inputs[self.inputs_index]
                 if isinstance(cmd, types.FunctionType):
-                    result = cmd(self.fakeDisplay, self.inputsIndex)
+                    result = cmd(self.fakeDisplay, self.inputs_index)
                     if result is not None:
                         self.waitingForRefresh = True
                         self.log("next(k)", repr(cmd)[:8], repr(result))
@@ -129,7 +129,7 @@ class FakeInput:
                         return constants.ERR
                     if self.tupleIndex + 1 == len(cmd) and cmd != BRACKETED_PASTE_BEGIN:
                         self.waitingForRefresh = True
-                    self.inputsIndex -= 1
+                    self.inputs_index -= 1
                     self.log("return", cmd[self.tupleIndex], self.tupleIndex, len(cmd))
                     return cmd[self.tupleIndex]
                 elif isinstance(cmd, int) or isinstance(cmd, bytes):
@@ -413,6 +413,7 @@ class StandardScreen(FakeCursesWindow):
         self.fakeDisplay = fakeDisplay
         fakeInput = FakeInput(fakeDisplay)
         self.fakeInput = fakeInput
+        self.fake_input = fakeInput
         self.movie = False
 
     def set_fake_inputs(self, cmdList):

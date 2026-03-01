@@ -75,6 +75,7 @@ class ViEditorTestCases(app.fake_curses_testing.FakeCursesTestCase):
                 self.display_check(CONTENT_ROW, CONTENT_COL, ["abc  "]),
                 self.cursor_check(CONTENT_ROW, CONTENT_COL + 3),
                 curses.ascii.ESC,  # Return to normal mode.
+                curses.ERR,        # Terminate the ESC sequence (standalone ESC).
                 # Press 'h' — it should move the cursor left, not insert 'h'.
                 ord("h"),
                 self.display_check(CONTENT_ROW, CONTENT_COL, ["abc  "]),
@@ -96,6 +97,7 @@ class ViEditorTestCases(app.fake_curses_testing.FakeCursesTestCase):
                 ord("b"),
                 ord("c"),
                 curses.ascii.ESC,  # Normal mode; cursor at col CONTENT_COL+3.
+                curses.ERR,        # Terminate the ESC sequence.
                 ord("^"),  # Move to start of line.
                 self.cursor_check(CONTENT_ROW, CONTENT_COL),
                 ord("l"),
@@ -119,6 +121,7 @@ class ViEditorTestCases(app.fake_curses_testing.FakeCursesTestCase):
                 ord("b"),
                 ord("c"),
                 curses.ascii.ESC,  # Normal mode; cursor at col CONTENT_COL+3.
+                curses.ERR,        # Terminate the ESC sequence.
                 ord("h"),
                 self.cursor_check(CONTENT_ROW, CONTENT_COL + 2),
                 ord("h"),
@@ -142,6 +145,7 @@ class ViEditorTestCases(app.fake_curses_testing.FakeCursesTestCase):
                 ord("b"),
                 ord("c"),
                 curses.ascii.ESC,  # Normal mode; cursor at col CONTENT_COL+3.
+                curses.ERR,        # Terminate the ESC sequence.
                 ord("^"),
                 self.cursor_check(CONTENT_ROW, CONTENT_COL),
                 self.call(self.switch_to_cua_mode),
@@ -161,6 +165,7 @@ class ViEditorTestCases(app.fake_curses_testing.FakeCursesTestCase):
                 ord("b"),
                 ord("c"),
                 curses.ascii.ESC,  # Normal mode; cursor at col CONTENT_COL+3.
+                curses.ERR,        # Terminate the ESC sequence.
                 ord("^"),  # Go to start so '$' has a visible effect.
                 self.cursor_check(CONTENT_ROW, CONTENT_COL),
                 ord("$"),
