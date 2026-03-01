@@ -12,10 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 import os
 import sys
 import unittest
@@ -28,7 +24,6 @@ import app.text_buffer
 import app.window
 
 kTestFile = "#bookmarks_test_file_with_unlikely_file_name~"
-
 
 class BookmarkTestCases(app.fake_curses_testing.FakeCursesTestCase):
     def setUp(self):

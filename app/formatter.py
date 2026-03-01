@@ -13,11 +13,6 @@
 # limitations under the License.
 """Formatters."""
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
-
 def format_python(text):
     try:
         import black

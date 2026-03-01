@@ -14,10 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 try:
     unicode
 except NameError:
@@ -36,7 +32,6 @@ import app.curses_util
 
 # from app.curses_util import *
 
-
 def debug_print_stack(*args):
     stack = inspect.stack()[1:]
     stack.reverse()
@@ -47,7 +42,6 @@ def debug_print_stack(*args):
             % (i, os.path.split(frame[1])[1], frame[2], frame[3])
         )
     print(u"\n".join(lines))
-
 
 class FakeCursesTestCase(unittest.TestCase):
     def set_up(self):

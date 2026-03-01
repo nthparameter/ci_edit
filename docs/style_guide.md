@@ -9,8 +9,3 @@ yapf. E.g.
 
 $ yapf -i --style google ci.py
 
-## Rust Style Guide
-
-Use rustfmt, e.g.
-
-$ cargo fmt

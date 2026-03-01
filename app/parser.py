@@ -14,10 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 try:
     unicode
 except NameError:
@@ -51,7 +47,6 @@ kPrior = 2
 # will start at kBegin = 3, kVisual = 2.
 kVisual = 3
 
-
 class ParserNode:
     """A parser node represents a span of grammar. i.e. from this point to that
     point is HTML. Another parser node would represent the next segment, of
@@ -78,7 +73,6 @@ class ParserNode:
                 repr(data[self.begin : self.begin + 15])[1:-1],
             )
         )
-
 
 class Parser:
     """A parser generates a set of grammar segments (ParserNode objects)."""

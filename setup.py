@@ -15,24 +15,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 from setuptools import setup
 from setuptools import find_packages
 from datetime import datetime
-import io
 import os
 
 here = os.path.abspath(os.path.dirname(__file__))
 
-
 def get_long_description():
     # Read the long-description from a file.
-    with io.open(os.path.join(here, "readme.md"), encoding="utf-8") as f:
+    with open(os.path.join(here, "readme.md"), encoding="utf-8") as f:
         return "\n" + f.read()
-
 
 setup(
     name="ci_edit",

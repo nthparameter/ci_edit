@@ -13,10 +13,6 @@
 # limitations under the License.
 """Manager for key bindings."""
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 import curses
 import curses.ascii
 
@@ -26,7 +22,6 @@ import app.log
 import app.selectable
 
 # import app.window
-
 
 class Controller:
     """A Controller is a keyboard mapping from keyboard/mouse events to editor
@@ -317,7 +312,6 @@ class Controller:
 
     def unfocus(self):
         pass
-
 
 class MainController:
     """The different keyboard mappings are different controllers. This class

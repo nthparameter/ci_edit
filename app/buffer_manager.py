@@ -13,9 +13,6 @@
 # limitations under the License.
 
 # For Python 2to3 support.
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
 
 try:
     unicode
@@ -23,7 +20,6 @@ except NameError:
     unicode = str  # redefined-builtin
     unichr = chr
 
-import io
 import os
 import sys
 
@@ -32,7 +28,6 @@ import app.config
 import app.log
 import app.history
 import app.text_buffer
-
 
 class BufferManager:
     """Manage a set of text buffers. Some text buffers may be hidden."""
@@ -137,12 +132,12 @@ class BufferManager:
         # file descriptors.
         stdinFd = sys.stdin.fileno()
         newFd = os.dup(stdinFd)
-        newStdin = io.open(u"/dev/tty")
+        newStdin = open(u"/dev/tty")
         os.dup2(newStdin.fileno(), stdinFd)
         # Create a text buffer to read from alternate stream.
         textBuffer = self.new_text_buffer()
         try:
-            with io.open(newFd, u"r") as fileInput:
+            with open(newFd, u"r") as fileInput:
                 textBuffer.file_filter(fileInput.read())
         except Exception as e:
             app.log.exception(e)

@@ -12,10 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 try:
     unicode
 except NameError:
@@ -38,7 +34,6 @@ import app.vi_editor
 
 # The terminal area that the curses can draw to.
 mainCursesWindow = None
-
 
 class ViewWindow:
     """A view window is a base window that does not get focus or have
@@ -354,7 +349,6 @@ class ViewWindow:
     def get_program(self):
         return self.program
 
-
 class ActiveWindow(ViewWindow):
     """An ActiveWindow may have focus and a controller."""
 
@@ -388,7 +382,6 @@ class ActiveWindow(ViewWindow):
     def unfocus(self):
         self.hasFocus = False
         self.controller.unfocus()
-
 
 class Window(ActiveWindow):
     """A Window holds a TextBuffer and a controller that operates on the
@@ -472,7 +465,6 @@ class Window(ActiveWindow):
             return tb.parser.resumeAtRow >= tb.parser.row_count()
         return True
 
-
 class LabelWindow(ViewWindow):
     """A text label.
 
@@ -509,7 +501,6 @@ class LabelWindow(ViewWindow):
         line = u"%*s" % (self.cols * self.align, line)
         self.add_str(0, 0, line, self.color)
         ViewWindow.render(self)
-
 
 class LabeledLine(Window):
     """A single line with a label.
@@ -557,7 +548,6 @@ class LabeledLine(Window):
         self.label = label
         self.reshape(self.top, self.left, self.rows, self.cols)
 
-
 class Menu(ViewWindow):
     """Work in progress on a context menu."""
 
@@ -597,7 +587,6 @@ class Menu(ViewWindow):
         for i in self.lines[: self.rows]:
             self.write_line(" " + i, color)
         ViewWindow.render(self)
-
 
 class LineNumbers(ViewWindow):
     def __init__(self, program, host):
@@ -733,7 +722,6 @@ class LineNumbers(ViewWindow):
     def render(self):
         self.draw_line_numbers()
 
-
 class LogWindow(ViewWindow):
     def __init__(self, program, parent):
         ViewWindow.__init__(self, program, parent)
@@ -753,7 +741,6 @@ class LogWindow(ViewWindow):
                 color = colorB
             self.write_line(i, color)
         ViewWindow.render(self)
-
 
 class InteractiveFind(Window):
     def __init__(self, program, host):
@@ -925,7 +912,6 @@ class InteractiveFind(Window):
         self.detach()
         Window.unfocus(self)
 
-
 class MessageLine(ViewWindow):
     """The message line appears at the bottom of the screen."""
 
@@ -943,7 +929,6 @@ class MessageLine(ViewWindow):
                 self.write_line(self.message, colorPrefs.get(u"message_line"))
         else:
             self.blank(colorPrefs.get(u"message_line"))
-
 
 class StatusLine(ViewWindow):
     """The status line appears at the bottom of the screen.
@@ -1009,7 +994,6 @@ class StatusLine(ViewWindow):
         )
         statusLine += u" " * (self.cols - len(statusLine) - len(rightSide)) + rightSide
         self.add_str(self.rows - 1, 0, statusLine[: self.cols], color)
-
 
 class TopInfo(ViewWindow):
     def __init__(self, program, host):
@@ -1088,7 +1072,6 @@ class TopInfo(ViewWindow):
     def reshape(self, top, left, rows, cols):
         self.borrowedRows = 0
         ViewWindow.reshape(self, top, left, rows, cols)
-
 
 class InputWindow(Window):
     """This is the main content window.
@@ -1355,7 +1338,6 @@ class InputWindow(Window):
             self.messageLine.detach()
         Window.unfocus(self)
 
-
 class OptionsSelectionWindow(ViewWindow):
     """Mutex window."""
 
@@ -1378,7 +1360,6 @@ class OptionsSelectionWindow(ViewWindow):
     def render(self):
         self.blank(self.color)
         ViewWindow.render(self)
-
 
 class OptionsTrinaryStateWindow(Window):
     def __init__(self, program, parent, label, prefCategory, prefName):
@@ -1444,7 +1425,6 @@ class OptionsTrinaryStateWindow(Window):
         color = self.focusColor if self.hasFocus else self.color
         self.write_line(self.label[: self.cols], color)
 
-
 class OptionsToggle(OptionsTrinaryStateWindow):
     def __init__(self, program, parent, label, prefCategory, prefName, width=None):
         if app.config.strict_debug:
@@ -1460,7 +1440,6 @@ class OptionsToggle(OptionsTrinaryStateWindow):
         OptionsTrinaryStateWindow.set_up(
             self, u"[x]" + label, u"[ ]" + label, u"[-]" + label, width
         )
-
 
 class RowWindow(ViewWindow):
     def __init__(self, program, host, separator):
@@ -1481,7 +1460,6 @@ class RowWindow(ViewWindow):
         ViewWindow.reshape(self, top, left, rows, cols)
         # app.log.info(top, left, rows, cols, self)
         self.layout_horizontally(self.zOrder, self.separator)
-
 
 class OptionsRow(ViewWindow):
     class ControlElement:
@@ -1627,7 +1605,6 @@ class OptionsRow(ViewWindow):
         self.writeLineRow = 0
         self.write_line(line[: self.cols], self.color)
 
-
 class PopupWindow(Window):
     def __init__(self, program, host):
         if app.config.strict_debug:
@@ -1695,7 +1672,6 @@ class PopupWindow(Window):
         self.detach()
         Window.unfocus(self)
 
-
 class PaletteWindow(Window):
     """A window with example foreground and background text colors."""
 
@@ -1724,7 +1700,6 @@ class PaletteWindow(Window):
     def unfocus(self):
         self.detach()
         Window.unfocus(self)
-
 
 class SortableHeaderWindow(OptionsTrinaryStateWindow):
     def __init__(self, program, parent, label, prefCategory, prefName, width=None):

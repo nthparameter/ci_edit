@@ -13,10 +13,6 @@
 # limitations under the License.
 """Interactive UIs for the ciEditor."""
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 try:
     unicode
 except NameError:
@@ -29,7 +25,6 @@ import re
 import app.config
 import app.controller
 import app.text_buffer
-
 
 def parse_int(inStr):
     if app.config.strict_debug:
@@ -45,7 +40,6 @@ def parse_int(inStr):
         return int(inStr[:k])
     return 0
 
-
 def test_parse_int():
     assert parse_int("0") == 0
     assert parse_int("0e") == 0
@@ -55,7 +49,6 @@ def test_parse_int():
     assert parse_int("-10") == -10
     assert parse_int("--10") == 0
     assert parse_int("--10") == 0
-
 
 class InteractivePrediction(app.controller.Controller):
     """Make a guess about what the user desires."""
@@ -188,7 +181,6 @@ class InteractivePrediction(app.controller.Controller):
             self.view.host.set_text_buffer(textBuffer)
         self.items = None
 
-
 class InteractiveFind(app.controller.Controller):
     """Find text within the current document."""
 
@@ -239,7 +231,6 @@ class InteractiveFind(app.controller.Controller):
         self.view.host.textBuffer.replace_found(replaceWith)
         self.findCmd = self.view.host.textBuffer.find_prior
 
-
 class InteractiveFindInput(app.controller.Controller):
     """Find text within the current document."""
 
@@ -274,7 +265,6 @@ class InteractiveFindInput(app.controller.Controller):
 
     def replace_and_prior(self):
         self.parent_controller().replace_and_prior()
-
 
 class InteractiveGoto(app.controller.Controller):
     """Jump to a particular line number."""
@@ -327,7 +317,6 @@ class InteractiveGoto(app.controller.Controller):
         line = self.textBuffer.parser.row_text(0)
         gotoLine, gotoCol = (line.split(u",") + [u"0", u"0"])[:2]
         self.cursor_move_to(parse_int(gotoLine) - 1, parse_int(gotoCol))
-
 
 class ToggleController(app.controller.Controller):
     def __init__(self, view):

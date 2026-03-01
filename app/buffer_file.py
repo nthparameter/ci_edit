@@ -12,10 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 try:
     unicode
 except NameError:
@@ -25,7 +21,6 @@ except NameError:
 import os
 
 import app.config
-
 
 def path_row_column(path, projectDir):
     """Guess whether unrecognized file path refers to another file or has line
@@ -80,7 +75,6 @@ def path_row_column(path, projectDir):
             if os.path.isfile(path[2:]):
                 path = path[2:]
     return path, openToRow, openToColumn
-
 
 def expand_full_path(path):
     return os.path.abspath(os.path.expanduser(os.path.expandvars(path)))

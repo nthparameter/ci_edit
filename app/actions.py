@@ -13,9 +13,6 @@
 # limitations under the License.
 
 # For Python 2to3 support.
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
 
 try:
     unicode
@@ -43,7 +40,6 @@ import app.log
 import app.mutator
 import app.parser
 import app.selectable
-
 
 class Actions(app.mutator.Mutator):
     """This base class to TextBuffer handles the text manipulation (without
@@ -928,7 +924,7 @@ class Actions(app.mutator.Mutator):
             self.set_message(u"Creating new file")
         else:
             try:
-                inputFile = io.open(self.fullPath)
+                inputFile = open(self.fullPath)
                 data = unicode(inputFile.read())
                 self.fileEncoding = inputFile.encoding
                 self.set_message(u"Opened existing file")
@@ -936,7 +932,7 @@ class Actions(app.mutator.Mutator):
             except Exception as e:
                 # app.log.info(unicode(e))
                 try:
-                    inputFile = io.open(self.fullPath, "rb")
+                    inputFile = open(self.fullPath, "rb")
                     if 1:
                         binary_data = inputFile.read()
                         long_hex = binascii.hexlify(binary_data).decode("utf-8")
@@ -1182,13 +1178,13 @@ class Actions(app.mutator.Mutator):
                     outputData = binascii.unhexlify(
                         self.parser.data.translate(removeWhitespace)
                     )
-                    outputFile = io.open(self.fullPath, u"wb+")
+                    outputFile = open(self.fullPath, u"wb+")
                 elif self.fileEncoding is None:
                     outputData = self.parser.data
-                    outputFile = io.open(self.fullPath, u"w+", encoding=u"UTF-8")
+                    outputFile = open(self.fullPath, u"w+", encoding=u"UTF-8")
                 else:
                     outputData = self.parser.data
-                    outputFile = io.open(
+                    outputFile = open(
                         self.fullPath, "w+", encoding=self.fileEncoding
                     )
                 outputFile.seek(0)

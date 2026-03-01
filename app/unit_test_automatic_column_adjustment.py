@@ -12,10 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 import os
 import sys
 
@@ -23,7 +19,6 @@ from app.curses_util import *
 import app.fake_curses_testing
 
 kTestFile = u"#automatic_column_adjustment_test_file_with_unlikely_file_name~"
-
 
 class AutomaticColumnAdjustmentCases(app.fake_curses_testing.FakeCursesTestCase):
     def setUp(self):

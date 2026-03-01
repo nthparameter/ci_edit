@@ -12,10 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 try:
     unicode
 except NameError:
@@ -27,7 +23,6 @@ import curses
 import app.curses_util
 import app.log
 import app.window
-
 
 class DebugWindow(app.window.ActiveWindow):
     def __init__(self, program, host):
@@ -103,7 +98,6 @@ class DebugWindow(app.window.ActiveWindow):
             u"bState %s %d" % (app.curses_util.mouse_button_name(bState), bState), color
         )
         self.write_line(u"start_and_end %r" % (textBuffer.start_and_end(),), color)
-
 
 class DebugUndoWindow(app.window.ActiveWindow):
     def __init__(self, program, host):

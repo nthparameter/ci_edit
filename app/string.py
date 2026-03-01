@@ -12,10 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 try:
     unicode
 except NameError:
@@ -47,7 +43,6 @@ DECODE = {
     u"v": u"\v",
 }
 
-
 def path_encode(path):
     if app.config.strict_debug:
         assert isinstance(path, unicode), repr(path)
@@ -62,7 +57,6 @@ def path_encode(path):
             c = u"\\x%02x" % (ord_c,)
         out += c
     return out
-
 
 def path_decode(path):
     if app.config.strict_debug:

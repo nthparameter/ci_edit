@@ -15,12 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 import sys
-
 
 def version_check():
     if sys.version_info[0] <= 2:
@@ -45,7 +40,6 @@ line when running ci_edit.
 """
         print(msg)
         sys.exit(1)
-
 
 if __name__ == "__main__":
     args = sys.argv

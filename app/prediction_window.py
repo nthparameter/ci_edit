@@ -12,16 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 import app.config
 import app.cu_editor
 import app.log
 import app.text_buffer
 import app.window
-
 
 class PredictionList(app.window.Window):
     """This <tbd>."""
@@ -184,7 +179,6 @@ class PredictionList(app.window.Window):
         app.window.Window.set_text_buffer(self, textBuffer)
         self.controller.set_text_buffer(textBuffer)
 
-
 class PredictionInputWindow(app.window.Window):
     def __init__(self, program, host):
         if app.config.strict_debug:
@@ -206,7 +200,6 @@ class PredictionInputWindow(app.window.Window):
         textBuffer.highlightTrailingWhitespace = False
         app.window.Window.set_text_buffer(self, textBuffer)
         self.controller.set_text_buffer(textBuffer)
-
 
 class PredictionWindow(app.window.Window):
     def __init__(self, program, host):

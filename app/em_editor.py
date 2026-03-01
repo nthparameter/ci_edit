@@ -14,9 +14,6 @@
 """Key bindings for the emacs-like editor."""
 
 # For Python 2to3 support.
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
 
 import curses
 import curses.ascii
@@ -27,7 +24,6 @@ from app.curses_util import *
 import app.controller
 import app.log
 import app.text_buffer
-
 
 def parse_int(str):
     i = 0
@@ -41,7 +37,6 @@ def parse_int(str):
         return int(str[:k])
     return 0
 
-
 def test_parse_int():
     assert parse_int("0") == 0
     assert parse_int("0e") == 0
@@ -51,7 +46,6 @@ def test_parse_int():
     assert parse_int("-10") == -10
     assert parse_int("--10") == 0
     assert parse_int("--10") == 0
-
 
 class EditText(app.controller.Controller):
     """An EditText is a base class for one-line controllers."""
@@ -97,7 +91,6 @@ class EditText(app.controller.Controller):
 
     def unfocus(self):
         pass
-
 
 class InteractiveOpener(EditText):
     """Open a file to edit."""
@@ -232,7 +225,6 @@ class InteractiveOpener(EditText):
                 os.path.abspath(os.path.expanduser(dirPath)) + ": not found"
             ]
 
-
 class InteractiveFind(EditText):
     """Find text within the current document."""
 
@@ -292,7 +284,6 @@ class InteractiveFind(EditText):
     def unfocus(self):
         app.log.info("unfocus Find")
         # self.hide()
-
 
 class InteractiveGoto(EditText):
     """Jump to a particular line number."""
@@ -354,7 +345,6 @@ class InteractiveGoto(EditText):
 
     # def unfocus(self):
     #  self.hide()
-
 
 class CiEdit(app.controller.Controller):
     """Keyboard mappings for ci."""
@@ -464,7 +454,6 @@ class CiEdit(app.controller.Controller):
         self.commandDefault = self.SwitchToMainAndDoCommand
         self.commandSet = self.commandSet_Select
         self.selection_character()
-
 
 class EmacsEdit(app.controller.Controller):
     """Emacs is a common Unix based text editor. This keyboard mapping is

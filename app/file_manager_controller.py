@@ -12,10 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 try:
     unicode
 except NameError:
@@ -30,7 +26,6 @@ import app.buffer_file
 import app.config
 import app.controller
 import app.string
-
 
 class DirectoryListController(app.controller.Controller):
     """Gather and prepare file directory information."""
@@ -182,7 +177,6 @@ class DirectoryListController(app.controller.Controller):
         self.filter = listFilter
         self.shownDirectory = None  # Cause a refresh.
 
-
 class FileManagerController(app.controller.Controller):
     """Create or open files."""
 
@@ -204,7 +198,6 @@ class FileManagerController(app.controller.Controller):
 
     def pass_event_to_directory_list(self):
         self.view.directoryList.controller.do_command(self.savedCh, None)
-
 
 class FilePathInputController(app.controller.Controller):
     """Manipulate path string."""

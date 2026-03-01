@@ -13,10 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 import cProfile
 import io
 import pstats
@@ -26,7 +22,6 @@ import unittest
 
 import app.parser
 import app.prefs
-
 
 class ParserTestCases(unittest.TestCase):
     def setUp(self):
@@ -927,7 +922,7 @@ e
             profile = cProfile.Profile()
             parser = app.parser.Parser()
             path = u"app/actions.py"
-            data = io.open(path).read()
+            data = open(path).read()
             fileType = self.prefs.get_file_type(path)
             grammar = self.prefs.get_grammar(fileType)
 
@@ -935,7 +930,7 @@ e
             parser.parse(data, grammar, 0, sys.maxsize)
             profile.disable()
 
-            output = io.StringIO.StringIO()
+            output = io.StringIO()
             stats = pstats.Stats(profile, stream=output).sort_stats(u"cumulative")
             stats.print_stats()
             print(output.getvalue())

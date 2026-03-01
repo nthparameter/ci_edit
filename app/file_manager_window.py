@@ -12,10 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 try:
     unicode
 except NameError:
@@ -30,7 +26,6 @@ import app.log
 import app.string
 import app.text_buffer
 import app.window
-
 
 # todo remove or use this.
 class PathRow(app.window.ViewWindow):
@@ -55,7 +50,6 @@ class PathRow(app.window.ViewWindow):
         color = self.program.color.get(u"message_line")
         self.writeLineRow = 0
         self.write_line(self.path, color)
-
 
 class DirectoryList(app.window.Window):
     """This <tbd>."""
@@ -115,7 +109,6 @@ class DirectoryList(app.window.Window):
         textBuffer.view.showCursor = False
         self.controller.set_text_buffer(textBuffer)
 
-
 class PathWindow(app.window.Window):
     """The path window is the editable text line where the user may freely type
     in a path.
@@ -145,7 +138,6 @@ class PathWindow(app.window.Window):
         textBuffer.highlightTrailingWhitespace = False
         app.window.Window.set_text_buffer(self, textBuffer)
         self.controller.set_text_buffer(textBuffer)
-
 
 class FileManagerWindow(app.window.Window):
     def __init__(self, program, host, inputWindow):

@@ -17,9 +17,6 @@
 """
 
 # For Python 2to3 support.
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
 
 try:
     FileNotFoundError
@@ -35,7 +32,6 @@ import os
 import time
 
 import app.log
-
 
 def calculate_checksum(filePath, data=None):
     """
@@ -71,7 +67,6 @@ def calculate_checksum(filePath, data=None):
         app.log.exception(e)
     return None
 
-
 def calculate_file_size(filePath):
     """
     Calculates the size of the specified value.
@@ -90,7 +85,6 @@ def calculate_file_size(filePath):
         app.log.exception(e)
     return 0
 
-
 def get_file_info(filePath, data=None):
     """
     Returns the hash value and size of the specified file.
@@ -108,7 +102,6 @@ def get_file_info(filePath, data=None):
     checksum = calculate_checksum(filePath, data)
     fileSize = calculate_file_size(filePath)
     return (checksum, fileSize)
-
 
 class History:
     def __init__(self, pathToHistory):

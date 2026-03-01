@@ -13,16 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 import unittest
 
 import app.log
 import app.ci_program
 import app.selectable
-
 
 class SelectableTestCases(unittest.TestCase):
     def setUp(self):
@@ -211,7 +206,6 @@ class SelectableTestCases(unittest.TestCase):
         self.assertEqual(selectable.markerCol, 0)
         selectable.penCol = 2
         self.assertEqual(selectable.markerCol, 0)
-
 
 if __name__ == "__main__":
     unittest.main()

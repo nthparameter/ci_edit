@@ -13,10 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 try:
     # Python2.
     unicode
@@ -25,14 +21,12 @@ try:
         chars = "".join([chr(i) for i in chars])
         return chars.decode("utf-8")
 
-
 except NameError:
     unicode = str
     unichr = chr
 
     def bytes_to_unicode(values):
         return bytes(values).decode("utf-8")
-
 
 assert bytes_to_unicode((226, 143, 176)) == u"⏰"
 
@@ -69,14 +63,12 @@ import app.window
 
 userConsoleMessage = None
 
-
 def user_message(*args):
     global userConsoleMessage
     if not userConsoleMessage:
         userConsoleMessage = ""
     args = [str(i) for i in args]
     userConsoleMessage += u" ".join(args) + u"\n"
-
 
 class CiProgram:
     """This is the main editor program. It holds top level information and runs
@@ -181,7 +173,7 @@ class CiProgram:
                 profile.enable()
                 self.refresh(drawList, cursor, cmdCount)
                 profile.disable()
-                output = io.StringIO.StringIO()
+                output = io.StringIO()
                 stats = pstats.Stats(profile, stream=output).sort_stats("cumulative")
                 stats.print_stats()
                 app.log.info(output.getvalue())
@@ -489,7 +481,7 @@ class CiProgram:
             profile.enable()
             self.command_loop()
             profile.disable()
-            output = io.StringIO.StringIO()
+            output = io.StringIO()
             stats = pstats.Stats(profile, stream=output).sort_stats("cumulative")
             stats.print_stats()
             app.log.info(output.getvalue())
@@ -550,7 +542,6 @@ class CiProgram:
             tb = self.programWindow.focusedWindow.textBuffer
             return (tb.penRow, tb.penCol, tb.markerRow, tb.markerCol, tb.selectionMode)
 
-
 def wrapped_ci(cursesScreen):
     try:
         prg = CiProgram()
@@ -565,7 +556,6 @@ def wrapped_ci(cursesScreen):
         for i in out:
             user_message(i[:-1])
             # app.log.error(i[:-1])
-
 
 def run_ci():
     locale.setlocale(locale.LC_ALL, "")
@@ -583,11 +573,10 @@ def run_ci():
         sys.stdout.flush()
     if userConsoleMessage:
         fullPath = app.buffer_file.expand_full_path("~/.ci_edit/userConsoleMessage")
-        with io.open(fullPath, "w+") as f:
+        with open(fullPath, "w+") as f:
             f.write(userConsoleMessage)
         sys.stdout.write(userConsoleMessage + "\n")
         sys.stdout.flush()
-
 
 if __name__ == "__main__":
     run_ci()

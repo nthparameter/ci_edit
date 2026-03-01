@@ -12,10 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 try:
     unicode
 except NameError:
@@ -29,7 +25,6 @@ import time
 import app.config
 import app.log
 import app.parser
-
 
 class LineBuffer:
     def __init__(self, program):

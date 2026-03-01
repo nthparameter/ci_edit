@@ -13,9 +13,6 @@
 # limitations under the License.
 
 # For Python 2to3 support.
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
 
 try:
     unicode
@@ -39,7 +36,6 @@ import app.config
 import app.profile
 import app.render
 
-
 class InstructionQueue(queue.Queue):
     def __init__(self, *args, **keywords):
         queue.Queue.__init__(self, *args, **keywords)
@@ -61,7 +57,6 @@ class InstructionQueue(queue.Queue):
         if app.config.strict_debug:
             assert isinstance(instruction, unicode), repr(instruction)
         queue.Queue.put(self, (instruction, message))
-
 
 class BackgroundThread(threading.Thread):
     def __init__(self, programWindow, toBackground, fromBackground, *args, **keywords):
@@ -136,7 +131,6 @@ class BackgroundThread(threading.Thread):
                     if instruction == u"quit":
                         app.log.info("bg received quit message")
                         return
-
 
 def startup_background(programWindow):
     toBackground = InstructionQueue()

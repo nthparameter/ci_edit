@@ -13,10 +13,6 @@
 # limitations under the License.
 """Key bindings for the cua-like editor."""
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 import curses
 
 from app.curses_util import *
@@ -26,7 +22,6 @@ import app.file_manager_controller
 import app.interactive_prompt
 import app.prediction_controller
 import app.text_buffer
-
 
 def init_command_set(controller, textBuffer):
     """The basic command set includes line editing controls."""
@@ -64,7 +59,6 @@ def init_command_set(controller, textBuffer):
         KEY_CTRL_RIGHT: textBuffer.cursor_move_word_right,
         KEY_CTRL_SHIFT_RIGHT: textBuffer.cursor_select_word_right,
     }
-
 
 def main_window_commands(controller, textBuffer):
     """The command set for a window (rather than a single line)."""
@@ -106,7 +100,6 @@ def main_window_commands(controller, textBuffer):
     )
     return commands
 
-
 class ConfirmClose(app.controller.Controller):
     """Ask about closing a file with unsaved changes."""
 
@@ -127,7 +120,6 @@ class ConfirmClose(app.controller.Controller):
         self.commandSet = commandSet
         self.commandDefault = self.confirmation_prompt_finish
 
-
 class ConfirmOverwrite(app.controller.Controller):
     """Ask about writing over an existing file."""
 
@@ -146,14 +138,12 @@ class ConfirmOverwrite(app.controller.Controller):
         self.commandSet = commandSet
         self.commandDefault = self.confirmation_prompt_finish
 
-
 class InteractiveFind(app.editor.InteractiveFind):
     def __init__(self, view):
         app.editor.InteractiveFind.__init__(self, view)
 
     def set_text_buffer(self, textBuffer):
         pass
-
 
 class InteractiveFindInput(app.editor.InteractiveFindInput):
     """Find text within the current document."""
@@ -197,7 +187,6 @@ class InteractiveFindInput(app.editor.InteractiveFindInput):
         self.commandSet = commandSet
         self.commandDefault = self.textBuffer.insert_printable
 
-
 class InteractiveReplaceInput(app.editor.InteractiveFindInput):
     """Find text within the current document."""
 
@@ -239,7 +228,6 @@ class InteractiveReplaceInput(app.editor.InteractiveFindInput):
     def extend_find_window(self):
         self.view.host.toggleExtendedFindWindow()
 
-
 class InteractiveGoto(app.editor.InteractiveGoto):
     """Jump to a particular line number."""
 
@@ -268,7 +256,6 @@ class InteractiveGoto(app.editor.InteractiveGoto):
         self.commandSet = commandSet
         self.commandDefault = self.textBuffer.insert_printable
 
-
 class DirectoryList(app.file_manager_controller.DirectoryListController):
     """Open a file to edit."""
 
@@ -293,7 +280,6 @@ class DirectoryList(app.file_manager_controller.DirectoryListController):
         }
         self.commandSet = commandSet
         self.commandDefault = self.pass_default_to_path_input
-
 
 class FileOpener(app.file_manager_controller.FileManagerController):
     """Open a file to edit."""
@@ -325,7 +311,6 @@ class FileOpener(app.file_manager_controller.FileManagerController):
         )
         self.commandSet = commandSet
         self.commandDefault = self.textBuffer.insert_printable
-
 
 class FilePathInput(app.file_manager_controller.FilePathInputController):
     """Open a file to edit."""
@@ -359,7 +344,6 @@ class FilePathInput(app.file_manager_controller.FilePathInputController):
         self.commandSet = commandSet
         self.commandDefault = self.textBuffer.insert_printable
 
-
 class InteractivePrediction(app.editor.InteractivePrediction):
     """Make a guess."""
 
@@ -387,7 +371,6 @@ class InteractivePrediction(app.editor.InteractivePrediction):
         self.commandSet = commandSet
         self.commandDefault = self.textBuffer.insert_printable
 
-
 class InteractivePrompt(app.interactive_prompt.InteractivePrompt):
     """Extended command prompt."""
 
@@ -407,7 +390,6 @@ class InteractivePrompt(app.interactive_prompt.InteractivePrompt):
         )
         self.commandSet = commandSet
         self.commandDefault = self.textBuffer.insert_printable
-
 
 class InteractiveQuit(app.controller.Controller):
     """Ask about unsaved changes."""
@@ -431,7 +413,6 @@ class InteractiveQuit(app.controller.Controller):
         self.commandSet = commandSet
         self.commandDefault = self.confirmation_prompt_finish
 
-
 class CuaEdit(app.controller.Controller):
     """Keyboard mappings for CUA. CUA is the Cut/Copy/Paste paradigm."""
 
@@ -450,7 +431,6 @@ class CuaEdit(app.controller.Controller):
 
     def on_change(self):
         pass
-
 
 class CuaPlusEdit(CuaEdit):
     """Keyboard mappings for CUA, plus some extra."""
@@ -481,7 +461,6 @@ class CuaPlusEdit(CuaEdit):
         )
         self.commandSet = commandSet
         self.commandDefault = self.textBuffer.insert_printable_with_pairing
-
 
 class PopupController(app.controller.Controller):
     """
@@ -523,7 +502,6 @@ class PopupController(app.controller.Controller):
     def set_text_buffer(self, textBuffer):
         self.textBuffer = textBuffer
 
-
 class PaletteDialogController(app.controller.Controller):
     """."""
 
@@ -553,7 +531,6 @@ class PaletteDialogController(app.controller.Controller):
     def set_text_buffer(self, textBuffer):
         self.textBuffer = textBuffer
 
-
 class PredictionList(app.prediction_controller.PredictionListController):
     """Open a file to edit."""
 
@@ -578,7 +555,6 @@ class PredictionList(app.prediction_controller.PredictionListController):
         )
         self.commandSet = commandSet
         self.commandDefault = self.textBuffer.insert_printable
-
 
 class PredictionController(app.prediction_controller.PredictionController):
     """Open a file to edit."""
@@ -608,7 +584,6 @@ class PredictionController(app.prediction_controller.PredictionController):
         )
         self.commandSet = commandSet
         self.commandDefault = self.textBuffer.insert_printable
-
 
 class PredictionInputController(app.prediction_controller.PredictionInputController):
     """Open a file to edit."""
@@ -642,7 +617,6 @@ class PredictionInputController(app.prediction_controller.PredictionInputControl
         )
         self.commandSet = commandSet
         self.commandDefault = self.textBuffer.insert_printable
-
 
 class ToggleController(app.editor.ToggleController):
     """Find text within the current document."""

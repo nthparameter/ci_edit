@@ -18,10 +18,6 @@ The values of constants and function calls are bogus. This was created based on
 what ci_edit uses, without regard or reference to the internals of the curses
 library."""
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 try:
     unicode
 except NameError:
@@ -45,12 +41,10 @@ from . import constants
 DEBUG_COLOR_PAIR_BASE = 256
 DEBUG_COLOR_PAIR_MASK = (DEBUG_COLOR_PAIR_BASE * 2) - 1
 
-
 def is_string_type(value):
     if sys.version_info[0] == 2:
         return type(value) in types.StringTypes
     return isinstance(value, str)
-
 
 # Avoiding importing app.curses_util.
 # Tuple events are preceded by an escape (27).
@@ -58,11 +52,9 @@ BRACKETED_PASTE_BEGIN = (91, 50, 48, 48, 126)  # i.e. "[200~"
 BRACKETED_PASTE_END = (91, 50, 48, 49, 126)  # i.e. "[201~"
 BRACKETED_PASTE = ("terminal_paste",)  # Pseudo event type.
 
-
 class error(BaseException):
     def __init__(self):
         BaseException.__init__(self)
-
 
 class FakeInput:
     def __init__(self, display):
@@ -150,7 +142,6 @@ class FakeInput:
         self.log("return", constants.ERR)
         return constants.ERR
 
-
 def test_log(log_level, *msg):
     # Adjust constant to increase verbosity.
     if log_level >= 0:
@@ -170,14 +161,11 @@ def test_log(log_level, *msg):
     )
     print(caller + " ".join([repr(i) for i in msg]))
 
-
 getchCallback = None
-
 
 def set_getch_callback(callback):
     global getchCallback
     getchCallback = callback
-
 
 # Test output. Use |display| to check the screen output.
 class FakeDisplay:
@@ -334,22 +322,17 @@ class FakeDisplay:
         self.displayStyle = [[-1 for _ in range(self.cols)] for _ in range(self.rows)]
         self.displayText = [[u"x" for _ in range(self.cols)] for _ in range(self.rows)]
 
-
 fakeDisplay = None
 fakeInput = None
 mouseEvents = []
 
-
 def get_fake_display():
     return fakeDisplay
-
 
 def print_fake_display():
     fakeDisplay.show()
 
-
 #####################################
-
 
 class FakeCursesWindow:
     def __init__(self, rows, cols):
@@ -420,7 +403,6 @@ class FakeCursesWindow:
     def timeout(self, *args):
         test_log(2, *args)
 
-
 class StandardScreen(FakeCursesWindow):
     def __init__(self):
         global fakeDisplay, fakeInput
@@ -453,61 +435,48 @@ class StandardScreen(FakeCursesWindow):
             if self.movie:
                 fakeDisplay.show()
 
-
 def baudrate(*args):
     test_log(2, *args)
     return -1
-
 
 def can_change_color(*args):
     test_log(2, *args)
     return 1
 
-
 def color_content(*args):
     test_log(2, *args)
-
 
 def color_pair(*args):
     test_log(2, *args)
     return fakeDisplay.get_color_pair(*args)
 
-
 def curs_set(*args):
     test_log(2, *args)
 
-
 def errorpass(*args):
     test_log(2, *args)
-
 
 def getch(*args):
     test_log(2, *args)
     return constants.ERR
 
-
 def add_mouse_event(mouse_event):
     test_log(2)
     return mouseEvents.append(mouse_event)
-
 
 def getmouse(*args):
     test_log(2, *args)
     return mouseEvents.pop()
 
-
 def has_colors(*args):
     test_log(2, *args)
     return True
 
-
 def init_color(*args):
     test_log(2, *args)
 
-
 def init_pair(*args):
     test_log(4, *args)
-
 
 def keyname(*args):
     test_log(2, *args)
@@ -518,48 +487,37 @@ def keyname(*args):
     if a < 0:
         raise ValueError()
 
-
 def meta(*args):
     test_log(2, *args)
-
 
 def mouseinterval(*args):
     test_log(2, *args)
 
-
 def mousemask(*args):
     test_log(2, *args)
-
 
 def newwin(*args):
     test_log(2, *args)
     return FakeCursesWindow(args[0], args[1])
 
-
 def raw(*args):
     test_log(2, *args)
-
 
 def resizeterm(*args):
     test_log(2, *args)
 
-
 def start_color(*args):
     test_log(2, *args)
-
 
 def ungetch(*args):
     test_log(2, *args)
 
-
 def use_default_colors(*args):
     test_log(2, *args)
-
 
 def get_pair(*args):
     fakeDisplay.get_color_pair(*args)
     test_log(2, *args)
-
 
 def wrapper(fun, *args, **kw):
     standardScreen = StandardScreen()

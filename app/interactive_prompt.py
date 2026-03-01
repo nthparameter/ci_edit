@@ -13,10 +13,6 @@
 # limitations under the License.
 """Interactive prompt to run advanced commands and sub-processes."""
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 try:
     unicode
 except NameError:
@@ -30,10 +26,8 @@ import subprocess
 import app.controller
 import app.formatter
 
-
 def function_test_eq(a, b):
     assert a == b, u"%r != %r" % (a, b)
-
 
 if 1:
     # Break up a command line, separate by |.
@@ -95,7 +89,6 @@ function_test_eq(kReUnquote.sub("\\2", '"date"'), "date")
 function_test_eq(kReUnquote.sub("\\2", "'date'"), "date")
 function_test_eq(kReUnquote.sub("\\2", "'da\\'te'"), "da\\'te")
 function_test_eq(kReUnquote.sub("\\2", '"da\\"te"'), 'da\\"te')
-
 
 class InteractivePrompt(app.controller.Controller):
     """Extended commands prompt."""

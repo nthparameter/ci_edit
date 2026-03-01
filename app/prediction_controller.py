@@ -12,10 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 try:
     unicode
 except NameError:
@@ -30,7 +26,6 @@ import warnings
 import app.buffer_file
 import app.controller
 import app.string
-
 
 class PredictionListController(app.controller.Controller):
     """Gather and prepare file directory information."""
@@ -194,7 +189,6 @@ class PredictionListController(app.controller.Controller):
         self.items = None
         self.shownList = None
 
-
 class PredictionController(app.controller.Controller):
     """Create or open files."""
 
@@ -217,7 +211,6 @@ class PredictionController(app.controller.Controller):
 
     def pass_event_to_prediction_list(self):
         self.view.predictionList.controller.do_command(self.savedCh, None)
-
 
 class PredictionInputController(app.controller.Controller):
     """Manipulate query string."""

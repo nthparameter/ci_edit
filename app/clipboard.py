@@ -12,10 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 try:
     unicode
 except NameError:
@@ -25,7 +21,6 @@ except NameError:
 import third_party.pyperclip as clipboard
 
 import app.config
-
 
 class Clipboard:
     def __init__(self):

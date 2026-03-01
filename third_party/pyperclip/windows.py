@@ -7,7 +7,6 @@ import ctypes
 from ctypes import c_size_t, sizeof, c_wchar_p, get_errno, c_wchar
 from .exceptions import PyperclipWindowsException
 
-
 class CheckedCall(object):
     def __init__(self, f):
         super(CheckedCall, self).__setattr__("f", f)
@@ -20,7 +19,6 @@ class CheckedCall(object):
 
     def __setattr__(self, key, value):
         setattr(self.f, key, value)
-
 
 def init_windows_clipboard():
     from ctypes.wintypes import (

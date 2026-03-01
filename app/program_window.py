@@ -12,10 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 import curses
 import os
 import signal
@@ -27,7 +23,6 @@ import app.file_manager_window
 import app.log
 import app.prediction_window
 import app.window
-
 
 class ProgramWindow(app.window.ActiveWindow):
     """The outermost window. This window doesn't draw content itself. It is

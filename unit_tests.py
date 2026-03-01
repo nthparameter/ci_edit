@@ -14,10 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 import os
 import sys
 
@@ -101,7 +97,6 @@ TESTS = {
     "undo": app.unit_test_undo_redo.UndoRedoTestCases,
 }
 
-
 def run_tests(tests, stopOnFailure=False):
     """Run through the list of tests."""
     for test in tests:
@@ -110,7 +105,6 @@ def run_tests(tests, stopOnFailure=False):
         if stopOnFailure and (result.failures or result.errors):
             return 1
     return 0
-
 
 def usage():
     print("Help:")
@@ -124,7 +118,6 @@ def usage():
     testNames.sort()
     for i in testNames:
         print(" ", i)
-
 
 def parse_arg_list(argList):
     testList = list(TESTS.values())
@@ -155,7 +148,6 @@ def parse_arg_list(argList):
         app.log.wrapper(lambda: run_tests(testList, True))
     else:
         sys.exit(run_tests(testList, True))
-
 
 if __name__ == "__main__":
     parse_arg_list(sys.argv)

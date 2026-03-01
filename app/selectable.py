@@ -12,10 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 import re
 
 import app.config
@@ -46,7 +42,6 @@ kSelectionModeNames = [
     "Line",
     "Word",
 ]
-
 
 class Selectable(app.line_buffer.LineBuffer):
     def __init__(self, program):

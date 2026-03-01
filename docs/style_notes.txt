@@ -1,0 +1,95 @@
+Style Audit Notes — ci_edit Python Codebase
+============================================
+
+## Current state vs. modern Python 3.12
+
+### Type hints
+- Status: zero adoption
+- No function signatures include type hints anywhere in app/
+- Makes IDE support, type checking, and documentation harder
+
+### String formatting
+- ~85% uses % operator (e.g. mutator.py:224, controller.py:364)
+- ~15% uses .format() (e.g. parser.py:1083)
+- 0% f-strings — not used anywhere in the codebase
+
+### Attribute naming
+- Attributes use camelCase: self.penRow, self.penCol, self.markerRow,
+  self.fileExtension, self.shouldReparse, self.lineLimitIndicator, etc.
+- Methods use snake_case: check_scroll_to_cursor(), get_matching_bracket_row_col()
+- Constants use k-prefix + camelCase: kSelectionNone, kSelectionBlock (selectable.py:27-48)
+- Class names use PascalCase (correct)
+- Deeply embedded — renaming camelCase attributes would touch every file
+
+### Python 2 compatibility artifacts
+- Every file has: from __future__ import absolute_import / division / print_function
+- These are no-ops in Python 3 and should be removed
+- readme.md mentions "Python 3.7+ and Python 2.7+ are supported"
+- Some io.open() usage instead of plain open() (Python 2 compat shim)
+- Unicode string literals (u"...") in several places
+
+### super() style
+- Old-style explicit parent calls: app.actions.Actions.__init__(self, program)
+- Should be: super().__init__(program)
+
+### Docstrings
+- ~25% method coverage; no class-level coverage standard
+- Format is ad-hoc plain text — some have Args/Returns sections, most don't
+- No consistent standard (not Google, not NumPy)
+
+### Error handling
+- Mostly specific exceptions (FileNotFoundError, OSError, re.error) — good
+- Some bare except Exception as e: in prefs.py:65, prefs.py:134
+- No custom exception types; uses stdlib exceptions only
+
+### Class style
+- Old-style explicit parent __init__ calls throughout the inheritance chain
+- No dataclasses or namedtuples used
+- Module-level k-prefixed integer constants instead of enum.Enum
+
+### Import organization
+- __future__ imports on every file (vestigial Python 2 compat)
+- Wildcard import: sm_editor.py:27 — from app.curses_util import *
+- Otherwise stdlib-first, then local — reasonable
+- All absolute imports (no relative)
+
+### Test style
+- Framework: unittest (not pytest)
+- setUp/tearDown pattern throughout
+- Custom test infrastructure in fake_curses_testing.py — capable headless harness
+- No pytest fixtures, no parametrize
+- Manual mock classes (FakeCursorWindow, FakeView)
+
+### Modern Python features not used
+- No f-strings (PEP 498)
+- No walrus operator (PEP 572)
+- No match/case (PEP 634)
+- No __slots__
+- No dataclasses (PEP 557)
+- No type hints (PEP 484)
+- No enum.Enum for constants
+
+---
+
+## Proposed style guide approach
+
+### Option A — Forward-only
+New code follows modern style; existing migrates opportunistically when touched.
+Acknowledges camelCase attribute debt as known legacy.
+
+### Option B — Prescriptive migration
+Define full target state and order of migration:
+  1. Drop __future__ imports (no-op anyway, easy mechanical change)
+  2. Switch to f-strings in new and touched code
+  3. Add type hints to new functions; backfill when touching existing ones
+  4. Standardize docstrings to Google style
+  5. Migrate super() calls
+  6. Address camelCase attributes last (largest scope, most disruptive)
+
+---
+
+## Open questions
+- Rename camelCase attributes to snake_case? Large scope but fixes PEP-8 violation.
+- Migrate tests to pytest runner (can run unittest tests via pytest)?
+- Introduce ruff as linter/formatter to replace yapf?
+- Adopt enum.Enum for kSelection* constants?

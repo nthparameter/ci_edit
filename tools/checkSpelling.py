@@ -14,10 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import print_function
-
 import glob
-import io
 import os
 import pprint
 import re
@@ -56,11 +53,10 @@ pathPrefs = []
 dictionary = app.spelling.Dictionary(dictionaryList, pathPrefs)
 assert dictionary.is_correct(u"has", "cpp")
 
-
 def handle_file(fileName, unrecognizedWords):
     # print(fileName, end="")
     try:
-        with io.open(fileName, "r") as f:
+        with open(fileName, "r") as f:
             data = f.read()
             if not data:
                 return
@@ -73,7 +69,6 @@ def handle_file(fileName, unrecognizedWords):
                     unrecognizedWords.add(word)
     except UnicodeDecodeError:
         print("Error decoding:", fileName)
-
 
 def walk_tree(root):
     unrecognizedWords = set()
@@ -90,7 +85,6 @@ def walk_tree(root):
         print(unrecognizedWords)
         print()
     return unrecognizedWords
-
 
 if os.path.isfile(root):
     print(handle_file(root))

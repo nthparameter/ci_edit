@@ -9,7 +9,6 @@ EXCEPT_MSG = """
 PY2 = sys.version_info[0] == 2
 text_type = unicode if PY2 else str
 
-
 def init_osx_clipboard():
     def copy_osx(text):
         p = subprocess.Popen(["pbcopy", "w"], stdin=subprocess.PIPE, close_fds=True)
@@ -21,7 +20,6 @@ def init_osx_clipboard():
         return stdout.decode("utf-8")
 
     return copy_osx, paste_osx
-
 
 def init_gtk_clipboard():
     import gtk
@@ -42,7 +40,6 @@ def init_gtk_clipboard():
 
     return copy_gtk, paste_gtk
 
-
 def init_qt_clipboard():
     # $DISPLAY should exist
     from PyQt4.QtGui import QApplication
@@ -58,7 +55,6 @@ def init_qt_clipboard():
         return text_type(cb.text())
 
     return copy_qt, paste_qt
-
 
 def init_xclip_clipboard():
     def copy_xclip(text):
@@ -80,7 +76,6 @@ def init_xclip_clipboard():
 
     return copy_xclip, paste_xclip
 
-
 def init_xsel_clipboard():
     def copy_xsel(text):
         p = subprocess.Popen(
@@ -96,7 +91,6 @@ def init_xsel_clipboard():
         return stdout.decode("utf-8")
 
     return copy_xsel, paste_xsel
-
 
 def init_klipper_clipboard():
     def copy_klipper(text):
@@ -133,7 +127,6 @@ def init_klipper_clipboard():
         return clipboardContents
 
     return copy_klipper, paste_klipper
-
 
 def init_no_clipboard():
     class ClipboardUnavailable(object):

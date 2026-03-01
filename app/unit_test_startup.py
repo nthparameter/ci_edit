@@ -13,10 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 import curses
 import os
 import sys
@@ -26,7 +22,6 @@ import app.ci_program
 import app.fake_curses_testing
 
 kTestFile = u"#startup_test_file_with_unlikely_file_name~"
-
 
 class StartupTestCases(app.fake_curses_testing.FakeCursesTestCase):
     def setUp(self):

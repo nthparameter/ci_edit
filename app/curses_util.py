@@ -14,10 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 try:
     unicode
 except NameError:
@@ -173,7 +169,6 @@ KEY_SHIFT_RIGHT = curses.KEY_SRIGHT
 KEY_MOUSE = curses.KEY_MOUSE
 KEY_RESIZE = curses.KEY_RESIZE
 
-
 def mouse_button_name(buttonState):
     """Curses debugging. Prints readable name for state of mouse buttons."""
     result = u""
@@ -224,14 +219,12 @@ def mouse_button_name(buttonState):
         result += u" ALT"
     return result
 
-
 def curses_key_name(keyCode):
     try:
         return curses.keyname(keyCode)
     except Exception:
         pass
     return None
-
 
 def column_to_index(column, string):
     """If the visual cursor is on |column|, which index of the string is the
@@ -253,7 +246,6 @@ def column_to_index(column, string):
             return None
     return index
 
-
 def char_at_column(column, string):
     """If the visual cursor is on |column|, which index of the string is the
     cursor on?"""
@@ -264,7 +256,6 @@ def char_at_column(column, string):
     if index is not None:
         return string[index]
     return None
-
 
 def fit_to_rendered_width(column, width, string):
     """With |width| character cells (columns) available, how much of |string|
@@ -287,7 +278,6 @@ def fit_to_rendered_width(column, width, string):
             break
         index += 1
     return index
-
 
 def rendered_find_iter(string, beginCol, endCol, charGroups, numbers, eolSpaces):
     """Get a slice (similar to `string[beginCol:endCol]`) based on the rendered
@@ -338,7 +328,6 @@ def rendered_find_iter(string, beginCol, endCol, charGroups, numbers, eolSpaces)
         while index and string[index - 1] == " ":
             index -= 1
         yield string[index:], index, index, len(charGroups) + 1
-
 
 def rendered_sub_str(string, beginCol, endCol=None):
     """
@@ -394,7 +383,6 @@ def rendered_sub_str(string, beginCol, endCol=None):
                 output.append(ch)
     return u"".join(output)
 
-
 if sys.version_info[0] == 2:
 
     def char_width(ch, column, tabWidth=8):
@@ -421,7 +409,6 @@ if sys.version_info[0] == 2:
     def is_zero_width(ch):
         return ch == u"" or ch < u" "  # or unicodedata.east_asian_width(ch) == "N"
 
-
 else:
 
     def char_width(ch, column, tabWidth=8):
@@ -445,7 +432,6 @@ else:
     def is_zero_width(ch):
         return ch == u"" or ch < u" "  # or unicodedata.east_asian_width(ch) == "N"
 
-
 def floor_col(column, line):
     """Round off the column so that it aligns with the start of a character.
     For lines without multi-column characters the result will equal |column|.
@@ -463,7 +449,6 @@ def floor_col(column, line):
         floorColumn += width
     return floorColumn
 
-
 def prior_char_col(column, line):
     """Return the start column of the character before |column|."""
     if app.config.strict_debug:
@@ -479,7 +464,6 @@ def prior_char_col(column, line):
         priorColumn += width
     return None
 
-
 def column_width(string):
     """When rendering |string| how many character cells will be used? For ASCII
     characters this will equal len(string). For many Chinese characters and
@@ -492,7 +476,6 @@ def column_width(string):
     for i in string:
         width += char_width(i, width)
     return width
-
 
 def wrap_lines(lines, indent, width):
     """Word wrap lines of text.
@@ -530,7 +513,6 @@ def wrap_lines(lines, indent, width):
         index += 1
     return output
 
-
 # This is built-in in Python 3.
 # In Python 2 it's done by hand.
 def terminal_size():
@@ -538,7 +520,6 @@ def terminal_size():
         b"HHHH", fcntl.ioctl(0, termios.TIOCGWINSZ, struct.pack(b"HHHH", 0, 0, 0, 0))
     )[:2]
     return h, w
-
 
 def hack_curses_fixes():
     if sys.platform == u"darwin":

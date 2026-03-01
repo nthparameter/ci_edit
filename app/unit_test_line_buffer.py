@@ -12,16 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 import unittest
 
 import app.log
 import app.ci_program
 import app.line_buffer
-
 
 class LineBufferTestCases(unittest.TestCase):
     def setUp(self):
@@ -33,7 +28,6 @@ class LineBufferTestCases(unittest.TestCase):
 
     def test_create(self):
         self.assertTrue(self.line_buffer is not None)
-
 
 if __name__ == "__main__":
     unittest.main()

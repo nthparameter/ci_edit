@@ -12,15 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 import curses
 import unittest
 
 import app.string
-
 
 class StringTestCases(unittest.TestCase):
     def test_path_encode(self):

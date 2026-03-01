@@ -12,10 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 try:
     unicode
 except NameError:
@@ -32,7 +28,6 @@ except ImportError:
     pass
 
 import app.buffer_file as test_buffer_file
-
 
 class pathRowColumnTestCases(unittest.TestCase):
     def setUp(self):

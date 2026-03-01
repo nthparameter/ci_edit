@@ -12,11 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
-import io
 import inspect
 import os
 import sys
@@ -35,10 +30,8 @@ enabledChannels = {
 shouldWritePrintLog = False
 startTime = time.time()
 
-
 def get_lines():
     return screenLog
-
 
 def parse_lines(frame, logChannel, *args):
     if not len(args):
@@ -60,7 +53,6 @@ def parse_lines(frame, logChannel, *args):
         msg += prior
     return msg.split(u"\n")
 
-
 def channel_enable(logChannel, isEnabled):
     global fullLog, shouldWritePrintLog
     fullLog += [
@@ -72,14 +64,12 @@ def channel_enable(logChannel, isEnabled):
     else:
         enabledChannels.pop(channel, None)
 
-
 def channel(logChannel, *args):
     global fullLog, screenLog
     if logChannel in enabledChannels:
         lines = parse_lines(inspect.stack()[2], logChannel, *args)
         screenLog += lines
         fullLog += lines
-
 
 def caller(*args):
     global fullLog, screenLog
@@ -92,7 +82,6 @@ def caller(*args):
     screenLog += lines
     fullLog += lines
 
-
 def exception(e, *args):
     global fullLog
     lines = parse_lines(inspect.stack()[1], u"except", *args)
@@ -102,35 +91,29 @@ def exception(e, *args):
     for i in out:
         error(i[:-1])
 
-
 def check_failed(prefix, a, op, b):
     stack(u"failed %s %r %s %r" % (prefix, a, op, b))
     raise Exception("fatal error")
-
 
 def check_ge(a, b):
     if a >= b:
         return
     check_failed(u"check_ge", a, u">=", b)
 
-
 def check_gt(a, b):
     if a > b:
         return
     check_failed(u"check_lt", a, u"<", b)
-
 
 def check_le(a, b):
     if a <= b:
         return
     check_failed(u"check_le", a, u"<=", b)
 
-
 def check_lt(a, b):
     if a < b:
         return
     check_failed(u"check_lt", a, u"<", b)
-
 
 def stack(*args):
     global fullLog, screenLog
@@ -147,27 +130,21 @@ def stack(*args):
         screenLog.append(u"stack    " + repr(args[0]))
         fullLog.append(u"stack    " + repr(args[0]))
 
-
 def info(*args):
     channel(u"info", *args)
-
 
 def meta(*args):
     """Log information related to logging."""
     channel(u"meta", *args)
 
-
 def mouse(*args):
     channel(u"mouse", *args)
-
 
 def parser(*args):
     channel(u"parser", *args)
 
-
 def startup(*args):
     channel(u"startup", *args)
-
 
 def quick(*args):
     global fullLog, screenLog
@@ -182,7 +159,6 @@ def quick(*args):
     screenLog += lines
     fullLog += lines
 
-
 def debug(*args):
     global fullLog, screenLog
     if u"debug" in enabledChannels:
@@ -190,24 +166,20 @@ def debug(*args):
         screenLog += lines
         fullLog += lines
 
-
 def detail(*args):
     global fullLog
     if u"detail" in enabledChannels:
         lines = parse_lines(inspect.stack()[1], u"detail", *args)
         fullLog += lines
 
-
 def error(*args):
     global fullLog
     lines = parse_lines(inspect.stack()[1], u"error", *args)
     fullLog += lines
 
-
 def when(*args):
     args = (time.time() - startTime,) + args
     channel(u"info", *args)
-
 
 def wrapper(function, shouldWrite=True):
     global shouldWritePrintLog
@@ -226,12 +198,10 @@ def wrapper(function, shouldWrite=True):
         flush()
     return r
 
-
 def write_to_file(path):
     fullPath = app.buffer_file.expand_full_path(path)
-    with io.open(fullPath, "w+", encoding=u"UTF-8") as out:
+    with open(fullPath, "w+", encoding=u"UTF-8") as out:
         out.write(u"\n".join(fullLog) + u"\n")
-
 
 def flush():
     if shouldWritePrintLog:

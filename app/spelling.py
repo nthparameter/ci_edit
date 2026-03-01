@@ -12,24 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 import bisect
 import glob
-import io
 import os
 import re
 
 import app.log
 
-
 class OsDictionary:
     def __init__(self):
         path = "/usr/share/dict/words"
         try:
-            self.file = io.open(path, "r")
+            self.file = open(path, "r")
             self.fileLength = self.file.seek(0, 2)  # Seek to end of file.
             self.pageSize = 1024 * 8  # Arbitrary.
             # Add one to pick up any partial page at the end.
@@ -85,7 +79,6 @@ class OsDictionary:
         except IOError:
             return False
 
-
 class Dictionary:
     def __init__(self, dictionaryList, pathPrefs):
         self.osDictionary = OsDictionary()
@@ -114,7 +107,7 @@ class Dictionary:
         for path in glob.iglob(dirPath + "*.words"):
             if os.path.isfile(path):
                 grammarName = path[len(dirPath) : -len(".words")]
-                with io.open(path, "r") as f:
+                with open(path, "r") as f:
                     lines = f.readlines()
                     index = 0
                     while not len(lines[index]) or lines[index][0] == "#":

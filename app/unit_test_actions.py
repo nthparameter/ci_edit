@@ -12,21 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 import os
 import unittest
 
 import app.log
 import app.text_buffer
 
-
 class FakeCursorWindow:
     def getmaxyx(self):
         return (100, 100)
-
 
 class FakeView:
     def __init__(self):
@@ -38,7 +32,6 @@ class FakeView:
         self.scrollRow = 0
         self.scrollCol = 0
 
-
 def check_row(test, text_buffer, row, expected):
     text_buffer.parse_document()
     if not (expected == text_buffer.parser.row_text(row)):
@@ -48,7 +41,6 @@ def check_row(test, text_buffer, row, expected):
                 row, repr(expected), repr(text_buffer.parser.data)
             )
         )
-
 
 class ActionsTestCase(unittest.TestCase):
     def current_row_text(self):
@@ -77,7 +69,6 @@ class ActionsTestCase(unittest.TestCase):
             self.textBuffer.penRow,
             self.textBuffer.penCol,
         )
-
 
 class MouseTestCases(ActionsTestCase):
     def setUp(self):
@@ -179,7 +170,6 @@ void blah();
         self.assertEqual(self.textBuffer.markerCol, wordEnd)
         self.assertEqual(self.textBuffer.penRow, row)
         self.assertEqual(self.textBuffer.penCol, 0)
-
 
 class SelectionTestCases(ActionsTestCase):
     def setUp(self):
@@ -314,7 +304,6 @@ a\twith tab
         # Top of document. This call should have no effect (and not crash).
         self.textBuffer.cursor_select_word_left()
         self.assertEqual(self.marker_pen_row_col(), (2, 5, 0, 0))
-
 
 class TextIndentTestCases(ActionsTestCase):
     def setUp(self):
@@ -539,7 +528,6 @@ class TextIndentTestCases(ActionsTestCase):
         tb.indent()
         check_pen_marker(0, 9, 2, 8)
 
-
 class TextInsertTestCases(ActionsTestCase):
     def setUp(self):
         app.log.shouldWritePrintLog = False
@@ -603,7 +591,6 @@ class TextInsertTestCases(ActionsTestCase):
         check_row(self, tb, 0, "o")
         insert(ord("("), None)
         check_row(self, tb, 0, "(o")
-
 
 class GrammarDeterminationTestCases(ActionsTestCase):
     def setUp(self):

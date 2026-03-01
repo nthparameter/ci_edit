@@ -12,10 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 import os
 import re
 
@@ -31,11 +27,9 @@ noOpInstructions = set(
     ]
 )
 
-
 def add_vectors(a, b):
     """Add two list-like objects, pair-wise."""
     return tuple([a[i] + b[i] for i in range(len(a))])
-
 
 class Mutator(app.selectable.Selectable):
     """Track and enact changes to a body of text."""

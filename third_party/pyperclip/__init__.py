@@ -45,7 +45,6 @@ from .windows import init_windows_clipboard
 HAS_DISPLAY = os.getenv("DISPLAY", False)
 CHECK_CMD = "where" if platform.system() == "Windows" else "which"
 
-
 def _executable_exists(name):
     return (
         subprocess.call(
@@ -53,7 +52,6 @@ def _executable_exists(name):
         )
         == 0
     )
-
 
 def determine_clipboard():
     # Determine the OS/platform and set
@@ -91,7 +89,6 @@ def determine_clipboard():
 
     return init_no_clipboard()
 
-
 def set_clipboard(clipboard):
     global copy, paste
 
@@ -107,7 +104,6 @@ def set_clipboard(clipboard):
     }
 
     copy, paste = clipboard_types[clipboard]()
-
 
 copy, paste = determine_clipboard()
 

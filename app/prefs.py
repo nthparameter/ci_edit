@@ -12,12 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 import curses
-import io
 import json
 import os
 import re
@@ -26,7 +21,6 @@ import sys
 import app.default_prefs
 import app.log
 import app.regex
-
 
 class Prefs:
     def __init__(self):
@@ -55,7 +49,7 @@ class Prefs:
             )
         )
         if os.path.isfile(prefsPath) and os.access(prefsPath, os.R_OK):
-            with io.open(prefsPath, "r") as f:
+            with open(prefsPath, "r") as f:
                 try:
                     additionalPrefs = json.loads(f.read())
                     app.log.startup(additionalPrefs)
@@ -128,7 +122,7 @@ class Prefs:
                 os.path.join(self.prefsDirectory, "%s.json" % (category,))
             )
         )
-        with io.open(prefsPath, "w", encoding=u"utf-8") as f:
+        with open(prefsPath, "w", encoding=u"utf-8") as f:
             try:
                 f.write(json.dumps(prefs[category]))
             except Exception as e:
