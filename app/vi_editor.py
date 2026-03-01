@@ -43,6 +43,7 @@ class ViEdit(app.controller.Controller):
             ord("l"): textBuffer.cursor_right,
         }
         self.commandSet = normalCommandSet
+        self.commandSet_Normal = normalCommandSet
         self.commandSet_Insert = {
             curses.ascii.ESC: self.switch_to_command_set_normal,
         }
@@ -68,5 +69,5 @@ class ViEdit(app.controller.Controller):
 
     def switch_to_command_set_normal(self, ignored=1):
         app.log.info("normal mode")
-        self.commandDefault = self.textBuffer.no_op
+        self.commandDefault = self.textBuffer.no_op_default
         self.commandSet = self.commandSet_Normal
