@@ -81,7 +81,7 @@ class FakeInput:
         callingFile = os.path.split(frame[1])[1]
         callingLine = frame[2]
         caller = "%16s %5s %3s %s " % (callingFile, callingLine, function, functionLine)
-        waiting = u"waitingForRefresh" if self.waitingForRefresh else ""
+        waiting = "waitingForRefresh" if self.waitingForRefresh else ""
         print(caller + " ".join([repr(i) for i in msg]), waiting)
 
     def next(self):
@@ -190,7 +190,7 @@ class FakeDisplay:
                 d = self.displayStyle[row + i][col + k]
                 if d != colorPair:
                     self.show()
-                    return u"\n  row %s, col %s color/style mismatch '%d' != '%d'" % (
+                    return "\n  row %s, col %s color/style mismatch '%d' != '%d'" % (
                         row + i,
                         col + k,
                         d,
@@ -209,32 +209,32 @@ class FakeDisplay:
             displayCol = col
             for ch in line:
                 if row + i >= self.rows:
-                    return u"\n  Row %d is outside of the %d row display" % (
+                    return "\n  Row %d is outside of the %d row display" % (
                         row + i,
                         self.rows,
                     )
                 if displayCol >= self.cols:
-                    return u"\n  Column %d is outside of the %d column display" % (
+                    return "\n  Column %d is outside of the %d column display" % (
                         displayCol,
                         self.cols,
                     )
                 displayCh = self.displayText[row + i][displayCol]
                 if displayCh != ch:
                     # self.show()
-                    result = u"\n  row %s, col %s mismatch '%s' != '%s'" % (
+                    result = "\n  row %s, col %s mismatch '%s' != '%s'" % (
                         row + i,
                         displayCol,
                         displayCh,
                         ch,
                     )
                     if verbose >= 1:
-                        actualLine = u"".join(self.displayText[row + i])
-                        result += u"\n  actual:   |%s|" % actualLine
+                        actualLine = "".join(self.displayText[row + i])
+                        result += "\n  actual:   |%s|" % actualLine
                     if verbose >= 2:
-                        expectedText = u"".join(line)
-                        result += u"\n  expected: %s|%s|" % (u" " * col, expectedText)
+                        expectedText = "".join(line)
+                        result += "\n  expected: %s|%s|" % (" " * col, expectedText)
                     if verbose >= 3:
-                        result += u"\n  mismatch:  %*s^" % (displayCol, u"")
+                        result += "\n  mismatch:  %*s^" % (displayCol, "")
                     return result
                 displayCol += app.curses_util.char_width(displayCh, displayCol)
         return None
@@ -254,7 +254,7 @@ class FakeDisplay:
                 self.displayStyle[cursorRow][cursorCol] = colorPair
                 cursorCol += 1
                 if app.curses_util.char_width(i, cursorCol) > 1:
-                    self.displayText[cursorRow][cursorCol] = u" "
+                    self.displayText[cursorRow][cursorCol] = " "
                     self.displayStyle[cursorRow][cursorCol] = colorPair
                     cursorCol += 1
             except IndexError:
@@ -265,10 +265,10 @@ class FakeDisplay:
         assert isinstance(screenText, unicode)
         for row in range(len(self.displayText)):
             line = self.displayText[row]
-            col = u"".join(line).find(screenText)
+            col = "".join(line).find(screenText)
             if col != -1:
                 return row, col
-        print(u"Error: Did not find", screenText)
+        print("Error: Did not find", screenText)
         self.show()
         return -1, -1
 
@@ -281,7 +281,7 @@ class FakeDisplay:
 
     def get_style(self):
         return [
-            u"".join(
+            "".join(
                 [
                     unichr((c & DEBUG_COLOR_PAIR_MASK) - DEBUG_COLOR_PAIR_BASE + 91)
                     for c in self.displayStyle[i]
@@ -300,7 +300,7 @@ class FakeDisplay:
             while col < limit:
                 line.append(rowChars[col])
                 col += app.curses_util.char_width(rowChars[col], col)
-            rows.append(u"".join(line))
+            rows.append("".join(line))
         return rows
 
     def set_screen_size(self, rows, cols):
@@ -311,16 +311,16 @@ class FakeDisplay:
     def show(self):
         assert (
             self.displayStyle[0][0] != -1
-        ), u"Error: showing display before drawing to it."
-        print(u"   %*s   %s" % (-self.cols, u"display", u"style"))
-        print(u"  +" + u"-" * self.cols + u"+ +" + u"-" * self.cols + u"+")
+        ), "Error: showing display before drawing to it."
+        print("   %*s   %s" % (-self.cols, "display", "style"))
+        print("  +" + "-" * self.cols + "+ +" + "-" * self.cols + "+")
         for i, (line, styles) in enumerate(zip(self.get_text(), self.get_style())):
-            print(u"%2d|%s| |%s|" % (i, line, styles))
-        print(u"  +" + u"-" * self.cols + u"+ +" + u"-" * self.cols + u"+")
+            print("%2d|%s| |%s|" % (i, line, styles))
+        print("  +" + "-" * self.cols + "+ +" + "-" * self.cols + "+")
 
     def reset(self):
         self.displayStyle = [[-1 for _ in range(self.cols)] for _ in range(self.rows)]
-        self.displayText = [[u"x" for _ in range(self.cols)] for _ in range(self.rows)]
+        self.displayText = [["x" for _ in range(self.cols)] for _ in range(self.rows)]
 
 fakeDisplay = None
 fakeInput = None
@@ -364,9 +364,9 @@ class FakeCursesWindow:
         val = fakeInput.next()
         if self.movie and val != constants.ERR and val != 0:
             if val == 409:
-                print(u"val", val, u"mouse_info", mouseEvents[-1])
+                print("val", val, "mouse_info", mouseEvents[-1])
             else:
-                print(u"val", val)
+                print("val", val)
         return val
 
     def getyx(self):

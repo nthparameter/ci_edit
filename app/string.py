@@ -21,32 +21,32 @@ except NameError:
 import app.config
 
 ENCODE = {
-    u"\\": u"\\\\",
-    u"\a": u"\\a",
-    u"\b": u"\\b",
-    u"\f": u"\\f",
-    u"\n": u"\\n",
-    u"\r": u"\\r",
-    u"\t": u"\\t",
-    u"\v": u"\\v",
-    u"\x7f": u"\\x7f",
+    "\\": "\\\\",
+    "\a": "\\a",
+    "\b": "\\b",
+    "\f": "\\f",
+    "\n": "\\n",
+    "\r": "\\r",
+    "\t": "\\t",
+    "\v": "\\v",
+    "\x7f": "\\x7f",
 }
 
 DECODE = {
-    u"\\": u"\\",
-    u"a": u"\a",
-    u"b": u"\b",
-    u"f": u"\f",
-    u"n": u"\n",
-    u"r": u"\r",
-    u"t": u"\t",
-    u"v": u"\v",
+    "\\": "\\",
+    "a": "\a",
+    "b": "\b",
+    "f": "\f",
+    "n": "\n",
+    "r": "\r",
+    "t": "\t",
+    "v": "\v",
 }
 
 def path_encode(path):
     if app.config.strict_debug:
         assert isinstance(path, unicode), repr(path)
-    out = u""
+    out = ""
     for i in range(len(path)):
         c = path[i]
         ord_c = ord(c)
@@ -54,32 +54,32 @@ def path_encode(path):
         if t is not None:
             c = t
         elif ord_c < 32:
-            c = u"\\x%02x" % (ord_c,)
+            c = "\\x%02x" % (ord_c,)
         out += c
     return out
 
 def path_decode(path):
     if app.config.strict_debug:
         assert isinstance(path, unicode)
-    out = u""
+    out = ""
     limit = len(path)
     i = 0
     while i < limit:
         c = path[i]
         i += 1
-        if c == u"\\":
+        if c == "\\":
             if i >= len(path):
-                out += u"\\"
+                out += "\\"
                 break
             c = path[i]
             i += 1
-            if c == u"x":
+            if c == "x":
                 c = unichr(path[i - 1 : i + 3])
-            elif c == u"u" or c == u"o":
+            elif c == "" or c == "o":
                 c = unichr(path[i - 1 : i + 5])
-            elif c == u"U":
+            elif c == "U":
                 c = unichr(path[i - 1 : i + 9])
             else:
-                c = DECODE.get(c, u"\\")
+                c = DECODE.get(c, "\\")
         out += c
     return out

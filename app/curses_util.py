@@ -98,7 +98,7 @@ KEY_SHIFT_PAGE_DOWN = curses.KEY_SNEXT
 KEY_SHIFT_PAGE_UP = curses.KEY_SPREVIOUS
 KEY_SHOME = curses.KEY_SHOME
 
-if sys.platform == u"darwin":
+if sys.platform == "darwin":
     KEY_ALT_LEFT = (91, 49, 59, 57, 68)
     KEY_ALT_RIGHT = (91, 49, 59, 57, 67)
     KEY_ALT_SHIFT_LEFT = (
@@ -123,7 +123,7 @@ else:
     KEY_ALT_SHIFT_LEFT = b"kLFT4"
     KEY_ALT_SHIFT_RIGHT = b"kRIT4"
 
-if u"SSH_CLIENT" in os.environ:
+if "SSH_CLIENT" in os.environ:
     KEY_ALT_LEFT = (98,)  # Need a better way to sort this out.
     KEY_ALT_RIGHT = (102,)  # ditto
 
@@ -171,52 +171,52 @@ KEY_RESIZE = curses.KEY_RESIZE
 
 def mouse_button_name(buttonState):
     """Curses debugging. Prints readable name for state of mouse buttons."""
-    result = u""
+    result = ""
     if buttonState & curses.BUTTON1_RELEASED:
-        result += u"BUTTON1_RELEASED"
+        result += "BUTTON1_RELEASED"
     if buttonState & curses.BUTTON1_PRESSED:
-        result += u"BUTTON1_PRESSED"
+        result += "BUTTON1_PRESSED"
     if buttonState & curses.BUTTON1_CLICKED:
-        result += u"BUTTON1_CLICKED"
+        result += "BUTTON1_CLICKED"
     if buttonState & curses.BUTTON1_DOUBLE_CLICKED:
-        result += u"BUTTON1_DOUBLE_CLICKED"
+        result += "BUTTON1_DOUBLE_CLICKED"
 
     if buttonState & curses.BUTTON2_RELEASED:
-        result += u"BUTTON2_RELEASED"
+        result += "BUTTON2_RELEASED"
     if buttonState & curses.BUTTON2_PRESSED:
-        result += u"BUTTON2_PRESSED"
+        result += "BUTTON2_PRESSED"
     if buttonState & curses.BUTTON2_CLICKED:
-        result += u"BUTTON2_CLICKED"
+        result += "BUTTON2_CLICKED"
     if buttonState & curses.BUTTON2_DOUBLE_CLICKED:
-        result += u"BUTTON2_DOUBLE_CLICKED"
+        result += "BUTTON2_DOUBLE_CLICKED"
 
     if buttonState & curses.BUTTON3_RELEASED:
-        result += u"BUTTON3_RELEASED"
+        result += "BUTTON3_RELEASED"
     if buttonState & curses.BUTTON3_PRESSED:
-        result += u"BUTTON3_PRESSED"
+        result += "BUTTON3_PRESSED"
     if buttonState & curses.BUTTON3_CLICKED:
-        result += u"BUTTON3_CLICKED"
+        result += "BUTTON3_CLICKED"
     if buttonState & curses.BUTTON3_DOUBLE_CLICKED:
-        result += u"BUTTON3_DOUBLE_CLICKED"
+        result += "BUTTON3_DOUBLE_CLICKED"
 
     if buttonState & curses.BUTTON4_RELEASED:
-        result += u"BUTTON4_RELEASED"
+        result += "BUTTON4_RELEASED"
     if buttonState & curses.BUTTON4_PRESSED:
-        result += u"BUTTON4_PRESSED"
+        result += "BUTTON4_PRESSED"
     if buttonState & curses.BUTTON4_CLICKED:
-        result += u"BUTTON4_CLICKED"
+        result += "BUTTON4_CLICKED"
     if buttonState & curses.BUTTON4_DOUBLE_CLICKED:
-        result += u"BUTTON4_DOUBLE_CLICKED"
+        result += "BUTTON4_DOUBLE_CLICKED"
 
     if buttonState & curses.REPORT_MOUSE_POSITION:
-        result += u"REPORT_MOUSE_POSITION"
+        result += "REPORT_MOUSE_POSITION"
 
     if buttonState & curses.BUTTON_SHIFT:
-        result += u" SHIFT"
+        result += " SHIFT"
     if buttonState & curses.BUTTON_CTRL:
-        result += u" CTRL"
+        result += " CTRL"
     if buttonState & curses.BUTTON_ALT:
-        result += u" ALT"
+        result += " ALT"
     return result
 
 def curses_key_name(keyCode):
@@ -359,14 +359,14 @@ def rendered_sub_str(string, beginCol, endCol=None):
     while column < beginCol:
         if i >= limit:
             # The |string| is entirely before |beginCol|.
-            return u""
+            return ""
         ch = string[i]
         column += char_width(ch, column)
         i += 1
         if column > beginCol:
             # Split the leading character.
             paddingWidth = column - beginCol
-            output.append(u" " * paddingWidth)
+            output.append(" " * paddingWidth)
     while i < limit and column < endCol:
         ch = string[i]
         lastCharWidth = char_width(ch, column)
@@ -375,62 +375,62 @@ def rendered_sub_str(string, beginCol, endCol=None):
         if column > endCol:
             # Split the trailing character.
             paddingWidth = min(endCol - (column - lastCharWidth), lastCharWidth - 1)
-            output.append(u" " * paddingWidth)
+            output.append(" " * paddingWidth)
         else:
-            if ch == u"\t":
-                output.append(u" " * lastCharWidth)
+            if ch == "\t":
+                output.append(" " * lastCharWidth)
             else:
                 output.append(ch)
-    return u"".join(output)
+    return "".join(output)
 
 if sys.version_info[0] == 2:
 
     def char_width(ch, column, tabWidth=8):
-        if ch == u"\t":
+        if ch == "\t":
             return tabWidth - (column % tabWidth)
-        elif ch == u"" or ch < u" ":
+        elif ch == "" or ch < " ":
             return 0
-        elif ch < u"ᄀ":
+        elif ch < "ᄀ":
             # Optimization.
             return 1
-        elif unicodedata.east_asian_width(ch) in (u"F", r"W"):
+        elif unicodedata.east_asian_width(ch) in ("F", r"W"):
             return 2
         return 1
 
     def is_double_width(ch):
-        if ch == u"" or ch < u"ᄀ":
+        if ch == "" or ch < "ᄀ":
             # Optimization.
             return False
         width = unicodedata.east_asian_width(ch)
-        if width in (u"F", u"W"):
+        if width in ("F", "W"):
             return True
         return False
 
     def is_zero_width(ch):
-        return ch == u"" or ch < u" "  # or unicodedata.east_asian_width(ch) == "N"
+        return ch == "" or ch < " "  # or unicodedata.east_asian_width(ch) == "N"
 
 else:
 
     def char_width(ch, column, tabWidth=8):
-        if ch == u"\t":
+        if ch == "\t":
             return tabWidth - (column % tabWidth)
-        elif ch == u"" or ch < u" ":
+        elif ch == "" or ch < " ":
             return 0
-        elif ch < u"ᄀ":
+        elif ch < "ᄀ":
             # Optimization.
             return 1
-        elif unicodedata.east_asian_width(ch) == u"W":
+        elif unicodedata.east_asian_width(ch) == "W":
             return 2
         return 1
 
     def is_double_width(ch):
-        if ch == u"" or ch < u"ᄀ":
+        if ch == "" or ch < "ᄀ":
             # Optimization.
             return False
         return unicodedata.east_asian_width(ch) == "W"
 
     def is_zero_width(ch):
-        return ch == u"" or ch < u" "  # or unicodedata.east_asian_width(ch) == "N"
+        return ch == "" or ch < " "  # or unicodedata.east_asian_width(ch) == "N"
 
 def floor_col(column, line):
     """Round off the column so that it aligns with the start of a character.
@@ -496,7 +496,7 @@ def wrap_lines(lines, indent, width):
         assert isinstance(width, int), repr(int)
     # There is a textwrap library in Python, but I was having trouble getting it
     # to do exactly what I desired. It may be useful to revisit textwrap later.
-    words = u" ".join(lines).split()
+    words = " ".join(lines).split()
     output = [indent]
     indentLen = column_width(indent)
     index = 0
@@ -507,7 +507,7 @@ def wrap_lines(lines, indent, width):
         if lineLen == indentLen and lineLen + wordLen < width:
             output[-1] += word
         elif lineLen + wordLen + 1 < width:
-            output[-1] += u" " + word
+            output[-1] += " " + word
         else:
             output.append(indent + word)
         index += 1
@@ -522,7 +522,7 @@ def terminal_size():
     return h, w
 
 def hack_curses_fixes():
-    if sys.platform == u"darwin":
+    if sys.platform == "darwin":
 
         def window_changed_handler(signum, frame):
             curses.ungetch(curses.KEY_RESIZE)

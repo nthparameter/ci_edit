@@ -32,12 +32,12 @@ class DebugWindow(app.window.ActiveWindow):
         """Draw real-time debug information to the screen."""
         textBuffer = win.textBuffer
         self.writeLineRow = 0
-        intent = u"noIntent"
-        if hasattr(win, u"userIntent"):
+        intent = "noIntent"
+        if hasattr(win, "userIntent"):
             intent = win.userIntent
-        color = program.color.get(u"debug_window")
+        color = program.color.get("debug_window")
         self.write_line(
-            u"   cRow %3d    cCol %2d goalCol %2d  %s"
+            "   cRow %3d    cCol %2d goalCol %2d  %s"
             % (
                 win.textBuffer.penRow,
                 win.textBuffer.penCol,
@@ -47,30 +47,30 @@ class DebugWindow(app.window.ActiveWindow):
             color,
         )
         self.write_line(
-            u"   pRow %3d    pCol %2d chRow %4d"
+            "   pRow %3d    pCol %2d chRow %4d"
             % (textBuffer.penRow, textBuffer.penCol, textBuffer.debugUpperChangedRow),
             color,
         )
         self.write_line(
-            u" mkrRow %3d  mkrCol %2d sm %d"
+            " mkrRow %3d  mkrCol %2d sm %d"
             % (textBuffer.markerRow, textBuffer.markerCol, textBuffer.selectionMode),
             color,
         )
         self.write_line(
-            u"scrlRow %3d scrlCol %2d lines %3d"
+            "scrlRow %3d scrlCol %2d lines %3d"
             % (win.scrollRow, win.scrollCol, textBuffer.parser.row_count()),
             color,
         )
         y, x = win.top, win.left
         maxRow, maxCol = win.rows, win.cols
         self.write_line(
-            u"y %2d x %2d maxRow %d maxCol %d baud %d color %d"
+            "y %2d x %2d maxRow %d maxCol %d baud %d color %d"
             % (y, x, maxRow, maxCol, curses.baudrate(), curses.can_change_color()),
             color,
         )
         screenRows, screenCols = program.cursesScreen.getmaxyx()
         self.write_line(
-            u"scr rows %d cols %d mlt %f/%f pt %f"
+            "scr rows %d cols %d mlt %f/%f pt %f"
             % (
                 screenRows,
                 screenCols,
@@ -81,23 +81,23 @@ class DebugWindow(app.window.ActiveWindow):
             color,
         )
         self.write_line(
-            u"ch %3s %s"
-            % (program.ch, app.curses_util.curses_key_name(program.ch) or u"UNKNOWN"),
+            "ch %3s %s"
+            % (program.ch, app.curses_util.curses_key_name(program.ch) or "UNKNOWN"),
             color,
         )
-        self.write_line(u"win %r" % (win,), color)
-        self.write_line(u"foc %r" % (program.programWindow.focusedWindow,), color)
-        self.write_line(u"tb %r" % (textBuffer,), color)
+        self.write_line("win %r" % (win,), color)
+        self.write_line("foc %r" % (program.programWindow.focusedWindow,), color)
+        self.write_line("tb %r" % (textBuffer,), color)
         (id, mouseCol, mouseRow, mouseZ, bState) = program.debugMouseEvent
         self.write_line(
-            u"mouse id %d, mouseCol %d, mouseRow %d, mouseZ %d"
+            "mouse id %d, mouseCol %d, mouseRow %d, mouseZ %d"
             % (id, mouseCol, mouseRow, mouseZ),
             color,
         )
         self.write_line(
-            u"bState %s %d" % (app.curses_util.mouse_button_name(bState), bState), color
+            "bState %s %d" % (app.curses_util.mouse_button_name(bState), bState), color
         )
-        self.write_line(u"start_and_end %r" % (textBuffer.start_and_end(),), color)
+        self.write_line("start_and_end %r" % (textBuffer.start_and_end(),), color)
 
 class DebugUndoWindow(app.window.ActiveWindow):
     def __init__(self, program, host):
@@ -111,7 +111,7 @@ class DebugUndoWindow(app.window.ActiveWindow):
         colorPrefs = win.program.color
         redoColorA = colorPrefs.get(100)
         self.write_line(
-            u"procTemp %d temp %r"
+            "procTemp %d temp %r"
             % (
                 textBuffer.processTempChange,
                 textBuffer.tempChange,
@@ -119,7 +119,7 @@ class DebugUndoWindow(app.window.ActiveWindow):
             redoColorA,
         )
         self.write_line(
-            u"redoIndex %3d savedAt %3d depth %3d"
+            "redoIndex %3d savedAt %3d depth %3d"
             % (
                 textBuffer.redoIndex,
                 textBuffer.savedAtRedoIndex,
@@ -130,7 +130,7 @@ class DebugUndoWindow(app.window.ActiveWindow):
         redoColorB = colorPrefs.get(101)
         split = 8
         for i in range(textBuffer.redoIndex - split, textBuffer.redoIndex):
-            text = i >= 0 and repr(textBuffer.redo_chain[i]) or u""
+            text = i >= 0 and repr(textBuffer.redo_chain[i]) or ""
             self.write_line(unicode(text), redoColorB)
         redoColorC = colorPrefs.get(1)
         for i in range(textBuffer.redoIndex, textBuffer.redoIndex + split - 1):

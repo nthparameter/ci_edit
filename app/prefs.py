@@ -35,10 +35,10 @@ class Prefs:
         self.devTest = prefs.get("devTest", {})
         self.palette = prefs.get("palette", {})
         self.startup = {}
-        self.status = prefs.get(u"status", {})
-        self.userData = prefs.get(u"userData", {})
-        self.__set_up_grammars(prefs.get(u"grammar", {}))
-        self.__set_up_file_types(prefs.get(u"fileType", {}))
+        self.status = prefs.get("status", {})
+        self.userData = prefs.get("userData", {})
+        self.__set_up_grammars(prefs.get("grammar", {}))
+        self.__set_up_file_types(prefs.get("fileType", {}))
         self.init()
 
     def load_prefs(self, fileName, category):
@@ -104,11 +104,11 @@ class Prefs:
         return fileType
 
     def tabs_to_spaces(self, fileType):
-        prefs = app.default_prefs.prefs.get(u"fileType", {})
+        prefs = app.default_prefs.prefs.get("fileType", {})
         if fileType is None or prefs is None:
             return False
         file_prefs = prefs.get(fileType)
-        return file_prefs and file_prefs.get(u"tabToSpaces")
+        return file_prefs and file_prefs.get("tabToSpaces")
 
     def get_grammar(self, fileType):
         return self.grammars.get(fileType)
@@ -122,7 +122,7 @@ class Prefs:
                 os.path.join(self.prefsDirectory, "%s.json" % (category,))
             )
         )
-        with open(prefsPath, "w", encoding=u"utf-8") as f:
+        with open(prefsPath, "w", encoding="utf-8") as f:
             try:
                 f.write(json.dumps(prefs[category]))
             except Exception as e:
@@ -179,7 +179,7 @@ class Prefs:
                 g = self.grammars.get(grammarName, None)
                 if g is None:
                     self._raise_grammar_not_found()
-                markers.append(g.get("begin", g.get("matches", u"")))
+                markers.append(g.get("begin", g.get("matches", "")))
                 matchGrammars.append(g)
             # |Next| markers start after |contains|.
             for grammarName in v.get("next", []):
@@ -201,7 +201,7 @@ class Prefs:
             # Variable width characters are at index [-3] in markers.
             markers.append(r"\t+")
             # Potentially double wide characters are at index [-2] in markers.
-            markers.append(u"[\U00001100-\U000fffff]+")
+            markers.append("[\U00001100-\U000fffff]+")
             # Carriage return characters are at index [-1] in markers.
             markers.append(r"\n")
             # app.log.startup('markers', v['name'], markers)

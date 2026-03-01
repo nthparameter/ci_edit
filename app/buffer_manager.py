@@ -102,13 +102,13 @@ class BufferManager:
                 del self.buffers[i]
                 self.buffers.append(tb)
                 break
-        app.log.info(u"Searched for textBuffer", repr(textBuffer))
+        app.log.info("Searched for textBuffer", repr(textBuffer))
         if not textBuffer:
             if os.path.isdir(fullPath):
-                app.log.info(u"Tried to open directory as a file", fullPath)
+                app.log.info("Tried to open directory as a file", fullPath)
                 return
             if not os.path.isfile(fullPath):
-                app.log.info(u"creating a new file at\n ", fullPath)
+                app.log.info("creating a new file at\n ", fullPath)
             textBuffer = app.text_buffer.TextBuffer(self.program)
             textBuffer.set_file_path(fullPath)
             textBuffer.file_load()
@@ -118,30 +118,30 @@ class BufferManager:
         return textBuffer
 
     def debug_log(self):
-        bufferList = u""
+        bufferList = ""
         for i in self.buffers:
-            bufferList += u"\n  " + repr(i.fullPath)
-            bufferList += u"\n    " + repr(i)
-            bufferList += u"\n    dirty: " + str(i.is_dirty())
-        app.log.info(u"BufferManager" + bufferList)
+            bufferList += "\n  " + repr(i.fullPath)
+            bufferList += "\n    " + repr(i)
+            bufferList += "\n    dirty: " + str(i.is_dirty())
+        app.log.info("BufferManager" + bufferList)
 
     def read_stdin(self):
-        app.log.info(u"reading from stdin")
+        app.log.info("reading from stdin")
         # Create a new input stream for the file data.
         # Fd is short for file descriptor. os.dup and os.dup2 will duplicate
         # file descriptors.
         stdinFd = sys.stdin.fileno()
         newFd = os.dup(stdinFd)
-        newStdin = open(u"/dev/tty")
+        newStdin = open("/dev/tty")
         os.dup2(newStdin.fileno(), stdinFd)
         # Create a text buffer to read from alternate stream.
         textBuffer = self.new_text_buffer()
         try:
-            with open(newFd, u"r") as fileInput:
+            with open(newFd, "r") as fileInput:
                 textBuffer.file_filter(fileInput.read())
         except Exception as e:
             app.log.exception(e)
-        app.log.info(u"finished reading from stdin")
+        app.log.info("finished reading from stdin")
         return textBuffer
 
     def untrack_buffer_(self, fileBuffer):

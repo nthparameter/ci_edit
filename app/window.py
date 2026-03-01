@@ -269,15 +269,15 @@ class ViewWindow:
 
     def show_window_hierarchy(self, indent="  "):
         """For debugging."""
-        focus = u"[f]" if self.isFocusable else u"[ ]"
-        extra = u""
+        focus = "[f]" if self.isFocusable else "[ ]"
+        extra = ""
         if hasattr(self, "label"):
-            extra += u' "' + self.label + u'"'
+            extra += ' "' + self.label + '"'
         app.log.info("%s%s%s%s" % (indent, focus, self, extra))
         for child in self.zOrder:
-            child.show_window_hierarchy(indent + u"  ")
+            child.show_window_hierarchy(indent + "  ")
 
-    def show_full_window_hierarchy(self, indent=u"  "):
+    def show_full_window_hierarchy(self, indent="  "):
         """For debugging."""
         f = self
         while f.parent is not None:
@@ -340,9 +340,9 @@ class ViewWindow:
         if app.config.strict_debug:
             assert isinstance(text, unicode)
         text = text[: self.cols]
-        text = text + u" " * max(0, self.cols - len(text))
+        text = text + " " * max(0, self.cols - len(text))
         self.program.backgroundFrame.add_str(
-            self.top + self.writeLineRow, self.left, text.encode(u"utf-8"), color
+            self.top + self.writeLineRow, self.left, text.encode("utf-8"), color
         )
         self.writeLineRow += 1
 
@@ -471,7 +471,7 @@ class LabelWindow(ViewWindow):
     The label is inert, it will pass events to its parent.
     """
 
-    def __init__(self, program, parent, label, preferredWidth=None, align=u"left"):
+    def __init__(self, program, parent, label, preferredWidth=None, align="left"):
         if app.config.strict_debug:
             assert issubclass(program.__class__, app.ci_program.CiProgram), self
             assert issubclass(parent.__class__, ViewWindow), parent
@@ -481,8 +481,8 @@ class LabelWindow(ViewWindow):
         ViewWindow.__init__(self, program, parent)
         self.label = label
         self.preferredWidth = preferredWidth
-        self.align = -1 if align == u"left" else 1
-        self.color = self.program.color.get(u"keyword")
+        self.align = -1 if align == "left" else 1
+        self.color = self.program.color.get("keyword")
 
     def preferred_size(self, rowLimit, colLimit):
         if app.config.strict_debug:
@@ -498,7 +498,7 @@ class LabelWindow(ViewWindow):
         if self.rows <= 0:
             return
         line = self.label[: self.cols]
-        line = u"%*s" % (self.cols * self.align, line)
+        line = "%*s" % (self.cols * self.align, line)
         self.add_str(0, 0, line, self.color)
         ViewWindow.render(self)
 
@@ -517,7 +517,7 @@ class LabeledLine(Window):
         Window.__init__(self, program, parent)
         self.host = parent
         tb = app.text_buffer.TextBuffer(self.program)
-        tb.rootGrammar = self.program.prefs.grammars[u"none"]
+        tb.rootGrammar = self.program.prefs.grammars["none"]
         self.set_text_buffer(tb)
         self.label = label
         self.leftColumn = ViewWindow(self.program, self)
@@ -536,7 +536,7 @@ class LabeledLine(Window):
         # app.log.info('LabeledLine', self.label, self.rows, self.cols)
         if self.rows <= 0:
             return
-        self.leftColumn.add_str(0, 0, self.label, self.program.color.get(u"keyword"))
+        self.leftColumn.add_str(0, 0, self.label, self.program.color.get("keyword"))
         Window.render(self)
 
     def reshape(self, top, left, rows, cols):
@@ -557,7 +557,7 @@ class Menu(ViewWindow):
             assert issubclass(host.__class__, ActiveWindow)
         ViewWindow.__init__(self, program, host)
         self.host = host
-        self.label = u""
+        self.label = ""
         self.lines = []
         self.commands = []
 
@@ -571,10 +571,10 @@ class Menu(ViewWindow):
 
     def move_size_to_fit(self, left, top):
         self.clear()
-        self.add_item(u"some menu", None)
+        self.add_item("some menu", None)
         # self.add_item('sort', self.host.textBuffer.sortSelection)
-        self.add_item(u"cut", self.host.textBuffer.edit_cut)
-        self.add_item(u"paste", self.host.textBuffer.edit_paste)
+        self.add_item("cut", self.host.textBuffer.edit_cut)
+        self.add_item("paste", self.host.textBuffer.edit_paste)
         longest = 0
         for i in self.lines:
             if len(i) > longest:
@@ -582,7 +582,7 @@ class Menu(ViewWindow):
         self.reshape(left, top, len(self.lines), longest + 2)
 
     def render(self):
-        color = self.program.color.get(u"context_menu")
+        color = self.program.color.get("context_menu")
         self.writeLineRow = 0
         for i in self.lines[: self.rows]:
             self.write_line(" " + i, color)
@@ -610,7 +610,7 @@ class LineNumbers(ViewWindow):
         currentBookmarkIndex = 0
         colorPrefs = self.program.color
         for i in range(limit):
-            color = colorPrefs.get(u"line_number")
+            color = colorPrefs.get("line_number")
             currentRow = self.host.scrollRow + i
             if currentBookmarkIndex < len(visibleBookmarks):
                 currentBookmark = visibleBookmarks[currentBookmarkIndex]
@@ -622,35 +622,35 @@ class LineNumbers(ViewWindow):
                     currentRow >= currentBookmark.begin
                     and currentRow <= currentBookmark.end
                 ):
-                    color = colorPrefs.get(currentBookmark.data.get(u"colorIndex"))
+                    color = colorPrefs.get(currentBookmark.data.get("colorIndex"))
                     if self.host.textBuffer.penRow == currentRow:
                         cursorBookmarkColorIndex = currentBookmark.data.get(
-                            u"colorIndex"
+                            "colorIndex"
                         )
                 if currentRow + 1 > currentBookmark.end:
                     currentBookmarkIndex += 1
-            self.add_str(i, 0, u" %5d " % (currentRow + 1), color)
+            self.add_str(i, 0, " %5d " % (currentRow + 1), color)
         # Draw indicators for text off of the left edge.
         if self.host.scrollCol > 0:
-            color = colorPrefs.get(u"line_overflow")
+            color = colorPrefs.get("line_overflow")
             for i in range(limit):
                 if self.host.textBuffer.parser.row_width(self.host.scrollRow + i) > 0:
-                    self.add_str(i, 6, u" ", color)
+                    self.add_str(i, 6, " ", color)
         # Draw blank line number rows past the end of the document.
-        color = colorPrefs.get(u"outside_document")
+        color = colorPrefs.get("outside_document")
         for i in range(limit, self.rows):
-            self.add_str(i, 0, u"       ", color)
+            self.add_str(i, 0, "       ", color)
         # Highlight the line numbers for the current cursor line.
         cursorAt = self.host.textBuffer.penRow - self.host.scrollRow
         if 0 <= cursorAt < limit:
             if cursorBookmarkColorIndex:
-                if self.program.prefs.startup[u"numColors"] == 8:
+                if self.program.prefs.startup["numColors"] == 8:
                     color = colorPrefs.get(cursorBookmarkColorIndex)
                 else:
                     color = colorPrefs.get(cursorBookmarkColorIndex % 32 + 128)
             else:
-                color = colorPrefs.get(u"line_number_current")
-            self.add_str(cursorAt, 1, u"%5d" % (self.host.textBuffer.penRow + 1), color)
+                color = colorPrefs.get("line_number_current")
+            self.add_str(cursorAt, 1, "%5d" % (self.host.textBuffer.penRow + 1), color)
 
     def get_visible_bookmarks(self, beginRow, endRow):
         """
@@ -677,7 +677,7 @@ class LineNumbers(ViewWindow):
 
     def mouse_click(self, paneRow, paneCol, shift, ctrl, alt):
         if ctrl:
-            app.log.info(u"click at", paneRow, paneCol)
+            app.log.info("click at", paneRow, paneCol)
             return
         self.host.change_focus_to(self.host)
         tb = self.host.textBuffer
@@ -730,14 +730,14 @@ class LogWindow(ViewWindow):
 
     def render(self):
         self.renderCounter += 1
-        app.log.meta(u" " * 10, self.renderCounter, u"- screen render -")
+        app.log.meta(" " * 10, self.renderCounter, "- screen render -")
         self.writeLineRow = 0
         colorPrefs = self.program.color
-        colorA = colorPrefs.get(u"default")
-        colorB = colorPrefs.get(u"highlight")
+        colorA = colorPrefs.get("default")
+        colorB = colorPrefs.get("highlight")
         for i in self.lines[-self.rows :]:
             color = colorA
-            if len(i) and i[-1] == u"-":
+            if len(i) and i[-1] == "-":
                 color = colorB
             self.write_line(i, color)
         ViewWindow.render(self)
@@ -748,13 +748,13 @@ class InteractiveFind(Window):
         self.host = host
         self.expanded = False
         self.set_controller(app.cu_editor.InteractiveFind)
-        indent = u"  "
+        indent = "  "
 
-        self.findLine = LabeledLine(self.program, self, u"Find: ")
+        self.findLine = LabeledLine(self.program, self, "Find: ")
         self.findLine.set_controller(app.cu_editor.InteractiveFindInput)
         self.findLine.set_parent(self)
 
-        self.replaceLine = LabeledLine(self.program, self, u"Replace: ")
+        self.replaceLine = LabeledLine(self.program, self, "Replace: ")
         self.replaceLine.set_controller(app.cu_editor.InteractiveReplaceInput)
         self.replaceLine.set_parent(self)
 
@@ -763,91 +763,91 @@ class InteractiveFind(Window):
 
         # If findUseRegex is false, re.escape the search.
         OptionsToggle(
-            self.program, self.matchOptionsRow, u"regex", u"editor", u"findUseRegex"
+            self.program, self.matchOptionsRow, "regex", "editor", "findUseRegex"
         )
         # If findWholeWord, wrap with \b.
         OptionsToggle(
             self.program,
             self.matchOptionsRow,
-            u"wholeWord",
-            u"editor",
-            u"findWholeWord",
+            "wholeWord",
+            "editor",
+            "findWholeWord",
         )
         # If findIgnoreCase, pass ignore case flag to regex.
         OptionsToggle(
             self.program,
             self.matchOptionsRow,
-            u"ignoreCase",
-            u"editor",
-            u"findIgnoreCase",
+            "ignoreCase",
+            "editor",
+            "findIgnoreCase",
         )
         if 0:
             # Use locale.
             OptionsToggle(
-                self.program, self.matchOptionsRow, u"locale", u"editor", u"findLocale"
+                self.program, self.matchOptionsRow, "locale", "editor", "findLocale"
             )
             # Span lines.
             OptionsToggle(
                 self.program,
                 self.matchOptionsRow,
-                u"multiline",
-                u"editor",
-                u"findMultiline",
+                "multiline",
+                "editor",
+                "findMultiline",
             )
             # Dot matches anything (even \n).
             OptionsToggle(
-                self.program, self.matchOptionsRow, u"dotAll", u"editor", u"findDotAll"
+                self.program, self.matchOptionsRow, "dotAll", "editor", "findDotAll"
             )
             # Unicode match.
             OptionsToggle(
                 self.program,
                 self.matchOptionsRow,
-                u"unicode",
-                u"editor",
-                u"findUnicode",
+                "unicode",
+                "editor",
+                "findUnicode",
             )
             # Replace uppercase with upper and lowercase with lower.
             OptionsToggle(
                 self.program,
                 self.matchOptionsRow,
-                u"smartCaps",
-                u"editor",
-                u"findReplaceSmartCaps",
+                "smartCaps",
+                "editor",
+                "findReplaceSmartCaps",
             )
 
         if 0:
             self.scopeOptions, self.scopeRow = self.add_select_options_row(
-                indent + u"scope     ",
-                [u"file", u"directory", u"openFiles", u"project"],
+                indent + "scope     ",
+                ["file", "directory", "openFiles", "project"],
             )
             (self.changeCaseOptions, self.changeCaseRow) = self.add_select_options_row(
-                indent + u"changeCase", [u"none", u"smart", u"upper", u"lower"]
+                indent + "changeCase", ["none", "smart", "upper", "lower"]
             )
             (self.withinOptions, self.withinOptionsRow) = self.add_select_options_row(
-                indent + u"within    ",
+                indent + "within    ",
                 [
-                    u"any",
-                    u"code",
-                    u"comment",
-                    u"error",
-                    u"markup",
-                    u"misspelled",  # Find in misspelled words.
-                    u"quoted",  # Find in strings.
+                    "any",
+                    "code",
+                    "comment",
+                    "error",
+                    "markup",
+                    "misspelled",  # Find in misspelled words.
+                    "quoted",  # Find in strings.
                 ],
             )
             (
                 self.searchSelectionOption,
                 self.searchSelectionRow,
             ) = self.add_select_options_row(
-                indent + u"selection ", [u"any", u"yes", u"no"]
+                indent + "selection ", ["any", "yes", "no"]
             )
             (
                 self.searchChangedOption,
                 self.searchChangedRow,
             ) = self.add_select_options_row(
-                indent + u"changed   ", [u"any", u"yes", u"no"]
+                indent + "changed   ", ["any", "yes", "no"]
             )
-            self.pathsLine = LabeledLine(self.program, self, u"Paths: ")
+            self.pathsLine = LabeledLine(self.program, self, "Paths: ")
             self.pathsLine.set_controller(app.cu_editor.InteractiveFindInput)
             self.pathsLine.set_parent(self)
 
@@ -865,7 +865,7 @@ class InteractiveFind(Window):
     def add_select_options_row(self, label, optionsList):
         """Such as a radio group."""
         optionsRow = OptionsRow(self.program, self)
-        optionsRow.color = self.program.color.get(u"keyword")
+        optionsRow.color = self.program.color.get("keyword")
         optionsRow.add_label(label)
         optionsDict = {}
         optionsRow.begin_group()
@@ -926,9 +926,9 @@ class MessageLine(ViewWindow):
         if self.message:
             if self.message != self.renderedMessage:
                 self.writeLineRow = 0
-                self.write_line(self.message, colorPrefs.get(u"message_line"))
+                self.write_line(self.message, colorPrefs.get("message_line"))
         else:
-            self.blank(colorPrefs.get(u"message_line"))
+            self.blank(colorPrefs.get("message_line"))
 
 class StatusLine(ViewWindow):
     """The status line appears at the bottom of the screen.
@@ -943,31 +943,31 @@ class StatusLine(ViewWindow):
     def render(self):
         tb = self.host.textBuffer
         colorPrefs = self.program.color
-        color = colorPrefs.get(u"status_line")
+        color = colorPrefs.get("status_line")
         if self.host.showTips:
-            tipRows = app.help.docs[u"tips"]
+            tipRows = app.help.docs["tips"]
             if len(tipRows) + 1 < self.rows:
                 for i in range(self.rows):
-                    self.add_str(i, 0, u" " * self.cols, color)
+                    self.add_str(i, 0, " " * self.cols, color)
                 for i, k in enumerate(tipRows):
                     self.add_str(i + 1, 4, k, color)
                 self.add_str(
-                    1, 40, u"(Press F1 to show/hide tips)", color | curses.A_REVERSE
+                    1, 40, "(Press F1 to show/hide tips)", color | curses.A_REVERSE
                 )
 
-        statusLine = u""
+        statusLine = ""
         if tb.message:
             statusLine = tb.message[0]
             color = (
                 tb.message[1]
                 if tb.message[1] is not None
-                else colorPrefs.get(u"status_line")
+                else colorPrefs.get("status_line")
             )
         if 0:
             if tb.is_dirty():
-                statusLine += u" * "
+                statusLine += " * "
             else:
-                statusLine += u" . "
+                statusLine += " . "
         # Percentages.
         rowPercentage = 0
         colPercentage = 0
@@ -978,21 +978,21 @@ class StatusLine(ViewWindow):
             if charCount and self.host.textBuffer.penCol != 0:
                 colPercentage = self.host.textBuffer.penCol * 100 // charCount
         # Format.
-        rightSide = u""
+        rightSide = ""
         if len(statusLine):
-            rightSide += u" |"
+            rightSide += " |"
         if self.program.prefs.startup.get("showLogWindow"):
-            rightSide += u" %s | %s |" % (
+            rightSide += " %s | %s |" % (
                 tb.cursor_grammar_name(),
                 tb.selection_mode_name(),
             )
-        rightSide += u" %4d,%2d | %3d%%,%3d%%" % (
+        rightSide += " %4d,%2d | %3d%%,%3d%%" % (
             self.host.textBuffer.penRow + 1,
             self.host.textBuffer.penCol + 1,
             rowPercentage,
             colPercentage,
         )
-        statusLine += u" " * (self.cols - len(statusLine) - len(rightSide)) + rightSide
+        statusLine += " " * (self.cols - len(statusLine) - len(rightSide)) + rightSide
         self.add_str(self.rows - 1, 0, statusLine[: self.cols], color)
 
 class TopInfo(ViewWindow):
@@ -1018,13 +1018,13 @@ class TopInfo(ViewWindow):
                     line = tb.parser.row_text(lineCursor)
                     lineCursor -= 1
             if len(line):
-                indent = len(line) - len(line.lstrip(u" "))
+                indent = len(line) - len(line.lstrip(" "))
                 lineCursor += 1
                 while lineCursor < tb.parser.row_count():
                     line = tb.parser.row_text(lineCursor)
                     if not len(line):
                         continue
-                    z = len(line) - len(line.lstrip(u" "))
+                    z = len(line) - len(line.lstrip(" "))
                     if z > indent:
                         indent = z
                         lineCursor += 1
@@ -1033,7 +1033,7 @@ class TopInfo(ViewWindow):
                 while indent and lineCursor > 0:
                     line = tb.parser.row_text(lineCursor)
                     if len(line):
-                        z = len(line) - len(line.lstrip(u" "))
+                        z = len(line) - len(line.lstrip(" "))
                         if z < indent:
                             indent = z
                             lines.append(line)
@@ -1041,12 +1041,12 @@ class TopInfo(ViewWindow):
         pathLine = app.string.path_encode(self.host.textBuffer.fullPath)
         if 1:
             if tb.isReadOnly:
-                pathLine += u" [RO]"
+                pathLine += " [RO]"
         if 1:
             if tb.is_dirty():
-                pathLine += u" * "
+                pathLine += " * "
             else:
-                pathLine += u" . "
+                pathLine += " . "
         lines.append(pathLine[-self.cols :])
         self.lines = lines
         infoRows = len(self.lines)
@@ -1064,10 +1064,10 @@ class TopInfo(ViewWindow):
         color = self.program.color.get("top_info")
         for i, line in enumerate(lines):
             self.add_str(
-                i, 0, (line + u" " * (self.cols - len(line)))[: self.cols], color
+                i, 0, (line + " " * (self.cols - len(line)))[: self.cols], color
             )
         for i in range(len(lines), self.rows):
-            self.add_str(i, 0, u" " * self.cols, color)
+            self.add_str(i, 0, " " * self.cols, color)
 
     def reshape(self, top, left, rows, cols):
         self.borrowedRows = 0
@@ -1114,22 +1114,22 @@ class InputWindow(Window):
             self.interactiveFind = InteractiveFind(self.program, self)
             self.interactiveFind.set_parent(self, 0)
         else:
-            self.interactiveFind = LabeledLine(self.program, self, u"find: ")
+            self.interactiveFind = LabeledLine(self.program, self, "find: ")
             self.interactiveFind.set_controller(app.cu_editor.InteractiveFind)
         if 1:
-            self.interactiveGoto = LabeledLine(self.program, self, u"goto: ")
+            self.interactiveGoto = LabeledLine(self.program, self, "goto: ")
             self.interactiveGoto.set_controller(app.cu_editor.InteractiveGoto)
         if 1:
-            self.interactivePrediction = LabeledLine(self.program, self, u"p: ")
+            self.interactivePrediction = LabeledLine(self.program, self, "p: ")
             self.interactivePrediction.set_controller(
                 app.cu_editor.InteractivePrediction
             )
         if 1:
-            self.interactivePrompt = LabeledLine(self.program, self, u"e: ")
+            self.interactivePrompt = LabeledLine(self.program, self, "e: ")
             self.interactivePrompt.set_controller(app.cu_editor.InteractivePrompt)
         if 1:
             self.interactiveQuit = LabeledLine(
-                self.program, self, u"Save changes? (yes, no, or cancel): "
+                self.program, self, "Save changes? (yes, no, or cancel): "
             )
             self.interactiveQuit.set_controller(app.cu_editor.InteractiveQuit)
         if 1:
@@ -1149,11 +1149,11 @@ class InputWindow(Window):
                 self.lineNumberColumn.detach()
         if 1:
             self.logoCorner = ViewWindow(self.program, self)
-            self.logoCorner.name = u"Logo"
+            self.logoCorner.name = "Logo"
             self.logoCorner.set_parent(self, 0)
         if 1:
             self.rightColumn = ViewWindow(self.program, self)
-            self.rightColumn.name = u"Right"
+            self.rightColumn.name = "Right"
             self.rightColumn.set_parent(self, 0)
             if not self.showRightColumn:
                 self.rightColumn.detach()
@@ -1162,7 +1162,7 @@ class InputWindow(Window):
         if self.showMessageLine:
             self.messageLine = MessageLine(self.program, self)
             self.messageLine.set_parent(self, 0)
-        self.showTips = self.program.prefs.status.get(u"showTips")
+        self.showTips = self.program.prefs.status.get("showTips")
         self.statusLineCount = 8 if self.showTips else 1
 
     if 0:
@@ -1227,8 +1227,8 @@ class InputWindow(Window):
             return
         color = self.program.color.get("logo")
         for i in range(logo.rows):
-            logo.add_str(i, 0, u" " * logo.cols, color)
-        logo.add_str(0, 1, u"ci"[: self.cols], color)
+            logo.add_str(i, 0, " " * logo.cols, color)
+        logo.add_str(0, 1, "ci"[: self.cols], color)
         logo.render()
 
     def draw_right_edge(self):
@@ -1244,10 +1244,10 @@ class InputWindow(Window):
                 > maxCol
             ):
                 color = colorPrefs.get("line_overflow")
-            self.rightColumn.add_str(i, 0, u" ", color)
+            self.rightColumn.add_str(i, 0, " ", color)
         color = colorPrefs.get("outside_document")
         for i in range(limit, maxRow):
-            self.rightColumn.add_str(i, 0, u" ", color)
+            self.rightColumn.add_str(i, 0, " ", color)
 
     def focus(self):
         self.layout()
@@ -1412,7 +1412,7 @@ class OptionsTrinaryStateWindow(Window):
             label = self.toggleUndefined
         else:
             label = self.toggleOn if pref else self.toggleOff
-        self.label = u"%*s" % (self.width, label)
+        self.label = "%*s" % (self.width, label)
 
     def preferred_size(self, rowLimit, colLimit):
         return min(rowLimit, 1), min(colLimit, abs(self.width))
@@ -1438,7 +1438,7 @@ class OptionsToggle(OptionsTrinaryStateWindow):
         # toggleOn = unichr(0x2612) + ' ' + control['name']
         # toggleOff = unichr(0x2610) + ' ' + control['name']
         OptionsTrinaryStateWindow.set_up(
-            self, u"[x]" + label, u"[ ]" + label, u"[-]" + label, width
+            self, "[x]" + label, "[ ]" + label, "[-]" + label, width
         )
 
 class RowWindow(ViewWindow):
@@ -1501,42 +1501,42 @@ class OptionsRow(ViewWindow):
         self.controlList.append(element)
         return element
 
-    def add_label(self, name, width=None, sep=u" "):
+    def add_label(self, name, width=None, sep=" "):
         def draw(control):
-            return control[u"name"]
+            return control["name"]
 
-        return self.add_element(draw, u"label", name, None, width, sep)
+        return self.add_element(draw, "label", name, None, width, sep)
 
-    def add_sort_header(self, name, reference, width=None, sep=u" |"):
+    def add_sort_header(self, name, reference, width=None, sep=" |"):
         def draw(control):
-            decoration = u"v" if control[u"dict"][control[u"name"]] else u"^"
-            if control[u"dict"][control[u"name"]] is None:
-                decoration = u"-"
-            if control[u"width"] < 0:
-                return u"%s %s" % (control[u"name"], decoration)
-            return u"%s %s" % (decoration, control[u"name"])
+            decoration = "v" if control["dict"][control["name"]] else "^"
+            if control["dict"][control["name"]] is None:
+                decoration = "-"
+            if control["width"] < 0:
+                return "%s %s" % (control["name"], decoration)
+            return "%s %s" % (decoration, control["name"])
 
-        self.add_element(draw, u"sort", name, reference, width, sep, len(u" v"))
+        self.add_element(draw, "sort", name, reference, width, sep, len(" v"))
 
-    def add_selection(self, name, reference, width=None, sep=u"  "):
+    def add_selection(self, name, reference, width=None, sep="  "):
         if app.config.strict_debug:
             assert isinstance(name, unicode)
         if 1:
-            toggleOn = u"(*)" + name
-            toggleOff = u"( )" + name
+            toggleOn = "(*)" + name
+            toggleOff = "( )" + name
 
         def draw(control):
-            return toggleOn if control[u"dict"][control[u"name"]] else toggleOff
+            return toggleOn if control["dict"][control["name"]] else toggleOff
 
         width = max(width, min(len(toggleOn), len(toggleOff)))
-        self.add_element(draw, u"selection", name, reference, width, sep, len(u"(*)"))
+        self.add_element(draw, "selection", name, reference, width, sep, len("(*)"))
 
-    def remove_this_add_toggle(self, name, reference, width=None, sep=u"  "):
+    def remove_this_add_toggle(self, name, reference, width=None, sep="  "):
         if app.config.strict_debug:
             assert isinstance(name, unicode)
         if 1:
-            toggleOn = u"[x]" + name
-            toggleOff = u"[ ]" + name
+            toggleOn = "[x]" + name
+            toggleOff = "[ ]" + name
         if 0:
             toggleOn = unichr(0x2612) + " " + control["name"]
             toggleOff = unichr(0x2610) + " " + control["name"]
@@ -1548,7 +1548,7 @@ class OptionsRow(ViewWindow):
             return toggleOn if control["dict"][control["name"]] else toggleOff
 
         width = max(width, min(len(toggleOn), len(toggleOff)))
-        self.add_element(draw, u"toggle", name, reference, width, sep, len("[-]"))
+        self.add_element(draw, "toggle", name, reference, width, sep, len("[-]"))
 
     def begin_group(self):
         """Like a radio group, or column sort headers."""
@@ -1596,10 +1596,10 @@ class OptionsRow(ViewWindow):
     def render(self):
         if self.rows <= 0:
             return
-        line = u""
+        line = ""
         for control in self.controlList:
             label = control["draw"](control)
-            line += u"%*s%s" % (control["width"], label, control["sep"])
+            line += "%*s%s" % (control["width"], label, control["sep"])
             if len(line) >= self.cols:
                 break
         self.writeLineRow = 0
@@ -1711,20 +1711,20 @@ class SortableHeaderWindow(OptionsTrinaryStateWindow):
         OptionsTrinaryStateWindow.__init__(
             self, program, parent, label, prefCategory, prefName
         )
-        self.color = self.program.color.get(u"top_info")
+        self.color = self.program.color.get("top_info")
 
         def draw(label, decoration, width):
             if width < 0:
-                x = u"%s %s" % (label, decoration)
+                x = "%s %s" % (label, decoration)
             else:
-                x = u"%s %s" % (decoration, label)
-            return u"%*s" % (width, x)
+                x = "%s %s" % (decoration, label)
+            return "%*s" % (width, x)
 
         OptionsTrinaryStateWindow.set_up(
             self,
-            draw(label, u"v", width),
-            draw(label, u"^", width),
-            draw(label, u"-", width),
+            draw(label, "v", width),
+            draw(label, "^", width),
+            draw(label, "-", width),
         )
 
     def deselect(self):

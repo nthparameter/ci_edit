@@ -88,10 +88,10 @@ class BackgroundThread(threading.Thread):
                 try:
                     instruction, message = self._toBackground.get(block)
                     # profile = app.profile.begin_python_profile()
-                    if instruction == u"quit":
+                    if instruction == "quit":
                         app.log.info("bg received quit message")
                         return
-                    elif instruction == u"cmdList":
+                    elif instruction == "cmdList":
                         app.log.info(programWindow, message)
                         programWindow.execute_command_list(message)
                     else:
@@ -102,7 +102,7 @@ class BackgroundThread(threading.Thread):
                     cmdCount += len(message)
                     programWindow.program.backgroundFrame.set_cmd_count(cmdCount)
                     self._fromBackground.put(
-                        u"render", programWindow.program.backgroundFrame.grab_frame()
+                        "render", programWindow.program.backgroundFrame.grab_frame()
                     )
                     os.kill(pid, signalNumber)
                     # app.profile.end_python_profile(profile)
@@ -116,7 +116,7 @@ class BackgroundThread(threading.Thread):
                     programWindow.render()
                     programWindow.program.backgroundFrame.set_cmd_count(cmdCount)
                     self._fromBackground.put(
-                        u"render", programWindow.program.backgroundFrame.grab_frame()
+                        "render", programWindow.program.backgroundFrame.grab_frame()
                     )
                     os.kill(pid, signalNumber)
             except Exception as e:
@@ -124,11 +124,11 @@ class BackgroundThread(threading.Thread):
                 app.log.error("bg thread exception", e)
                 errorType, value, tracebackInfo = sys.exc_info()
                 out = traceback.format_exception(errorType, value, tracebackInfo)
-                self._fromBackground.put(u"exception", out)
+                self._fromBackground.put("exception", out)
                 os.kill(pid, signalNumber)
                 while True:
                     instruction, message = self._toBackground.get()
-                    if instruction == u"quit":
+                    if instruction == "quit":
                         app.log.info("bg received quit message")
                         return
 

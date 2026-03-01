@@ -189,7 +189,7 @@ a\twith tab
 \twhile
 {
 """
-        self.textBuffer.set_file_type(u"text")
+        self.textBuffer.set_file_type("text")
         self.textBuffer.insert_lines(tuple(test.split("\n")))
         self.textBuffer.parse_document()
         # self.textBuffer.parser.debug_log(print, test)
@@ -208,30 +208,30 @@ a\twith tab
 
     def test_cursor_move(self):
         self.set_marker_pen_row_col(0, 0, 2, 5)
-        self.assertEqual(self.current_row_text(), u"// second comment")
+        self.assertEqual(self.current_row_text(), "// second comment")
         self.textBuffer.cursor_move_left()
         self.assertEqual(self.marker_pen_row_col(), (0, 0, 2, 4))
         self.textBuffer.cursor_move_right()
         self.assertEqual(self.marker_pen_row_col(), (0, 0, 2, 5))
 
         self.set_marker_pen_row_col(0, 0, 8, 16)
-        self.assertEqual(self.current_row_text(), u"\t\t")
+        self.assertEqual(self.current_row_text(), "\t\t")
         self.textBuffer.cursor_move_left()
         self.assertEqual(self.marker_pen_row_col(), (0, 0, 8, 8))
         self.textBuffer.cursor_move_left()
         self.assertEqual(self.marker_pen_row_col(), (0, 0, 8, 0))
         self.textBuffer.cursor_move_left()
-        self.assertEqual(self.current_row_text(), u"a\twith tab")
+        self.assertEqual(self.current_row_text(), "a\twith tab")
         self.assertEqual(self.marker_pen_row_col(), (0, 0, 7, 16))
         self.textBuffer.cursor_move_right()
-        self.assertEqual(self.current_row_text(), u"\t\t")
+        self.assertEqual(self.current_row_text(), "\t\t")
         self.assertEqual(self.marker_pen_row_col(), (0, 0, 8, 0))
         self.textBuffer.cursor_move_right()
         self.assertEqual(self.marker_pen_row_col(), (0, 0, 8, 8))
         self.textBuffer.cursor_move_right()
         self.assertEqual(self.marker_pen_row_col(), (0, 0, 8, 16))
         self.textBuffer.cursor_move_right()
-        self.assertEqual(self.current_row_text(), u"\twhile")
+        self.assertEqual(self.current_row_text(), "\twhile")
         self.assertEqual(self.marker_pen_row_col(), (0, 0, 9, 0))
         self.textBuffer.cursor_move_right()
         self.assertEqual(self.marker_pen_row_col(), (0, 0, 9, 8))
@@ -240,10 +240,10 @@ a\twith tab
         self.textBuffer.cursor_move_right()
         self.assertEqual(self.marker_pen_row_col(), (0, 0, 9, 10))
         self.textBuffer.cursor_move_up_or_begin()
-        self.assertEqual(self.current_row_text(), u"\t\t")
+        self.assertEqual(self.current_row_text(), "\t\t")
         self.assertEqual(self.marker_pen_row_col(), (0, 0, 8, 8))
         self.textBuffer.cursor_move_up_or_begin()
-        self.assertEqual(self.current_row_text(), u"a\twith tab")
+        self.assertEqual(self.current_row_text(), "a\twith tab")
         # The column is 10 because of the prior move right which set goalCol.
         self.assertEqual(self.marker_pen_row_col(), (0, 0, 7, 10))
         self.textBuffer.cursor_move_left()
@@ -253,16 +253,16 @@ a\twith tab
         self.textBuffer.cursor_move_left()
         self.assertEqual(self.marker_pen_row_col(), (0, 0, 7, 1))
         self.textBuffer.cursor_move_down_or_end()
-        self.assertEqual(self.current_row_text(), u"\t\t")
+        self.assertEqual(self.current_row_text(), "\t\t")
         self.assertEqual(self.marker_pen_row_col(), (0, 0, 8, 0))
 
     def test_backspace(self):
         self.set_marker_pen_row_col(0, 0, 6, 8)
-        self.assertEqual(self.current_row_text(), u"\ta\t")
+        self.assertEqual(self.current_row_text(), "\ta\t")
         self.textBuffer.backspace()
         self.textBuffer.parse_document()
         self.assertEqual(self.marker_pen_row_col(), (0, 0, 6, 0))
-        self.assertEqual(self.current_row_text(), u"a\t")
+        self.assertEqual(self.current_row_text(), "a\t")
         self.textBuffer.cursor_move_right()
         self.assertEqual(self.marker_pen_row_col(), (0, 0, 6, 1))
 
@@ -270,7 +270,7 @@ a\twith tab
         tb = self.textBuffer
         self.set_marker_pen_row_col(0, 0, 2, 5)
 
-        self.assertEqual(self.current_row_text(), u"// second comment")
+        self.assertEqual(self.current_row_text(), "// second comment")
         self.textBuffer.cursor_select_word_left()
         self.assertEqual(self.marker_pen_row_col(), (2, 5, 2, 3))
 
@@ -460,7 +460,7 @@ class TextIndentTestCases(ActionsTestCase):
     def test_indent_unindent_lines2(self):
         def insert(input):
             for i in input:
-                if i == u"\n":
+                if i == "\n":
                     self.textBuffer.carriage_return()
                 else:
                     self.textBuffer.insert_printable_with_pairing(ord(i), None)
@@ -483,7 +483,7 @@ class TextIndentTestCases(ActionsTestCase):
         tb = self.textBuffer
         self.assertEqual(tb.parser.row_count(), 1)
         check_pen_marker(0, 0, 0, 0)
-        insert(u"apple\nbanana\ncarrot\ndate\neggplant\n")
+        insert("apple\nbanana\ncarrot\ndate\neggplant\n")
         check_row(self, tb, 0, "apple")
         check_row(self, tb, 1, "banana")
         check_row(self, tb, 2, "carrot")

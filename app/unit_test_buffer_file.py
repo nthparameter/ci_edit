@@ -57,60 +57,60 @@ class pathRowColumnTestCases(unittest.TestCase):
             self.assertEqual(True, os.path.isfile("a"))
 
         os.path.isfile = Mock(side_effect=[False, True])
-        self.assertEqual(decode(u"", u""), (u"", None, None))
-        self.assertEqual(decode(u"/", u""), (u"/", None, None))
+        self.assertEqual(decode("", ""), ("", None, None))
+        self.assertEqual(decode("/", ""), ("/", None, None))
 
         os.path.isfile = Mock(side_effect=[False, False])
-        self.assertEqual(decode(u"//apple", u"/stuff"), (u"/stuff/apple", None, None))
+        self.assertEqual(decode("//apple", "/stuff"), ("/stuff/apple", None, None))
 
         os.path.isfile = Mock(side_effect=[False, False])
-        self.assertEqual(decode(u"//apple", None), (u"//apple", None, None))
+        self.assertEqual(decode("//apple", None), ("//apple", None, None))
 
         os.path.isfile = Mock(side_effect=[False, False, False])
-        self.assertEqual(decode(u":5", u""), (u"", 4, None))
+        self.assertEqual(decode(":5", ""), ("", 4, None))
 
         os.path.isfile = Mock(side_effect=[False, False, False])
-        self.assertEqual(decode(u"/:5", u""), (u"/", 4, None))
+        self.assertEqual(decode("/:5", ""), ("/", 4, None))
 
         os.path.isfile = Mock(side_effect=[False, False, False])
-        self.assertEqual(decode(u"//apple:5", u"/stuff"), (u"/stuff/apple", 4, None))
+        self.assertEqual(decode("//apple:5", "/stuff"), ("/stuff/apple", 4, None))
 
         os.path.isfile = Mock(side_effect=[False, False, False])
-        self.assertEqual(decode(u"//apple:5", None), (u"//apple", 4, None))
+        self.assertEqual(decode("//apple:5", None), ("//apple", 4, None))
 
         os.path.isfile = Mock(side_effect=[False, True])
-        self.assertEqual(decode(u"//apple", u"/stuff"), (u"/stuff/apple", None, None))
+        self.assertEqual(decode("//apple", "/stuff"), ("/stuff/apple", None, None))
 
         os.path.isfile = Mock(side_effect=[False, True])
-        self.assertEqual(decode(u"//apple", None), (u"apple", None, None))
+        self.assertEqual(decode("//apple", None), ("apple", None, None))
 
         os.path.isfile = Mock(side_effect=[False, True])
-        self.assertEqual(decode(u":5", u""), (u"", 4, None))
+        self.assertEqual(decode(":5", ""), ("", 4, None))
 
         os.path.isfile = Mock(side_effect=[False, True])
-        self.assertEqual(decode(u"/:5", u""), (u"/", 4, None))
+        self.assertEqual(decode("/:5", ""), ("/", 4, None))
 
         os.path.isfile = Mock(side_effect=[False, True])
-        self.assertEqual(decode(u"//apple:5", u"/stuff"), (u"/stuff/apple", 4, None))
+        self.assertEqual(decode("//apple:5", "/stuff"), ("/stuff/apple", 4, None))
 
         os.path.isfile = Mock(side_effect=[False, True, True])
-        self.assertEqual(decode(u"//apple:5", None), (u"apple", 4, None))
+        self.assertEqual(decode("//apple:5", None), ("apple", 4, None))
 
         os.path.isfile = Mock(side_effect=[False, True, True])
-        self.assertEqual(decode(u"//apple:5:", None), (u"apple", 4, None))
+        self.assertEqual(decode("//apple:5:", None), ("apple", 4, None))
 
         os.path.isfile = Mock(side_effect=[False, True, True])
-        self.assertEqual(decode(u"//apple:5:9", None), (u"apple", 4, 8))
+        self.assertEqual(decode("//apple:5:9", None), ("apple", 4, 8))
 
         os.path.isfile = Mock(side_effect=[False, True, True])
-        self.assertEqual(decode(u"//apple:5:9:", None), (u"apple", 4, 8))
+        self.assertEqual(decode("//apple:5:9:", None), ("apple", 4, 8))
 
         os.path.isfile = Mock(side_effect=[False, True, True])
-        self.assertEqual(decode(u"apple:banana", None), (u"apple:banana", None, None))
+        self.assertEqual(decode("apple:banana", None), ("apple:banana", None, None))
 
         os.path.isfile = Mock(side_effect=[False, True, True])
         self.assertEqual(
-            decode(u"//apple:banana:cat:", None), (u"apple:banana:cat:", None, None)
+            decode("//apple:banana:cat:", None), ("apple:banana:cat:", None, None)
         )
 
         os.path.isfile = originalIsFile

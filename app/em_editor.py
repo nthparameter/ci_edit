@@ -55,7 +55,7 @@ class EditText(app.controller.Controller):
         self.document = None
 
     def set_text_buffer(self, textBuffer):
-        textBuffer.lines = [u""]
+        textBuffer.lines = [""]
         self.commandSet = {
             KEY_F1: self.info,
             CTRL_A: textBuffer.selection_all,

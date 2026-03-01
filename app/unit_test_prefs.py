@@ -27,7 +27,7 @@ class PrefsTestCases(app.fake_curses_testing.FakeCursesTestCase):
     def test_default_prefs(self):
         self.run_with_fake_inputs(
             [
-                self.pref_check(u"editor", u"saveUndo", True),
+                self.pref_check("editor", "saveUndo", True),
                 CTRL_Q,
             ]
         )

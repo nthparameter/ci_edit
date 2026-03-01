@@ -21,7 +21,7 @@ from app.curses_util import *
 import app.ci_program
 import app.fake_curses_testing
 
-kTestFile = u"#startup_test_file_with_unlikely_file_name~"
+kTestFile = "#startup_test_file_with_unlikely_file_name~"
 
 class StartupTestCases(app.fake_curses_testing.FakeCursesTestCase):
     def setUp(self):
@@ -30,18 +30,18 @@ class StartupTestCases(app.fake_curses_testing.FakeCursesTestCase):
 
     def test_no_args(self):
         self.run_with_fake_inputs(
-            [self.display_check(2, 7, [u"      "]), self.cursor_check(2, 7), CTRL_Q]
+            [self.display_check(2, 7, ["      "]), self.cursor_check(2, 7), CTRL_Q]
         )
 
     def test_one_file(self):
         # self.set_movie_mode(True)
         self.run_with_fake_inputs(
             [
-                self.display_check(2, 7, [u"// Copyright "]),
+                self.display_check(2, 7, ["// Copyright "]),
                 self.cursor_check(2, 7),
                 CTRL_Q,
             ],
-            [sys.argv[0], self.path_to_sample(u"sample.cc")],
+            [sys.argv[0], self.path_to_sample("sample.cc")],
         )
 
     def test_two_files(self):
@@ -49,17 +49,17 @@ class StartupTestCases(app.fake_curses_testing.FakeCursesTestCase):
         self.run_with_fake_inputs(
             [
                 KEY_PAGE_DOWN,
-                self.display_check(5, 7, [u"// This is a C++ sample file"]),
+                self.display_check(5, 7, ["// This is a C++ sample file"]),
                 self.cursor_check(2, 7),
                 CTRL_W,
                 KEY_PAGE_DOWN,
-                self.display_check(5, 7, [u"// This is a C++ sample header"]),
+                self.display_check(5, 7, ["// This is a C++ sample header"]),
                 CTRL_Q,
             ],
             [
                 sys.argv[0],
-                self.path_to_sample(u"sample.cc"),
-                self.path_to_sample(u"sample.h"),
+                self.path_to_sample("sample.cc"),
+                self.path_to_sample("sample.h"),
             ],
         )
 
@@ -67,9 +67,9 @@ class StartupTestCases(app.fake_curses_testing.FakeCursesTestCase):
         # self.set_movie_mode(True)
         self.run_with_fake_inputs(
             [
-                self.display_check(2, 7, [u"// distributed under the License"]),
+                self.display_check(2, 7, ["// distributed under the License"]),
                 self.cursor_check(4, 7),
                 CTRL_Q,
             ],
-            [sys.argv[0], self.path_to_sample(u"sample.cc:12")],
+            [sys.argv[0], self.path_to_sample("sample.cc:12")],
         )

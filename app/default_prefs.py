@@ -534,7 +534,7 @@ prefs = {
     "color": {},
     "devTest": {},
     # TODO(dschuyler): provide a UI to enable selected dictionaries.
-    u"dictionaries": {
+    "dictionaries": {
         # The base dictionaries are loaded at startup. They are active for all
         # documents.
         "base": [
@@ -554,8 +554,8 @@ prefs = {
         # If the expanded path to the current document contains |key| the list
         # of dictionaries are applied.
         "path_match": {
-            u"/chromium/": [u"chromium"],
-            u"/fuchsia/": [u"fuchsia"],
+            "/chromium/": ["chromium"],
+            "/fuchsia/": ["fuchsia"],
         },
     },
     "editor": {
@@ -565,7 +565,7 @@ prefs = {
         "autoInsertClosingCharacter": False,
         # When opening a path that starts with "//", the value is used to
         # replace the first slash in a double slash prefix.
-        "baseDirEnv": u"/",  # u"${FUCHSIA_DIR}",
+        "baseDirEnv": "/",  # "${FUCHSIA_DIR}",
         # Scroll the window to keep the cursor on screen.
         "captiveCursor": False,
         "colorScheme": "default",
@@ -2007,4 +2007,4 @@ prefs = {
 }
 
 # Alias for old palette name.
-prefs[u"palette"][u"default"] = prefs[u"palette"][u"default256"]
+prefs["palette"]["default"] = prefs["palette"]["default256"]

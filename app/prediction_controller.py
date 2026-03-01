@@ -126,7 +126,7 @@ class PredictionListController(app.controller.Controller):
                     else:
                         i += 1
             except re.error:
-                self.view.textBuffer.set_message(u"invalid regex")
+                self.view.textBuffer.set_message("invalid regex")
 
     def focus(self):
         # app.log.info('PredictionListController')
@@ -231,8 +231,8 @@ class PredictionInputController(app.controller.Controller):
 
     def focus(self):
         # app.log.info('PredictionInputController')
-        self.set_encoded_path(u"")
-        # self.get_named_window('predictionList').controller.set_filter(u"py")
+        self.set_encoded_path("")
+        # self.get_named_window('predictionList').controller.set_filter("py")
         self.get_named_window("predictionList").focus()
         app.controller.Controller.focus(self)
 

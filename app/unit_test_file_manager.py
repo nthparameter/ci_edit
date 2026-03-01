@@ -29,10 +29,10 @@ class FileManagerTestCases(app.fake_curses_testing.FakeCursesTestCase):
         # self.set_movie_mode(True)
         self.run_with_fake_inputs(
             [
-                self.display_check(0, 0, [u" ci     "]),
-                self.display_check(2, 7, [u"     "]),
+                self.display_check(0, 0, [" ci     "]),
+                self.display_check(2, 7, ["     "]),
                 CTRL_S,
-                self.display_check(0, 0, [u" ci    Save File As"]),
+                self.display_check(0, 0, [" ci    Save File As"]),
                 CTRL_Q,
                 CTRL_Q,
             ]
@@ -42,15 +42,15 @@ class FileManagerTestCases(app.fake_curses_testing.FakeCursesTestCase):
         # self.set_movie_mode(True)
         self.run_with_fake_inputs(
             [
-                self.display_check(0, 0, [u" ci     "]),
-                self.display_check(2, 7, [u"     "]),
+                self.display_check(0, 0, [" ci     "]),
+                self.display_check(2, 7, ["     "]),
                 ord("a"),
-                self.display_check(2, 7, [u"a    "]),
+                self.display_check(2, 7, ["a    "]),
                 CTRL_S,
-                self.display_check(0, 0, [u" ci    Save File As"]),
+                self.display_check(0, 0, [" ci    Save File As"]),
                 CTRL_Q,
-                self.display_check(0, 0, [u" ci     "]),
-                self.display_check(-2, 0, [u"      "]),
+                self.display_check(0, 0, [" ci     "]),
+                self.display_check(-2, 0, ["      "]),
                 CTRL_Q,
                 ord("n"),
             ]
@@ -60,28 +60,28 @@ class FileManagerTestCases(app.fake_curses_testing.FakeCursesTestCase):
         # self.set_movie_mode(True)
         self.run_with_fake_inputs(
             [
-                self.display_check(0, 0, [u" ci     "]),
-                self.display_check(2, 7, [u"     "]),
+                self.display_check(0, 0, [" ci     "]),
+                self.display_check(2, 7, ["     "]),
                 CTRL_O,
-                self.display_check(0, 0, [u" ci    Open File  "]),
+                self.display_check(0, 0, [" ci    Open File  "]),
                 CTRL_A,
-                self.write_text(self.path_to_sample(u"")),
-                self.display_check(3, 0, [u"./     ", u"../     "]),
-                self.display_check(5, 0, [u"._ A name with cr\\r/"]),
+                self.write_text(self.path_to_sample("")),
+                self.display_check(3, 0, ["./     ", "../     "]),
+                self.display_check(5, 0, ["._ A name with cr\\r/"]),
                 self.mouse_event(0, 5, 0, curses.BUTTON1_PRESSED),
-                self.display_check(5, 0, [u"example"]),
-                self.display_find_check(u"/._ A name with ", u"cr\\r/"),
+                self.display_check(5, 0, ["example"]),
+                self.display_find_check("/._ A name with ", "cr\\r/"),
                 KEY_ESCAPE,
                 curses.ERR,
-                self.display_check(0, 0, [u" ci     "]),
-                self.display_check(2, 7, [u"     "]),
+                self.display_check(0, 0, [" ci     "]),
+                self.display_check(2, 7, ["     "]),
                 CTRL_O,
-                self.display_check(0, 0, [u" ci    Open File  "]),
+                self.display_check(0, 0, [" ci    Open File  "]),
                 CTRL_A,
-                self.write_text(self.path_to_sample(u"._ A name")),
+                self.write_text(self.path_to_sample("._ A name")),
                 CTRL_I,
-                self.display_check(5, 0, [u"example"]),
-                self.display_find_check(u"/._ A name with ", u"cr\\r/"),
+                self.display_check(5, 0, ["example"]),
+                self.display_find_check("/._ A name with ", "cr\\r/"),
                 CTRL_Q,
                 CTRL_Q,
             ]
@@ -90,18 +90,18 @@ class FileManagerTestCases(app.fake_curses_testing.FakeCursesTestCase):
     def test_mouse_scroll(self):
         # self.set_movie_mode(True)
         dirList = [
-            u"./     ",
-            u"../     ",
-            u"._ A name with cr\\r/",
+            "./     ",
+            "../     ",
+            "._ A name with cr\\r/",
         ]
         self.run_with_fake_inputs(
             [
-                self.display_check(0, 0, [u" ci     "]),
-                self.display_check(2, 7, [u"     "]),
+                self.display_check(0, 0, [" ci     "]),
+                self.display_check(2, 7, ["     "]),
                 CTRL_O,
-                self.display_check(0, 0, [u" ci    Open File  "]),
+                self.display_check(0, 0, [" ci    Open File  "]),
                 CTRL_A,
-                self.write_text(self.path_to_sample(u"")),
+                self.write_text(self.path_to_sample("")),
                 self.display_check(3, 0, dirList[0:3]),
                 self.mouse_event(0, 5, 0, curses.REPORT_MOUSE_POSITION),
                 self.display_check(3, 0, dirList[0:3]),
@@ -124,10 +124,10 @@ class FileManagerTestCases(app.fake_curses_testing.FakeCursesTestCase):
         # self.set_movie_mode(True)
         self.run_with_fake_inputs(
             [
-                self.display_check(0, 0, [u" ci     "]),
-                self.display_check(2, 7, [u"     "]),
+                self.display_check(0, 0, [" ci     "]),
+                self.display_check(2, 7, ["     "]),
                 CTRL_O,
-                self.display_check(0, 0, [u" ci    Open File  "]),
+                self.display_check(0, 0, [" ci    Open File  "]),
                 CTRL_Q,
                 CTRL_Q,
             ]
@@ -137,14 +137,14 @@ class FileManagerTestCases(app.fake_curses_testing.FakeCursesTestCase):
         # self.set_movie_mode(True)
         self.run_with_fake_inputs(
             [
-                self.display_check(0, 0, [u" ci     "]),
-                self.display_check(2, 7, [u"     "]),
+                self.display_check(0, 0, [" ci     "]),
+                self.display_check(2, 7, ["     "]),
                 CTRL_O,
-                self.display_check(0, 0, [u" ci    Open File  "]),
+                self.display_check(0, 0, [" ci    Open File  "]),
                 CTRL_A,
-                self.write_text(self.path_to_sample(u"binary_test_file")),
+                self.write_text(self.path_to_sample("binary_test_file")),
                 CTRL_J,
-                self.display_check(2, 7, [u"006401006c1a005a0800640000640100"]),
+                self.display_check(2, 7, ["006401006c1a005a0800640000640100"]),
                 CTRL_Q,
             ]
         )
@@ -153,14 +153,14 @@ class FileManagerTestCases(app.fake_curses_testing.FakeCursesTestCase):
         # self.set_movie_mode(True)
         self.run_with_fake_inputs(
             [
-                self.display_check(0, 0, [u" ci     "]),
-                self.display_check(2, 7, [u"     "]),
+                self.display_check(0, 0, [" ci     "]),
+                self.display_check(2, 7, ["     "]),
                 CTRL_O,
-                self.display_check(0, 0, [u" ci    Open File  "]),
+                self.display_check(0, 0, [" ci    Open File  "]),
                 CTRL_A,
-                self.write_text(self.path_to_sample(u"valid_unicode")),
+                self.write_text(self.path_to_sample("valid_unicode")),
                 CTRL_J,
-                self.display_check(4, 7, [u"Здравствуйте"]),
+                self.display_check(4, 7, ["Здравствуйте"]),
                 CTRL_Q,
             ]
         )
@@ -170,18 +170,18 @@ class FileManagerTestCases(app.fake_curses_testing.FakeCursesTestCase):
         # self.set_movie_mode(True)
         self.run_with_fake_inputs(
             [
-                self.display_check(0, 0, [u" ci     "]),
-                self.display_check(2, 7, [u"     "]),
+                self.display_check(0, 0, [" ci     "]),
+                self.display_check(2, 7, ["     "]),
                 CTRL_O,
-                self.display_check(0, 0, [u" ci    Open File  "]),
+                self.display_check(0, 0, [" ci    Open File  "]),
                 CTRL_A,
                 KEY_BACKSPACE1,
-                self.display_check(2, 7, [u"     "]),
+                self.display_check(2, 7, ["     "]),
                 CTRL_J,
-                self.display_check(0, 0, [u" ci    Open File  "]),
+                self.display_check(0, 0, [" ci    Open File  "]),
                 KEY_ESCAPE,
                 curses.ERR,
-                self.display_check(0, 0, [u" ci     "]),
+                self.display_check(0, 0, [" ci     "]),
                 CTRL_Q,
             ]
         )
@@ -190,11 +190,11 @@ class FileManagerTestCases(app.fake_curses_testing.FakeCursesTestCase):
         # self.set_movie_mode(True)
         self.run_with_fake_inputs(
             [
-                self.pref_check(u"editor", u"filesShowSizes", True),
-                self.display_check(0, 0, [u" ci     "]),
+                self.pref_check("editor", "filesShowSizes", True),
+                self.display_check(0, 0, [" ci     "]),
                 CTRL_O,
-                self.display_check(0, 0, [u" ci    Open"]),
-                self.find_text_and_click(1000, u"[x]sizes", curses.BUTTON1_PRESSED),
+                self.display_check(0, 0, [" ci    Open"]),
+                self.find_text_and_click(1000, "[x]sizes", curses.BUTTON1_PRESSED),
                 CTRL_Q,
             ]
         )
@@ -203,11 +203,11 @@ class FileManagerTestCases(app.fake_curses_testing.FakeCursesTestCase):
         # self.set_movie_mode(True)
         self.run_with_fake_inputs(
             [
-                self.display_check(0, 0, [u" ci     "]),
+                self.display_check(0, 0, [" ci     "]),
                 CTRL_O,
-                self.display_check(0, 0, [u" ci    Open"]),
+                self.display_check(0, 0, [" ci    Open"]),
                 KEY_PAGE_DOWN,
-                self.display_find_check(u"AUTHORS", u""),
+                self.display_find_check("AUTHORS", ""),
                 CTRL_Q,
                 # TODO(dschuyler): Quitting from the file manager uses two frame
                 # updates. When that is fixed, this second CTRL_Q should be removed.

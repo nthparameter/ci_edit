@@ -57,7 +57,7 @@ class InteractivePrediction(app.controller.Controller):
         if app.config.strict_debug:
             assert issubclass(self.__class__, InteractivePrediction), self
             assert issubclass(view.__class__, app.window.ViewWindow), view
-        app.controller.Controller.__init__(self, view, u"prediction")
+        app.controller.Controller.__init__(self, view, "prediction")
 
     def cancel(self):
         self.items = [(self.priorTextBuffer, self.priorTextBuffer.fullPath, "")]
@@ -218,7 +218,7 @@ class InteractiveFind(app.controller.Controller):
             elif hasattr(e, "message"):
                 self.error = e.message
             else:
-                self.error = u"invalid regex"
+                self.error = "invalid regex"
         self.findCmd = self.view.host.textBuffer.find
 
     def replace_and_next(self):
@@ -282,7 +282,7 @@ class InteractiveGoto(app.controller.Controller):
         self.textBuffer.selection_all()
 
     def info(self):
-        app.log.info(u"InteractiveGoto command set")
+        app.log.info("InteractiveGoto command set")
 
     def goto_bottom(self):
         app.log.info()
@@ -299,7 +299,7 @@ class InteractiveGoto(app.controller.Controller):
 
     def goto_top(self):
         self.textBuffer.selection_all()
-        self.textBuffer.insert(u"0")
+        self.textBuffer.insert("0")
         self.change_to_host_window()
 
     def cursor_move_to(self, row, col):
@@ -315,7 +315,7 @@ class InteractiveGoto(app.controller.Controller):
         app.log.info()
         self.textBuffer.parse_document()
         line = self.textBuffer.parser.row_text(0)
-        gotoLine, gotoCol = (line.split(u",") + [u"0", u"0"])[:2]
+        gotoLine, gotoCol = (line.split(",") + ["0", "0"])[:2]
         self.cursor_move_to(parse_int(gotoLine) - 1, parse_int(gotoCol))
 
 class ToggleController(app.controller.Controller):
@@ -323,7 +323,7 @@ class ToggleController(app.controller.Controller):
         if app.config.strict_debug:
             assert issubclass(self.__class__, ToggleController), self
             assert issubclass(view.__class__, app.window.ViewWindow), view
-        app.controller.Controller.__init__(self, view, u"toggle")
+        app.controller.Controller.__init__(self, view, "toggle")
 
     def clear_value(self):
         category = self.view.prefCategory

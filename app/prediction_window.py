@@ -31,40 +31,40 @@ class PredictionList(app.window.Window):
         self.controller = app.cu_editor.PredictionList(self)
         self.set_text_buffer(app.text_buffer.TextBuffer(self.program))
         # Set up table headers.
-        color = host.program.color.get(u"top_info")
+        color = host.program.color.get("top_info")
         self.optionsRow = app.window.OptionsSelectionWindow(self.program, self)
         self.optionsRow.set_parent(self)
         self.typeColumn = app.window.SortableHeaderWindow(
             self.program,
             self.optionsRow,
-            u"Type",
-            u"editor",
-            u"predictionSortAscendingByType",
+            "Type",
+            "editor",
+            "predictionSortAscendingByType",
             8,
         )
-        label = app.window.LabelWindow(self.program, self.optionsRow, u"|")
+        label = app.window.LabelWindow(self.program, self.optionsRow, "|")
         label.set_parent(self.optionsRow)
         label.color = color
         self.nameColumn = app.window.SortableHeaderWindow(
             self.program,
             self.optionsRow,
-            u"Name",
-            u"editor",
-            u"predictionSortAscendingByName",
+            "Name",
+            "editor",
+            "predictionSortAscendingByName",
             -61,
         )
-        label = app.window.LabelWindow(self.program, self.optionsRow, u"|")
+        label = app.window.LabelWindow(self.program, self.optionsRow, "|")
         label.set_parent(self.optionsRow)
         label.color = color
         self.statusColumn = app.window.SortableHeaderWindow(
             self.program,
             self.optionsRow,
-            u"Status ",
-            u"editor",
-            u"predictionSortAscendingByStatus",
+            "Status ",
+            "editor",
+            "predictionSortAscendingByStatus",
             -7,
         )
-        label = app.window.LabelWindow(self.program, self.optionsRow, u"|")
+        label = app.window.LabelWindow(self.program, self.optionsRow, "|")
         label.set_parent(self.optionsRow)
         label.color = color
 
@@ -103,25 +103,25 @@ class PredictionList(app.window.Window):
         # Filter the list. (The filter function is not used so as to edit the
         # list in place).
         appPrefs = self.program.prefs
-        showOpen = appPrefs.editor[u"predictionShowOpenFiles"]
-        showAlternate = appPrefs.editor[u"predictionShowAlternateFiles"]
-        showRecent = appPrefs.editor[u"predictionShowRecentFiles"]
+        showOpen = appPrefs.editor["predictionShowOpenFiles"]
+        showAlternate = appPrefs.editor["predictionShowAlternateFiles"]
+        showRecent = appPrefs.editor["predictionShowRecentFiles"]
         if not (showOpen and showAlternate and showRecent):
             i = 0
             while i < len(items):
-                if not showOpen and items[i][3] == u"open":
+                if not showOpen and items[i][3] == "open":
                     items.pop(i)
-                elif not showAlternate and items[i][3] == u"alt":
+                elif not showAlternate and items[i][3] == "alt":
                     items.pop(i)
-                elif not showRecent and items[i][3] == u"recent":
+                elif not showRecent and items[i][3] == "recent":
                     items.pop(i)
                 else:
                     i += 1
         # Sort the list
-        sortByPrediction = appPrefs.editor[u"predictionSortAscendingByPrediction"]
-        sortByType = appPrefs.editor[u"predictionSortAscendingByType"]
-        sortByName = appPrefs.editor[u"predictionSortAscendingByName"]
-        sortByStatus = appPrefs.editor[u"predictionSortAscendingByStatus"]
+        sortByPrediction = appPrefs.editor["predictionSortAscendingByPrediction"]
+        sortByType = appPrefs.editor["predictionSortAscendingByType"]
+        sortByName = appPrefs.editor["predictionSortAscendingByName"]
+        sortByStatus = appPrefs.editor["predictionSortAscendingByStatus"]
         if sortByPrediction is not None:
             items.sort(reverse=not sortByPrediction, key=lambda x: x[4])
         elif sortByType is not None:
@@ -137,12 +137,12 @@ class PredictionList(app.window.Window):
             return path[-width:]
 
         if len(items) == 0:
-            self.textBuffer.replace_lines((u"",))
+            self.textBuffer.replace_lines(("",))
         else:
             self.textBuffer.replace_lines(
                 tuple(
                     [
-                        u"%*s %*s %.*s"
+                        "%*s %*s %.*s"
                         % (
                             self.typeColumn.cols,
                             i[3],
@@ -164,7 +164,7 @@ class PredictionList(app.window.Window):
 
     def reshape(self, top, left, rows, cols):
         """Change self and sub-windows to fit within the given rectangle."""
-        app.log.detail(u"reshape", top, left, rows, cols)
+        app.log.detail("reshape", top, left, rows, cols)
         self.optionsRow.reshape(top, left, 1, cols)
         top += 1
         rows -= 1
@@ -210,7 +210,7 @@ class PredictionWindow(app.window.Window):
         self.set_text_buffer(app.text_buffer.TextBuffer(self.program))
 
         self.titleRow = app.window.OptionsRow(self.program, self)
-        self.titleRow.add_label(u" ci   ")
+        self.titleRow.add_label(" ci   ")
         self.titleRow.set_parent(self)
 
         self.predictionInputWindow = PredictionInputWindow(self.program, self)
@@ -223,36 +223,36 @@ class PredictionWindow(app.window.Window):
             self.optionsRow = app.window.RowWindow(self.program, self, 2)
             self.optionsRow.set_parent(self)
             colorPrefs = host.program.color
-            self.optionsRow.color = colorPrefs.get(u"top_info")
-            label = app.window.LabelWindow(self.program, self.optionsRow, u"Show:")
-            label.color = colorPrefs.get(u"top_info")
+            self.optionsRow.color = colorPrefs.get("top_info")
+            label = app.window.LabelWindow(self.program, self.optionsRow, "Show:")
+            label.color = colorPrefs.get("top_info")
             label.set_parent(self.optionsRow)
             toggle = app.window.OptionsToggle(
                 self.program,
                 self.optionsRow,
-                u"open",
-                u"editor",
-                u"predictionShowOpenFiles",
+                "open",
+                "editor",
+                "predictionShowOpenFiles",
             )
-            toggle.color = colorPrefs.get(u"top_info")
+            toggle.color = colorPrefs.get("top_info")
             toggle = app.window.OptionsToggle(
                 self.program,
                 self.optionsRow,
-                u"alternates",
-                u"editor",
-                u"predictionShowAlternateFiles",
+                "alternates",
+                "editor",
+                "predictionShowAlternateFiles",
             )
-            toggle.color = colorPrefs.get(u"top_info")
+            toggle.color = colorPrefs.get("top_info")
             toggle = app.window.OptionsToggle(
                 self.program,
                 self.optionsRow,
-                u"recent",
-                u"editor",
-                u"predictionShowRecentFiles",
+                "recent",
+                "editor",
+                "predictionShowRecentFiles",
             )
-            toggle.color = colorPrefs.get(u"top_info")
+            toggle.color = colorPrefs.get("top_info")
 
-        self.messageLine = app.window.LabelWindow(self.program, self, u"")
+        self.messageLine = app.window.LabelWindow(self.program, self, "")
         self.messageLine.set_parent(self)
 
     def bring_child_to_front(self, child):

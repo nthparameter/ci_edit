@@ -17,6 +17,6 @@ def format_python(text):
     try:
         import black
     except ImportError:
-        raise RuntimeError(u"install black formatter to format: pip install black")
+        raise RuntimeError("install black formatter to format: pip install black")
 
     return black.format_str(text, mode=black.FileMode())

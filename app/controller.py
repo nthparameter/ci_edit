@@ -355,7 +355,7 @@ class MainController:
         if tb.message is None and tb.selectionMode != app.selectable.kSelectionNone:
             charCount, lineCount = tb.count_selected()
             tb.set_message(
-                u"%d characters (%d lines) selected" % (charCount, lineCount)
+                "%d characters (%d lines) selected" % (charCount, lineCount)
             )
         self.controller.on_change()
 

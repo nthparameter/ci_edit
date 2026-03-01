@@ -53,7 +53,7 @@ def calculate_checksum(filePath, data=None):
         if data is not None:
             if len(data) == 0:
                 return None
-            hasher.update(data.encode(u"utf-8"))
+            hasher.update(data.encode("utf-8"))
         else:
             with open(filePath, "rb") as dataFile:
                 data = dataFile.read()
@@ -140,7 +140,7 @@ class History:
                 self.userHistory.pop((lastChecksum, lastFileSize), None)
                 newChecksum, newFileSize = get_file_info(filePath)
                 if newChecksum is None:
-                    app.log.info(u"Failed to checksum", repr(filePath))
+                    app.log.info("Failed to checksum", repr(filePath))
                     return
                 self.userHistory[(newChecksum, newFileSize)] = fileHistory
                 with open(self.pathToHistory, "wb") as historyFile:

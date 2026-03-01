@@ -21,7 +21,7 @@ from app.curses_util import *
 import app.ci_program
 import app.fake_curses_testing
 
-kTestFile = u"#application_test_file_with_unlikely_file_name~"
+kTestFile = "#application_test_file_with_unlikely_file_name~"
 
 class ApplicationTestCases(app.fake_curses_testing.FakeCursesTestCase):
     def setUp(self):
@@ -32,14 +32,14 @@ class ApplicationTestCases(app.fake_curses_testing.FakeCursesTestCase):
         self.run_with_test_file(
             kTestFile,
             [
-                self.display_check(2, 7, [u"      "]),
-                self.write_text(u"tex"),
-                self.display_check(2, 7, [u"tex "]),
+                self.display_check(2, 7, ["      "]),
+                self.write_text("tex"),
+                self.display_check(2, 7, ["tex "]),
                 KEY_BACKSPACE1,
-                u"t",
-                self.display_check(2, 7, [u"tet "]),
+                "t",
+                self.display_check(2, 7, ["tet "]),
                 CTRL_Q,
-                u"n",
+                "n",
             ],
         )
 
@@ -47,13 +47,13 @@ class ApplicationTestCases(app.fake_curses_testing.FakeCursesTestCase):
         self.run_with_test_file(
             kTestFile,
             [
-                self.display_check(2, 0, [u"     1       "]),
-                u":",
-                self.display_check(2, 0, [u"     1 :     "]),
+                self.display_check(2, 0, ["     1       "]),
+                ":",
+                self.display_check(2, 0, ["     1 :     "]),
                 KEY_BACKSPACE1,
-                self.display_check(2, 0, [u"     1       "]),
+                self.display_check(2, 0, ["     1       "]),
                 CTRL_Q,
-                u"n",
+                "n",
             ],
         )
 
@@ -62,19 +62,19 @@ class ApplicationTestCases(app.fake_curses_testing.FakeCursesTestCase):
         self.run_with_test_file(
             kTestFile,
             [
-                self.display_check(2, 7, [u"      "]),
+                self.display_check(2, 7, ["      "]),
                 self.cursor_check(2, 7),
                 (226, 143, 176),
-                self.display_check(2, 7, [u"⏰"]),
+                self.display_check(2, 7, ["⏰"]),
                 self.cursor_check(2, 9),
                 KEY_BACKSPACE1,
                 self.cursor_check(2, 7),
-                self.display_check(2, 7, [u"      "]),
+                self.display_check(2, 7, ["      "]),
                 CTRL_Z,
                 self.cursor_check(2, 9),
-                self.display_check(2, 7, [u"⏰      "]),
+                self.display_check(2, 7, ["⏰      "]),
                 CTRL_Q,
-                u"n",
+                "n",
             ],
         )
 
@@ -82,69 +82,69 @@ class ApplicationTestCases(app.fake_curses_testing.FakeCursesTestCase):
         self.run_with_test_file(
             kTestFile,
             [
-                self.display_check(2, 7, [u"      "]),
+                self.display_check(2, 7, ["      "]),
                 self.cursor_check(2, 7),
-                u"a",
+                "a",
                 self.cursor_check(2, 8),
                 (226, 143, 176),
-                self.display_check(2, 7, [u"a⏰"]),
+                self.display_check(2, 7, ["a⏰"]),
                 self.cursor_check(2, 10),
                 KEY_BACKSPACE1,
                 self.cursor_check(2, 8),
-                self.display_check(2, 7, [u"a      "]),
-                u"t",
-                self.display_check(2, 7, [u"at     "]),
+                self.display_check(2, 7, ["a      "]),
+                "t",
+                self.display_check(2, 7, ["at     "]),
                 CTRL_Z,
-                self.display_check(2, 7, [u"a      "]),
+                self.display_check(2, 7, ["a      "]),
                 CTRL_Z,
-                self.display_check(2, 7, [u"a⏰"]),
-                self.write_text(u"four"),
-                self.display_check(2, 7, [u"a⏰four"]),
+                self.display_check(2, 7, ["a⏰"]),
+                self.write_text("four"),
+                self.display_check(2, 7, ["a⏰four"]),
                 KEY_HOME,
                 # First char.
                 KEY_SHIFT_RIGHT,
-                self.display_check(2, 7, [u"a⏰four"]),
+                self.display_check(2, 7, ["a⏰four"]),
                 self.selection_check(0, 1, 0, 0, 3),
                 self.display_check_style(
-                    2, 7, 1, 1, self.prg.color.get(u"selected", 0)
+                    2, 7, 1, 1, self.prg.color.get("selected", 0)
                 ),
-                self.display_check_style(2, 8, 1, 10, self.prg.color.get(u"text", 0)),
+                self.display_check_style(2, 8, 1, 10, self.prg.color.get("text", 0)),
                 # Second char.
                 KEY_SHIFT_RIGHT,
-                self.display_check(2, 7, [u"a⏰four"]),
+                self.display_check(2, 7, ["a⏰four"]),
                 self.selection_check(0, 3, 0, 0, 3),
                 self.display_check_style(
-                    2, 7, 1, 3, self.prg.color.get(u"selected", 0)
+                    2, 7, 1, 3, self.prg.color.get("selected", 0)
                 ),
-                self.display_check_style(2, 10, 1, 7, self.prg.color.get(u"text", 0)),
+                self.display_check_style(2, 10, 1, 7, self.prg.color.get("text", 0)),
                 # Third char.
                 KEY_SHIFT_RIGHT,
-                self.display_check(2, 7, [u"a⏰four"]),
+                self.display_check(2, 7, ["a⏰four"]),
                 self.selection_check(0, 4, 0, 0, 3),
                 self.display_check_style(
-                    2, 7, 1, 4, self.prg.color.get(u"selected", 0)
+                    2, 7, 1, 4, self.prg.color.get("selected", 0)
                 ),
-                self.display_check_style(2, 11, 1, 6, self.prg.color.get(u"text", 0)),
+                self.display_check_style(2, 11, 1, 6, self.prg.color.get("text", 0)),
                 # Fourth char.
                 KEY_SHIFT_RIGHT,
-                self.display_check(2, 7, [u"a⏰four"]),
+                self.display_check(2, 7, ["a⏰four"]),
                 self.selection_check(0, 5, 0, 0, 3),
                 self.display_check_style(
-                    2, 7, 1, 5, self.prg.color.get(u"selected", 0)
+                    2, 7, 1, 5, self.prg.color.get("selected", 0)
                 ),
-                self.display_check_style(2, 12, 1, 5, self.prg.color.get(u"text", 0)),
+                self.display_check_style(2, 12, 1, 5, self.prg.color.get("text", 0)),
                 CTRL_X,
-                self.display_check(2, 7, [u"ur    "]),
+                self.display_check(2, 7, ["ur    "]),
                 CTRL_Z,
-                self.display_check(2, 7, [u"a⏰four"]),
+                self.display_check(2, 7, ["a⏰four"]),
                 KEY_RIGHT,
                 KEY_END,
                 self.cursor_check(2, 14),
                 CTRL_J,
                 self.cursor_check(3, 7),
-                self.display_check(2, 7, [u"a⏰four"]),
+                self.display_check(2, 7, ["a⏰four"]),
                 CTRL_Q,
-                u"n",
+                "n",
             ],
         )
 
@@ -156,13 +156,13 @@ class ApplicationTestCases(app.fake_curses_testing.FakeCursesTestCase):
                     0,
                     0,
                     [
-                        u" ci    _file_with_unlikely_file_name~ . ",
-                        u"                                        ",
-                        u"     1                                  ",
+                        " ci    _file_with_unlikely_file_name~ . ",
+                        "                                        ",
+                        "     1                                  ",
                     ],
                 ),
                 self.cursor_check(2, 7),
-                self.write_text(u"test\napple\norange"),
+                self.write_text("test\napple\norange"),
                 self.cursor_check(4, 13),
                 self.selection_check(2, 6, 0, 0, 0),
                 KEY_UP,
@@ -218,7 +218,7 @@ class ApplicationTestCases(app.fake_curses_testing.FakeCursesTestCase):
                 self.cursor_check(4, 8),
                 self.selection_check(2, 1, 2, 6, 3),
                 CTRL_Q,
-                u"n",
+                "n",
             ],
         )
 
@@ -227,7 +227,7 @@ class ApplicationTestCases(app.fake_curses_testing.FakeCursesTestCase):
             kTestFile,
             [
                 self.cursor_check(2, 7),
-                self.write_text(u"test\napple\norange"),
+                self.write_text("test\napple\norange"),
                 self.cursor_check(4, 13),
                 self.selection_check(2, 6, 0, 0, 0),
                 KEY_SHIFT_UP,
@@ -257,7 +257,7 @@ class ApplicationTestCases(app.fake_curses_testing.FakeCursesTestCase):
                 self.cursor_check(3, 12),
                 self.selection_check(1, 5, 0, 0, 0),
                 CTRL_Q,
-                u"n",
+                "n",
             ],
         )
 
@@ -266,11 +266,11 @@ class ApplicationTestCases(app.fake_curses_testing.FakeCursesTestCase):
             kTestFile,
             [
                 self.cursor_check(2, 7),
-                self.write_text(u"test\napple\norange"),
+                self.write_text("test\napple\norange"),
                 self.cursor_check(4, 13),
                 self.selection_check(2, 6, 0, 0, 0),
                 CTRL_G,
-                u"t",
+                "t",
                 self.cursor_check(2, 7),
                 self.selection_check(0, 0, 0, 0, 0),
                 KEY_SHIFT_DOWN,
@@ -300,7 +300,7 @@ class ApplicationTestCases(app.fake_curses_testing.FakeCursesTestCase):
                 self.cursor_check(3, 7),
                 self.selection_check(1, 0, 2, 6, 0),
                 CTRL_Q,
-                u"n",
+                "n",
             ],
         )
 
@@ -312,23 +312,23 @@ class ApplicationTestCases(app.fake_curses_testing.FakeCursesTestCase):
                     0,
                     0,
                     [
-                        u" ci    _file_with_unlikely_file_name~ . ",
-                        u"                                        ",
-                        u"     1                                  ",
+                        " ci    _file_with_unlikely_file_name~ . ",
+                        "                                        ",
+                        "     1                                  ",
                     ],
                 ),
                 self.cursor_check(2, 7),
-                self.write_text(u"test\napple bananaCarrot DogElephantFrog\norange"),
+                self.write_text("test\napple bananaCarrot DogElephantFrog\norange"),
                 self.display_check(
                     0,
                     0,
                     [
-                        u" ci    _file_with_unlikely_file_name~ * ",
-                        u"                                        ",
-                        u"     1 test                             ",
-                        u"     2 apple bananaCarrot DogElephantFr ",
-                        u"     3 orange                           ",
-                        u"                                        ",
+                        " ci    _file_with_unlikely_file_name~ * ",
+                        "                                        ",
+                        "     1 test                             ",
+                        "     2 apple bananaCarrot DogElephantFr ",
+                        "     3 orange                           ",
+                        "                                        ",
                     ],
                 ),
                 self.cursor_check(4, 13),
@@ -355,7 +355,7 @@ class ApplicationTestCases(app.fake_curses_testing.FakeCursesTestCase):
                 self.cursor_check(3, 23),
                 self.selection_check(1, 19, 1, 18, 0),
                 CTRL_Q,
-                u"n",
+                "n",
             ],
         )
 
@@ -368,20 +368,20 @@ class ApplicationTestCases(app.fake_curses_testing.FakeCursesTestCase):
                     0,
                     0,
                     [
-                        u" ci    _file_with_unlikely_file_name~ . ",
-                        u"                                        ",
-                        u"     1                                  ",
+                        " ci    _file_with_unlikely_file_name~ . ",
+                        "                                        ",
+                        "     1                                  ",
                     ],
                 ),
                 self.cursor_check(2, 7),
-                self.write_text(u"test\napple\norange\none\ntwenty five"),
+                self.write_text("test\napple\norange\none\ntwenty five"),
                 # self.print_parser_state(),
                 self.cursor_check(6, 18),
                 self.display_check(
                     -2,
                     0,
                     [
-                        u"             ",
+                        "             ",
                     ],
                 ),
                 self.selection_check(4, 11, 0, 0, 0),
@@ -391,19 +391,19 @@ class ApplicationTestCases(app.fake_curses_testing.FakeCursesTestCase):
                     -2,
                     0,
                     [
-                        u"11 characters (1 lines) selected",
+                        "11 characters (1 lines) selected",
                     ],
                 ),
                 self.selection_check(4, 11, 4, 0, 4),
                 self.display_check_style(
-                    0, 0, 1, len(u" ci "), self.prg.color.get(u"logo", 0)
+                    0, 0, 1, len(" ci "), self.prg.color.get("logo", 0)
                 ),
                 KEY_UP,
                 self.display_check(
                     -2,
                     0,
                     [
-                        u"                       ",
+                        "                       ",
                     ],
                 ),
                 self.selection_check(3, 3, 4, 11, 0),
@@ -413,7 +413,7 @@ class ApplicationTestCases(app.fake_curses_testing.FakeCursesTestCase):
                     -2,
                     0,
                     [
-                        u"4 characters (2 lines) selected",
+                        "4 characters (2 lines) selected",
                     ],
                 ),
                 self.selection_check(4, 0, 3, 0, 4),
@@ -423,7 +423,7 @@ class ApplicationTestCases(app.fake_curses_testing.FakeCursesTestCase):
                     -2,
                     0,
                     [
-                        u"15 characters (2 lines) selected",
+                        "15 characters (2 lines) selected",
                     ],
                 ),
                 self.mouse_event(
@@ -434,7 +434,7 @@ class ApplicationTestCases(app.fake_curses_testing.FakeCursesTestCase):
                     -2,
                     0,
                     [
-                        u"30 characters (5 lines) selected",
+                        "30 characters (5 lines) selected",
                     ],
                 ),
                 KEY_UP,
@@ -445,7 +445,7 @@ class ApplicationTestCases(app.fake_curses_testing.FakeCursesTestCase):
                     -2,
                     0,
                     [
-                        u"Top of file ",
+                        "Top of file ",
                     ],
                 ),
                 KEY_DOWN,
@@ -461,7 +461,7 @@ class ApplicationTestCases(app.fake_curses_testing.FakeCursesTestCase):
                     -2,
                     0,
                     [
-                        u"17 characters (4 lines) selected",
+                        "17 characters (4 lines) selected",
                     ],
                 ),
                 # Test cut then undo (regression test).
@@ -469,11 +469,11 @@ class ApplicationTestCases(app.fake_curses_testing.FakeCursesTestCase):
                     2,
                     7,
                     [
-                        u"test",
-                        u"apple",
-                        u"orange",
-                        u"one",
-                        u"twenty five",
+                        "test",
+                        "apple",
+                        "orange",
+                        "one",
+                        "twenty five",
                     ],
                 ),
                 CTRL_X,
@@ -482,15 +482,15 @@ class ApplicationTestCases(app.fake_curses_testing.FakeCursesTestCase):
                     -2,
                     0,
                     [
-                        u"copied 4 lines  ",
+                        "copied 4 lines  ",
                     ],
                 ),
                 self.display_check(
                     2,
                     7,
                     [
-                        u"test",
-                        u"twenty five",
+                        "test",
+                        "twenty five",
                     ],
                 ),
                 CTRL_Z,
@@ -499,7 +499,7 @@ class ApplicationTestCases(app.fake_curses_testing.FakeCursesTestCase):
                     -2,
                     0,
                     [
-                        u"17 characters (4 lines) selected",
+                        "17 characters (4 lines) selected",
                     ],
                 ),
                 # Test backspace.
@@ -509,7 +509,7 @@ class ApplicationTestCases(app.fake_curses_testing.FakeCursesTestCase):
                     -2,
                     0,
                     [
-                        u"33 characters (5 lines) selected",
+                        "33 characters (5 lines) selected",
                     ],
                 ),
                 KEY_BACKSPACE1,
@@ -517,7 +517,7 @@ class ApplicationTestCases(app.fake_curses_testing.FakeCursesTestCase):
                     -2,
                     0,
                     [
-                        u"                       ",
+                        "                       ",
                     ],
                 ),
                 # Test carriage return.
@@ -527,7 +527,7 @@ class ApplicationTestCases(app.fake_curses_testing.FakeCursesTestCase):
                     -2,
                     0,
                     [
-                        u"33 characters (5 lines) selected",
+                        "33 characters (5 lines) selected",
                     ],
                 ),
                 CTRL_J,
@@ -535,7 +535,7 @@ class ApplicationTestCases(app.fake_curses_testing.FakeCursesTestCase):
                     -2,
                     0,
                     [
-                        u"                       ",
+                        "                       ",
                     ],
                 ),
                 # Test insert.
@@ -545,7 +545,7 @@ class ApplicationTestCases(app.fake_curses_testing.FakeCursesTestCase):
                     -2,
                     0,
                     [
-                        u"33 characters (5 lines) selected",
+                        "33 characters (5 lines) selected",
                     ],
                 ),
                 "a",
@@ -553,11 +553,11 @@ class ApplicationTestCases(app.fake_curses_testing.FakeCursesTestCase):
                     -2,
                     0,
                     [
-                        u"                       ",
+                        "                       ",
                     ],
                 ),
                 CTRL_Q,
-                u"n",
+                "n",
             ],
         )
 
@@ -569,27 +569,27 @@ class ApplicationTestCases(app.fake_curses_testing.FakeCursesTestCase):
                     0,
                     0,
                     [
-                        u" ci    _file_with_unlikely_file_name~ . ",
-                        u"                                        ",
-                        u"     1                                  ",
+                        " ci    _file_with_unlikely_file_name~ . ",
+                        "                                        ",
+                        "     1                                  ",
                     ],
                 ),
                 self.cursor_check(2, 7),
-                u"a",
-                u"b",
-                u"c",
+                "a",
+                "b",
+                "c",
                 CTRL_J,
-                u"d",
-                u"e",
+                "d",
+                "e",
                 CTRL_J,
-                u"f",
-                u"g",
-                u"h",
-                u"i",
+                "f",
+                "g",
+                "h",
+                "i",
                 self.cursor_check(4, 11),
                 self.mouse_event(0, 3, 2, curses.BUTTON1_PRESSED),
                 CTRL_L,
                 CTRL_Q,
-                u"n",
+                "n",
             ],
         )

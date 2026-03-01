@@ -173,11 +173,11 @@ class TextBuffer(app.actions.Actions):
                     remaining = min(renderedWidth - k, remaining)
                     length = min(endCol - k, remaining)
                     color = color_pref(
-                        node.grammar.get(u"colorIndex", defaultColor), colorDelta
+                        node.grammar.get("colorIndex", defaultColor), colorDelta
                     )
                     if eol or length <= 0:
                         window.add_str(
-                            top + i, left + k - startCol, u" " * (endCol - k), color
+                            top + i, left + k - startCol, " " * (endCol - k), color
                         )
                         break
                     window.add_str(
@@ -189,10 +189,10 @@ class TextBuffer(app.actions.Actions):
                     subStart = k - preceding
                     subEnd = k + remaining
                     subLine = line[subStart:subEnd]
-                    if spellChecking and node.grammar.get(u"spelling", True):
+                    if spellChecking and node.grammar.get("spelling", True):
                         # Highlight spelling errors
-                        grammarName = node.grammar.get(u"name", "unknown")
-                        misspellingColor = color_pref(u"misspelling", colorDelta)
+                        grammarName = node.grammar.get("name", "unknown")
+                        misspellingColor = color_pref("misspelling", colorDelta)
                         for found in re.finditer(app.regex.kReSubwords, subLine):
                             reg = found.regs[0]  # Mispelllled word
                             offsetStart = subStart + reg[0]
@@ -221,13 +221,13 @@ class TextBuffer(app.actions.Actions):
                     top + i,
                     left,
                     line + " " * (cols - len(line)),
-                    color_pref(u"default", colorDelta),
+                    color_pref("default", colorDelta),
                 )
         self.draw_overlays(window, top, left, rows, cols, colorDelta)
         if 0:  # Experiment: draw our own cursor.
             if startRow <= self.penRow < endRow and startCol <= self.penCol < endCol:
                 window.add_str(
-                    self.penRow - startRow, self.penCol - startCol, u"X", 200
+                    self.penRow - startRow, self.penCol - startCol, "X", 200
                 )
 
     def draw_overlays(self, window, top, left, maxRow, maxCol, colorDelta):
@@ -242,9 +242,9 @@ class TextBuffer(app.actions.Actions):
             # Highlight numbers.
             # Highlight space ending lines.
             colors = (
-                color_pref(u"bracket", colorDelta),
-                color_pref(u"number", colorDelta),
-                color_pref(u"trailing_space", colorDelta),
+                color_pref("bracket", colorDelta),
+                color_pref("number", colorDelta),
+                color_pref("trailing_space", colorDelta),
             )
             for i in range(rowLimit):
                 line = self.parser.row_text(startRow + i)
@@ -255,7 +255,7 @@ class TextBuffer(app.actions.Actions):
                     line,
                     startCol,
                     endCol,
-                    (u"[]{}()",),
+                    ("[]{}()",),
                     True,
                     highlightTrailingWhitespace,
                 ):
@@ -279,22 +279,22 @@ class TextBuffer(app.actions.Actions):
                         top + self.penRow - startRow,
                         self.penCol - self.view.scrollCol,
                         ch,
-                        color_pref(u"matching_bracket", colorDelta),
+                        color_pref("matching_bracket", colorDelta),
                     )
                     characterFinder = {
-                        u"(": u")",
-                        u"[": u"]",
-                        u"{": u"}",
-                        u")": u"(",
-                        u"]": u"[",
-                        u"}": u"{",
+                        "(": ")",
+                        "[": "]",
+                        "{": "}",
+                        ")": "(",
+                        "]": "[",
+                        "}": "{",
                     }
                     oppCharacter = characterFinder[ch]
                     window.add_str(
                         top + matchingBracketRow - startRow,
                         matchingBracketCol - self.view.scrollCol,
                         oppCharacter,
-                        color_pref(u"matching_bracket", colorDelta),
+                        color_pref("matching_bracket", colorDelta),
                     )
         if self.highlightCursorLine:
             # Highlight the whole line at the cursor location.
@@ -304,7 +304,7 @@ class TextBuffer(app.actions.Actions):
                     top + self.penRow - startRow,
                     left,
                     line,
-                    color_pref(u"current_line", colorDelta),
+                    color_pref("current_line", colorDelta),
                 )
         if self.findRe is not None:
             # Highlight find.

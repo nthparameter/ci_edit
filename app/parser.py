@@ -80,7 +80,7 @@ class Parser:
     def __init__(self, appPrefs):
         self.appPrefs = appPrefs
         self._defaultGrammar = appPrefs.grammars["none"]
-        self.data = u""
+        self.data = ""
         self.emptyNode = ParserNode({}, None, None, 0)
         self.endNode = ({}, sys.maxsize, sys.maxsize, sys.maxsize)
         self.resumeAtRow = 0
@@ -108,10 +108,10 @@ class Parser:
             # Bottom of file (or past end of line, but assuming end of file).
             offset = len(self.data)
         ch = self.data[offset - 1]
-        if ch == u"\n":
+        if ch == "\n":
             row -= 1
             col = self.row_width(row)
-        elif ch == u"\t":
+        elif ch == "\t":
             col += self.prior_char_row_col(row, col)[1]
         elif app.curses_util.is_double_width(ch):
             col -= 2
@@ -158,7 +158,7 @@ class Parser:
         subnodeCol = subnode[kVisual] - node[kVisual]
         subnodeColDelta = col - subnodeCol
         offset = subnode[kBegin]
-        if self.data[offset] == u"\t":
+        if self.data[offset] == "\t":
             tabWidth = 8
             flooredTabGrammarCol = subnodeCol // tabWidth * tabWidth
             offset += (col - flooredTabGrammarCol) // tabWidth
@@ -206,8 +206,8 @@ class Parser:
         remainingOffset = offset - nodes[index][kBegin]
         if remainingOffset > 0:
             ch = self.data[nodes[index][kBegin]]
-            if ch == u"\t":
-                tabWidth = self.appPrefs.editor.get(u"tabSize", 8)
+            if ch == "\t":
+                tabWidth = self.appPrefs.editor.get("tabSize", 8)
                 # Add the (potentially) fractional tab.
                 col += app.curses_util.char_width(ch, col, tabWidth)
                 # Add the remaining tabs.
@@ -345,7 +345,7 @@ class Parser:
         nextNode = self.parserNodes[rowIndex + grammarIndex + 1]
         return (
             self.data[node[kBegin] : nextNode[kBegin]],
-            node[kGrammar].get(u"link_type"),
+            node[kGrammar].get("link_type"),
         )
 
     def in_document(self, row, col):
@@ -390,7 +390,7 @@ class Parser:
             assert row >= 0
             assert col >= 0
             assert len(lines) > 0
-        text = u"\n".join(lines)
+        text = "\n".join(lines)
         self.insert(row, col, text)
 
     def next_char_row_col(self, row, col):
@@ -500,7 +500,7 @@ class Parser:
         visualStartCol = 0
         while True:
             while offset < limit and data[offset] != "\n":
-                if data[offset] < u"ᄀ":
+                if data[offset] < "ᄀ":
                     # The char is less than the first double width character.
                     # (An optimization to avoid calling char_width().)
                     visual += 1
@@ -571,7 +571,7 @@ class Parser:
             if row + 1 >= len(self.rows):
                 return self.data[begin:]
             end = self.parserNodes[self.rows[row + 1]][kBegin]
-            if len(self.data) and self.data[end - 1] == u"\n":
+            if len(self.data) and self.data[end - 1] == "\n":
                 end -= 1
             return self.data[begin:end]
 
@@ -582,7 +582,7 @@ class Parser:
             begin = self.data_offset(row, width + beginCol)
 
         if begin is None:
-            return u""
+            return ""
 
         if endCol is None:
             end = self.data_offset(row + 1, 0)
@@ -597,7 +597,7 @@ class Parser:
 
         if end is None:
             end = len(self.data)
-        if end > 0 and self.data[end - 1] == u"\n":
+        if end > 0 and self.data[end - 1] == "\n":
             end -= 1
 
         return self.data[begin:end]
@@ -1068,7 +1068,7 @@ class Parser:
         very slow, so it's normally disabled.
         """
         # Check that all the lines got identified.
-        lines = data.split(u"\n")
+        lines = data.split("\n")
         if out is not None:
             out(lines)
         assert len(lines) == self.row_count()
@@ -1084,7 +1084,7 @@ class Parser:
 
             if out is not None:
                 out("----------- ", line)
-            piecedLine = u""
+            piecedLine = ""
             k = 0
             grammarIndex = 0
             while True:

@@ -44,7 +44,7 @@ class Mutator(app.selectable.Selectable):
         self.findRe = None
         self.findBackRe = None
         self.fileExtension = None
-        self.fullPath = u""
+        self.fullPath = ""
         self.fileStat = None
         self.goalCol = 0
         self.isReadOnly = False
@@ -204,7 +204,7 @@ class Mutator(app.selectable.Selectable):
             if self.selectionMode != app.selectable.kSelectionNone:
                 assert self.markerRow >= to
                 self.markerRow += count
-        self.parser.insert_lines(to, 0, lines.split(u"\n"))
+        self.parser.insert_lines(to, 0, lines.split("\n"))
 
     def __do_vertical_insert(self, change):
         text, row, endRow, col = change[1]
@@ -224,27 +224,27 @@ class Mutator(app.selectable.Selectable):
         self.selectionMode += change[1][4]
 
     def print_redo_state(self, out):
-        out(u"---- Redo State begin ----")
+        out("---- Redo State begin ----")
         out(
-            u"procTemp %d temp %r"
+            "procTemp %d temp %r"
             % (
                 self.processTempChange,
                 self.tempChange,
             )
         )
         out(
-            u"redoIndex %3d savedAt %3d depth %3d"
+            "redoIndex %3d savedAt %3d depth %3d"
             % (self.redoIndex, self.savedAtRedoIndex, len(self.redo_chain))
         )
         index = len(self.redo_chain)
         while index > 0:
             if index == self.redoIndex:
-                out(u"  -----> next redo ^; next undo v")
+                out("  -----> next redo ^; next undo v")
             if index == self.savedAtRedoIndex:
-                out(u"  <saved>")
+                out("  <saved>")
             index -= 1
-            out(u"    {}".format(repr(self.redo_chain[index])))
-        out(u"---- Redo State end ----")
+            out("    {}".format(repr(self.redo_chain[index])))
+        out("---- Redo State end ----")
 
     def redo(self):
         """Replay the next action on the redo_chain."""
@@ -310,7 +310,7 @@ class Mutator(app.selectable.Selectable):
                     lines.append(ii[2:])
                 elif ii[0] == "-":
                     index += 1
-            self.parser.data = lines.join(u"\n")
+            self.parser.data = lines.join("\n")
             firstChangedRow = change[1][0] if type(change[1][0]) is type(0) else 0
         elif change[0] == "m":  # Redo move
             self.__redo_move(change)
@@ -318,7 +318,7 @@ class Mutator(app.selectable.Selectable):
             begin, end, to = change[1]
             self.__do_move_lines(begin, end, to)
         elif change[0] == "n":  # Redo split lines (insert \n).
-            self.parser.insert(self.penRow, self.penCol, u"\n")
+            self.parser.insert(self.penRow, self.penCol, "\n")
             self.__redo_move(change[2])
         elif change[0] == "v":  # Redo paste.
             self.insert_lines(change[1])
@@ -468,7 +468,7 @@ class Mutator(app.selectable.Selectable):
             self.penCol -= width
             self.goalCol = self.penCol
         elif change[0] == "j":  # Undo join lines.
-            self.parser.insert(self.penRow, self.penCol, u"\n")
+            self.parser.insert(self.penRow, self.penCol, "\n")
         elif change[0] == "ld":  # Undo line diff.
             assert False  # Not used.
             lines = []
@@ -482,7 +482,7 @@ class Mutator(app.selectable.Selectable):
                     index += 1
                 elif ii[0] == "-":
                     lines.append(ii[2:])
-            self.parser.data = lines.join(u"\n")
+            self.parser.data = lines.join("\n")
             firstChangedRow = change[1][0] if type(change[1][0]) is type(0) else 0
         elif change[0] == "m":
             self.__undo_move(change)

@@ -32,7 +32,7 @@ class LineBuffer:
         self.isBinary = False
         self.parser = app.parser.Parser(program.prefs)
         self.parserTime = 0.0
-        self.message = (u"New buffer", None)
+        self.message = ("New buffer", None)
         self.set_file_type("words")
 
     def set_file_type(self, fileType):
@@ -46,24 +46,24 @@ class LineBuffer:
             assert isinstance(data, unicode)
         # Performance: in a 1000 line test it appears fastest to do some simple
         # .replace() calls to minimize the number of calls to parse().
-        data = data.replace(u"\r\n", u"\n")
-        data = data.replace(u"\r", u"\n")
+        data = data.replace("\r\n", "\n")
+        data = data.replace("\r", "\n")
         if self.program.prefs.tabs_to_spaces(self.fileType):
-            tabSize = self.program.prefs.editor.get(u"tabSize", 8)
+            tabSize = self.program.prefs.editor.get("tabSize", 8)
             data = data.expandtabs(tabSize)
 
         def parse(sre):
-            return u"\x01%02x" % ord(sre.groups()[0])
+            return "\x01%02x" % ord(sre.groups()[0])
 
-        # data = re.sub(u'([\0-\x09\x0b-\x1f\x7f-\xff])', parse, data)
-        data = re.sub(u"([\0-\x09\x0b-\x1f])", parse, data)
+        # data = re.sub('([\0-\x09\x0b-\x1f\x7f-\xff])', parse, data)
+        data = re.sub("([\0-\x09\x0b-\x1f])", parse, data)
         return data
 
     def unescape_binary_chars(self, data):
         def encode(line):
             return chr(int(line.groups()[0], 16))
 
-        out = re.sub(u"\x01([0-9a-fA-F][0-9a-fA-F])", encode, data)
+        out = re.sub("\x01([0-9a-fA-F][0-9a-fA-F])", encode, data)
         if app.config.strict_debug:
             assert isinstance(out, unicode)
         return out

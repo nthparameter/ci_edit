@@ -134,10 +134,10 @@ def parse_arg_list(argList):
     except ValueError:
         pass
     if len(argList) > 1:
-        if not (argList[1] == u"no" or argList[1] in TESTS):
+        if not (argList[1] == "no" or argList[1] in TESTS):
             usage()
             sys.exit(-1)
-        if argList[1] == u"no":
+        if argList[1] == "no":
             for i in argList[2:]:
                 del testList[testList.index(TESTS[i])]
         else:

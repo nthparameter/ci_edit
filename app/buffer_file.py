@@ -41,8 +41,8 @@ def path_row_column(path, projectDir):
     openToColumn = None
     if os.path.isfile(path):  # or os.path.isdir(os.path.dirname(path)):
         return path, openToRow, openToColumn
-    pieces = path.split(u":")
-    if pieces[-1] == u"":
+    pieces = path.split(":")
+    if pieces[-1] == "":
         if len(pieces) == 3:
             try:
                 openToRow = int(pieces[1]) - 1
@@ -69,9 +69,9 @@ def path_row_column(path, projectDir):
     if openToRow is not None:
         path = pieces[0]
     if len(path) > 2:  #  and not os.path.isdir(path[:2]):
-        if projectDir is not None and path.startswith(u"//"):
+        if projectDir is not None and path.startswith("//"):
             path = projectDir + path[1:]
-        elif path[1] == u"/":
+        elif path[1] == "/":
             if os.path.isfile(path[2:]):
                 path = path[2:]
     return path, openToRow, openToColumn

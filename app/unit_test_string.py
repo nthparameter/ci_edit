@@ -20,13 +20,13 @@ import app.string
 class StringTestCases(unittest.TestCase):
     def test_path_encode(self):
         tests = [
-            (u"abcd", u"abcd"),
-            (u"\rabcd", u"\\rabcd"),
-            (u"ab\rcd", u"ab\\rcd"),
-            (u"abcd\r", u"abcd\\r"),
-            (u"\aab\tcd\r", u"\\aab\\tcd\\r"),
-            (u"abcd\\", u"abcd\\\\"),
-            (u"\\", u"\\\\"),
+            ("abcd", "abcd"),
+            ("\rabcd", "\\rabcd"),
+            ("ab\rcd", "ab\\rcd"),
+            ("abcd\r", "abcd\\r"),
+            ("\aab\tcd\r", "\\aab\\tcd\\r"),
+            ("abcd\\", "abcd\\\\"),
+            ("\\", "\\\\"),
         ]
         for test in tests:
             self.assertEqual(app.string.path_encode(test[0]), test[1])

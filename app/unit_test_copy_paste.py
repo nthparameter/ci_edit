@@ -23,7 +23,7 @@ import app.ci_program
 import app.curses_util
 import app.fake_curses_testing
 
-kTestFile = u"#application_test_file_with_unlikely_file_name~"
+kTestFile = "#application_test_file_with_unlikely_file_name~"
 
 class CopyPasteTestCases(app.fake_curses_testing.FakeCursesTestCase):
     def setUp(self):
@@ -31,23 +31,23 @@ class CopyPasteTestCases(app.fake_curses_testing.FakeCursesTestCase):
         app.fake_curses_testing.FakeCursesTestCase.set_up(self)
 
     def test_bracketed_paste(self):
-        self.assertEqual(app.curses_util.char_width(u"ế", 0), 1)
+        self.assertEqual(app.curses_util.char_width("ế", 0), 1)
         self.run_with_fake_inputs(
             [
-                self.display_check(2, 7, [u"      "]),
+                self.display_check(2, 7, ["      "]),
                 curses.ascii.ESC,
                 app.curses_util.BRACKETED_PASTE_BEGIN,
-                u"t",
-                u"e",
+                "t",
+                "e",
                 225,
                 186,
                 191,  # Send an "" in utf-8.
-                u"t",
+                "t",
                 curses.ascii.ESC,
                 app.curses_util.BRACKETED_PASTE_END,
-                self.display_check(2, 7, [u"te\u1ebft "]),
+                self.display_check(2, 7, ["te\u1ebft "]),
                 CTRL_Q,
-                u"n",
+                "n",
             ]
         )
 
@@ -55,19 +55,19 @@ class CopyPasteTestCases(app.fake_curses_testing.FakeCursesTestCase):
         # self.set_movie_mode(True)
         self.run_with_fake_inputs(
             [
-                self.display_check(2, 7, [u"      "]),
-                self.write_text(u"apple\nbanana\ncarrot\ndate\neggplant\nfig"),
+                self.display_check(2, 7, ["      "]),
+                self.write_text("apple\nbanana\ncarrot\ndate\neggplant\nfig"),
                 self.display_check(
                     2,
                     7,
                     [
-                        u"apple   ",
-                        u"banana   ",
-                        u"carrot   ",
-                        u"date   ",
-                        u"eggplant   ",
-                        u"fig   ",
-                        u"         ",
+                        "apple   ",
+                        "banana   ",
+                        "carrot   ",
+                        "date   ",
+                        "eggplant   ",
+                        "fig   ",
+                        "         ",
                     ],
                 ),
                 self.selection_check(5, 3, 0, 0, 0),
@@ -82,11 +82,11 @@ class CopyPasteTestCases(app.fake_curses_testing.FakeCursesTestCase):
                     2,
                     7,
                     [
-                        u"apple   ",
-                        u"bae   ",
-                        u"eggplant   ",
-                        u"fig   ",
-                        u"         ",
+                        "apple   ",
+                        "bae   ",
+                        "eggplant   ",
+                        "fig   ",
+                        "         ",
                     ],
                 ),
                 self.selection_check(1, 2, 1, 2, 0),
@@ -95,13 +95,13 @@ class CopyPasteTestCases(app.fake_curses_testing.FakeCursesTestCase):
                     2,
                     7,
                     [
-                        u"apple   ",
-                        u"banana   ",
-                        u"carrot   ",
-                        u"date   ",
-                        u"eggplant   ",
-                        u"fig   ",
-                        u"         ",
+                        "apple   ",
+                        "banana   ",
+                        "carrot   ",
+                        "date   ",
+                        "eggplant   ",
+                        "fig   ",
+                        "         ",
                     ],
                 ),
                 self.selection_check(3, 3, 1, 2, 0),
@@ -110,15 +110,15 @@ class CopyPasteTestCases(app.fake_curses_testing.FakeCursesTestCase):
                     2,
                     7,
                     [
-                        u"apple   ",
-                        u"banana   ",
-                        u"carrot   ",
-                        u"datnana   ",
-                        u"carrot   ",
-                        u"date   ",
-                        u"eggplant   ",
-                        u"fig   ",
-                        u"         ",
+                        "apple   ",
+                        "banana   ",
+                        "carrot   ",
+                        "datnana   ",
+                        "carrot   ",
+                        "date   ",
+                        "eggplant   ",
+                        "fig   ",
+                        "         ",
                     ],
                 ),
                 self.selection_check(5, 3, 1, 2, 0),
@@ -127,13 +127,13 @@ class CopyPasteTestCases(app.fake_curses_testing.FakeCursesTestCase):
                     2,
                     7,
                     [
-                        u"apple   ",
-                        u"banana   ",
-                        u"carrot   ",
-                        u"date   ",
-                        u"eggplant   ",
-                        u"fig   ",
-                        u"         ",
+                        "apple   ",
+                        "banana   ",
+                        "carrot   ",
+                        "date   ",
+                        "eggplant   ",
+                        "fig   ",
+                        "         ",
                     ],
                 ),
                 self.selection_check(3, 3, 1, 2, 0),
@@ -142,11 +142,11 @@ class CopyPasteTestCases(app.fake_curses_testing.FakeCursesTestCase):
                     2,
                     7,
                     [
-                        u"apple   ",
-                        u"bae   ",
-                        u"eggplant   ",
-                        u"fig   ",
-                        u"         ",
+                        "apple   ",
+                        "bae   ",
+                        "eggplant   ",
+                        "fig   ",
+                        "         ",
                     ],
                 ),
                 self.selection_check(1, 2, 1, 2, 0),
@@ -156,22 +156,22 @@ class CopyPasteTestCases(app.fake_curses_testing.FakeCursesTestCase):
                     2,
                     7,
                     [
-                        u"apple   ",
-                        u"banana   ",
-                        u"carrot   ",
-                        u"datnana   ",
-                        u"carrot   ",
-                        u"date   ",
-                        u"eggplant   ",
-                        u"fig   ",
-                        u"         ",
+                        "apple   ",
+                        "banana   ",
+                        "carrot   ",
+                        "datnana   ",
+                        "carrot   ",
+                        "date   ",
+                        "eggplant   ",
+                        "fig   ",
+                        "         ",
                     ],
                 ),
                 self.selection_check(5, 3, 1, 2, 0),
                 CTRL_Q,
-                u"n",
+                "n",
             ]
         )
 
     def test_write_text(self):
-        self.run_with_fake_inputs([self.write_text(u"test\n"), CTRL_Q, u"n"])
+        self.run_with_fake_inputs([self.write_text("test\n"), CTRL_Q, "n"])

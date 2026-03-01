@@ -51,7 +51,7 @@ dictionaryList = [os.path.basename(i)[11:-6] for i in dictionaryList]
 print(pprint.pprint(dictionaryList))
 pathPrefs = []
 dictionary = app.spelling.Dictionary(dictionaryList, pathPrefs)
-assert dictionary.is_correct(u"has", "cpp")
+assert dictionary.is_correct("has", "cpp")
 
 def handle_file(fileName, unrecognizedWords):
     # print(fileName, end="")

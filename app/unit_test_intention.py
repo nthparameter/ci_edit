@@ -22,7 +22,7 @@ from app.curses_util import *
 import app.ci_program
 import app.fake_curses_testing
 
-kTestFile = u"#application_test_file_with_unlikely_file_name~"
+kTestFile = "#application_test_file_with_unlikely_file_name~"
 
 class IntentionTestCases(app.fake_curses_testing.FakeCursesTestCase):
     def setUp(self):
@@ -34,7 +34,7 @@ class IntentionTestCases(app.fake_curses_testing.FakeCursesTestCase):
 
     def test_new_file_quit(self):
         self.run_with_test_file(
-            kTestFile, [self.display_check(2, 7, [u"        "]), CTRL_Q]
+            kTestFile, [self.display_check(2, 7, ["        "]), CTRL_Q]
         )
 
     def test_quit_cancel(self):
@@ -45,22 +45,22 @@ class IntentionTestCases(app.fake_curses_testing.FakeCursesTestCase):
                     0,
                     0,
                     [
-                        u" ci     .                               ",
+                        " ci     .                               ",
                     ],
                 ),
-                u"x",
+                "x",
                 CTRL_Q,
-                u"c",
-                self.write_text(u" after cancel"),
+                "c",
+                self.write_text(" after cancel"),
                 self.display_check(
                     2,
                     7,
                     [
-                        u"x after cancel ",
+                        "x after cancel ",
                     ],
                 ),
                 CTRL_Q,
-                u"n",
+                "n",
             ]
         )
 
@@ -73,12 +73,12 @@ class IntentionTestCases(app.fake_curses_testing.FakeCursesTestCase):
                     0,
                     0,
                     [
-                        u" ci     .                               ",
+                        " ci     .                               ",
                     ],
                 ),
-                u"x",
+                "x",
                 CTRL_Q,
-                u"y",
+                "y",
                 self.write_text(kTestFile),
                 CTRL_J,
                 CTRL_Q,

@@ -29,13 +29,13 @@ class ExecutePromptTestCases(app.fake_curses_testing.FakeCursesTestCase):
         # self.set_movie_mode(True)
         self.run_with_fake_inputs(
             [
-                self.display_check(-1, 0, [u"      "]),
+                self.display_check(-1, 0, ["      "]),
                 CTRL_E,
-                self.display_check(-1, 0, [u"e: "]),
+                self.display_check(-1, 0, ["e: "]),
                 CTRL_J,
-                self.display_check(-1, 0, [u"      "]),
+                self.display_check(-1, 0, ["      "]),
                 CTRL_E,
-                self.display_check(-1, 0, [u"e: "]),
+                self.display_check(-1, 0, ["e: "]),
                 CTRL_J,
                 CTRL_Q,
             ]
@@ -45,23 +45,23 @@ class ExecutePromptTestCases(app.fake_curses_testing.FakeCursesTestCase):
         # self.set_movie_mode(True)
         self.run_with_fake_inputs(
             [
-                self.write_text(u"carrot\nbanana\nbanana\napple\n"),
+                self.write_text("carrot\nbanana\nbanana\napple\n"),
                 self.display_check(
                     2,
                     7,
-                    [u"carrot  ", u"banana  ", u"banana  ", u"apple  ", u"           "],
+                    ["carrot  ", "banana  ", "banana  ", "apple  ", "           "],
                 ),
                 CTRL_A,
                 CTRL_E,
-                self.write_text(u"|sort"),
-                self.display_check(-1, 0, [u"e: |sort  "]),
+                self.write_text("|sort"),
+                self.display_check(-1, 0, ["e: |sort  "]),
                 CTRL_J,
                 self.display_check(
                     2,
                     7,
-                    [u"apple  ", u"banana  ", u"banana  ", u"carrot  ", u"           "],
+                    ["apple  ", "banana  ", "banana  ", "carrot  ", "           "],
                 ),
                 CTRL_Q,
-                u"n",
+                "n",
             ]
         )

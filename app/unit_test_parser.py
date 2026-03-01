@@ -71,19 +71,19 @@ class ParserTestCases(unittest.TestCase):
 
     def test_parse(self):
         tests = [
-            u"""/* first comment */
+            """/* first comment */
 two
 // second comment
 #include "test.h"
 void blah();
 // No end of line""",
-            u"""/* first comment */
+            """/* first comment */
 two
 // second comment
 #include "test.h"
 void blah();
 """,
-            u"""/* test includes */
+            """/* test includes */
 // The malformed include on the next line is a regression test.
 #include <test.h"
 #include "test.h"
@@ -102,10 +102,10 @@ void blah();
 """,
         ]
         for test in tests:
-            # self.assertEqual(test.splitlines(), test.split(u"\n"))
-            lines = test.split(u"\n")
+            # self.assertEqual(test.splitlines(), test.split("\n"))
+            lines = test.split("\n")
             self.prefs = app.prefs.Prefs()
-            self.parser.parse(None, test, self.prefs.grammars[u"cpp"], 0, 99999)
+            self.parser.parse(None, test, self.prefs.grammars["cpp"], 0, 99999)
             # self.parser.debug_log(print, test)
             self.assertEqual(len(lines), self.parser.row_count())
             for i, line in enumerate(lines):
@@ -117,7 +117,7 @@ void blah();
             self.parser.debug_check_lines(None, test)
 
     def test_parse_cpp_literal(self):
-        test = u"""/* first comment */
+        test = """/* first comment */
 char stuff = R"mine(two
 // not a comment)mine";
 void blah();
@@ -125,19 +125,19 @@ void blah();
         self.prefs = app.prefs.Prefs()
         self.parser.parse(None, test, self.prefs.grammars["cpp"], 0, 99999)
         # self.parser.debug_log(print, test)
-        self.assertEqual(self.parser.row_text(0), u"/* first comment */")
-        self.assertEqual(self.parser.row_text(1), u"""char stuff = R"mine(two""")
+        self.assertEqual(self.parser.row_text(0), "/* first comment */")
+        self.assertEqual(self.parser.row_text(1), """char stuff = R"mine(two""")
         self.assertEqual(
-            self.parser.grammar_at(0, 0), self.prefs.grammars[u"cpp_block_comment"]
+            self.parser.grammar_at(0, 0), self.prefs.grammars["cpp_block_comment"]
         )
-        self.assertEqual(self.parser.grammar_at(1, 8), self.prefs.grammars[u"cpp"])
+        self.assertEqual(self.parser.grammar_at(1, 8), self.prefs.grammars["cpp"])
         self.assertEqual(
-            self.parser.grammar_at(1, 18), self.prefs.grammars[u"cpp_string_literal"]
+            self.parser.grammar_at(1, 18), self.prefs.grammars["cpp_string_literal"]
         )
-        self.assertEqual(self.parser.grammar_at(3, 7), self.prefs.grammars[u"cpp"])
+        self.assertEqual(self.parser.grammar_at(3, 7), self.prefs.grammars["cpp"])
 
     def test_parse_rs_raw_string(self):
-        test = u"""// one
+        test = """// one
 let stuff = r###"two
 not an "## end
 ignored " quote"###;
@@ -145,29 +145,29 @@ fn main { }
 // two
 """
         self.prefs = app.prefs.Prefs()
-        self.parser.parse(None, test, self.prefs.grammars[u"rs"], 0, 99999)
-        self.assertEqual(self.parser.row_text(0), u"// one")
-        self.assertEqual(self.parser.row_text(1), u"""let stuff = r###"two""")
+        self.parser.parse(None, test, self.prefs.grammars["rs"], 0, 99999)
+        self.assertEqual(self.parser.row_text(0), "// one")
+        self.assertEqual(self.parser.row_text(1), """let stuff = r###"two""")
         self.assertEqual(
-            self.parser.grammar_at(0, 0), self.prefs.grammars[u"cpp_line_comment"]
+            self.parser.grammar_at(0, 0), self.prefs.grammars["cpp_line_comment"]
         )
-        self.assertEqual(self.parser.grammar_at(1, 8), self.prefs.grammars[u"rs"])
+        self.assertEqual(self.parser.grammar_at(1, 8), self.prefs.grammars["rs"])
         self.assertEqual(
-            self.parser.grammar_at(1, 18), self.prefs.grammars[u"rs_raw_string"]
-        )
-        self.assertEqual(
-            self.parser.grammar_at(2, 12), self.prefs.grammars[u"rs_raw_string"]
+            self.parser.grammar_at(1, 18), self.prefs.grammars["rs_raw_string"]
         )
         self.assertEqual(
-            self.parser.grammar_at(3, 15), self.prefs.grammars[u"rs_raw_string"]
+            self.parser.grammar_at(2, 12), self.prefs.grammars["rs_raw_string"]
         )
         self.assertEqual(
-            self.parser.grammar_at(3, 12), self.prefs.grammars[u"rs_raw_string"]
+            self.parser.grammar_at(3, 15), self.prefs.grammars["rs_raw_string"]
         )
-        self.assertEqual(self.parser.grammar_at(4, 7), self.prefs.grammars[u"rs"])
+        self.assertEqual(
+            self.parser.grammar_at(3, 12), self.prefs.grammars["rs_raw_string"]
+        )
+        self.assertEqual(self.parser.grammar_at(4, 7), self.prefs.grammars["rs"])
 
     def test_parse_tabs(self):
-        test = u"""\t<tab
+        test = """\t<tab
 \t <tab+space
  \t<space+tab
 \ta<
@@ -181,7 +181,7 @@ parse\t\t\tz
 """
         self.prefs = app.prefs.Prefs()
         p = self.parser
-        self.parser.parse(None, test, self.prefs.grammars[u"rs"], 0, 99999)
+        self.parser.parse(None, test, self.prefs.grammars["rs"], 0, 99999)
         if 0:
             print("")
             for i, t in enumerate(test.splitlines()):
@@ -190,44 +190,44 @@ parse\t\t\tz
 
         self.assertEqual(p.row_count(), 12)
 
-        self.assertEqual(p.row_text(0), u"\t<tab")
-        self.assertEqual(p.row_text(1), u"\t <tab+space")
-        self.assertEqual(p.row_text(2), u" \t<space+tab")
-        self.assertEqual(p.row_text(3), u"\ta<")
-        self.assertEqual(p.row_text(4), u"a\t<")
-        self.assertEqual(p.row_text(5), u"some text.>\t<")
-        self.assertEqual(p.row_text(6), u"\t\t<2tabs")
-        self.assertEqual(p.row_text(7), u"line\twith\ttabs")
-        self.assertEqual(p.row_text(8), u"ends with tab>\t")
-        self.assertEqual(p.row_text(9), u"\t")
-        self.assertEqual(p.row_text(10), u"parse\t\t\tz")
-        self.assertEqual(p.row_text(11), u"")
+        self.assertEqual(p.row_text(0), "\t<tab")
+        self.assertEqual(p.row_text(1), "\t <tab+space")
+        self.assertEqual(p.row_text(2), " \t<space+tab")
+        self.assertEqual(p.row_text(3), "\ta<")
+        self.assertEqual(p.row_text(4), "a\t<")
+        self.assertEqual(p.row_text(5), "some text.>\t<")
+        self.assertEqual(p.row_text(6), "\t\t<2tabs")
+        self.assertEqual(p.row_text(7), "line\twith\ttabs")
+        self.assertEqual(p.row_text(8), "ends with tab>\t")
+        self.assertEqual(p.row_text(9), "\t")
+        self.assertEqual(p.row_text(10), "parse\t\t\tz")
+        self.assertEqual(p.row_text(11), "")
 
-        self.assertEqual(p.row_text(0, 0), u"\t<tab")
-        self.assertEqual(p.row_text(0, 0, 0), u"")
-        self.assertEqual(p.row_text(0, 0, 30), u"\t<tab")
-        self.assertEqual(p.row_text(0, 8), u"<tab")
-        self.assertEqual(p.row_text(0, 8, 9), u"<")
-        self.assertEqual(p.row_text(0, 8, -3), u"<")
-        self.assertEqual(p.row_text(0, -4, -3), u"<")
-        self.assertEqual(p.row_text(0, -1), u"b")
-        self.assertEqual(p.row_text(0, -2, -1), u"a")
-        self.assertEqual(p.row_text(0, -3, -2), u"t")
-        self.assertEqual(p.row_text(0, 11), u"b")
-        self.assertEqual(p.row_text(1, 0, 0), u"")
-        self.assertEqual(p.row_text(1, 1, 1), u"")
-        self.assertEqual(p.row_text(11, 0, 0), u"")
+        self.assertEqual(p.row_text(0, 0), "\t<tab")
+        self.assertEqual(p.row_text(0, 0, 0), "")
+        self.assertEqual(p.row_text(0, 0, 30), "\t<tab")
+        self.assertEqual(p.row_text(0, 8), "<tab")
+        self.assertEqual(p.row_text(0, 8, 9), "<")
+        self.assertEqual(p.row_text(0, 8, -3), "<")
+        self.assertEqual(p.row_text(0, -4, -3), "<")
+        self.assertEqual(p.row_text(0, -1), "b")
+        self.assertEqual(p.row_text(0, -2, -1), "a")
+        self.assertEqual(p.row_text(0, -3, -2), "t")
+        self.assertEqual(p.row_text(0, 11), "b")
+        self.assertEqual(p.row_text(1, 0, 0), "")
+        self.assertEqual(p.row_text(1, 1, 1), "")
+        self.assertEqual(p.row_text(11, 0, 0), "")
 
-        self.assertEqual(p.row_text_and_width(0), (u"\t<tab", 12))
-        self.assertEqual(p.row_text_and_width(1), (u"\t <tab+space", 19))
-        self.assertEqual(p.row_text_and_width(2), (u" \t<space+tab", 18))
-        self.assertEqual(p.row_text_and_width(3), (u"\ta<", 10))
-        self.assertEqual(p.row_text_and_width(4), (u"a\t<", 9))
-        self.assertEqual(p.row_text_and_width(5), (u"some text.>\t<", 17))
-        self.assertEqual(p.row_text_and_width(6), (u"\t\t<2tabs", 22))
-        self.assertEqual(p.row_text_and_width(7), (u"line\twith\ttabs", 20))
-        self.assertEqual(p.row_text_and_width(8), (u"ends with tab>\t", 16))
-        self.assertEqual(p.row_text_and_width(9), (u"\t", 8))
+        self.assertEqual(p.row_text_and_width(0), ("\t<tab", 12))
+        self.assertEqual(p.row_text_and_width(1), ("\t <tab+space", 19))
+        self.assertEqual(p.row_text_and_width(2), (" \t<space+tab", 18))
+        self.assertEqual(p.row_text_and_width(3), ("\ta<", 10))
+        self.assertEqual(p.row_text_and_width(4), ("a\t<", 9))
+        self.assertEqual(p.row_text_and_width(5), ("some text.>\t<", 17))
+        self.assertEqual(p.row_text_and_width(6), ("\t\t<2tabs", 22))
+        self.assertEqual(p.row_text_and_width(7), ("line\twith\ttabs", 20))
+        self.assertEqual(p.row_text_and_width(8), ("ends with tab>\t", 16))
+        self.assertEqual(p.row_text_and_width(9), ("\t", 8))
 
         self.assertEqual(p.row_width(0), 12)
         self.assertEqual(p.row_width(1), 19)
@@ -248,22 +248,22 @@ parse\t\t\tz
         # self.assertEqual(p.grammar_at(0, 0), 0)
 
         self.assertEqual(p.next_char_row_col(999999, 0), None)
-        # Test u"\t<tab".
+        # Test "\t<tab".
         self.assertEqual(p.next_char_row_col(0, 0), (0, 8))
         self.assertEqual(p.next_char_row_col(0, 1), (0, 7))
         self.assertEqual(p.next_char_row_col(0, 7), (0, 1))
         self.assertEqual(p.next_char_row_col(0, 8), (0, 1))
         self.assertEqual(p.next_char_row_col(0, 11), (0, 1))
         self.assertEqual(p.next_char_row_col(0, 12), (1, -12))
-        # Test u"\t\t<2tabs".
+        # Test "\t\t<2tabs".
         self.assertEqual(p.next_char_row_col(6, 0), (0, 8))
         self.assertEqual(p.next_char_row_col(6, 8), (0, 8))
         self.assertEqual(p.next_char_row_col(6, 16), (0, 1))
         self.assertEqual(p.next_char_row_col(6, 22), (1, -22))
-        # Test u"\t".
+        # Test "\t".
         self.assertEqual(p.next_char_row_col(9, 0), (0, 8))
         self.assertEqual(p.next_char_row_col(9, 8), (1, -8))
-        # Test u"parse\t\t\tz".
+        # Test "parse\t\t\tz".
         self.assertEqual(p.next_char_row_col(10, 0), (0, 1))
         self.assertEqual(p.next_char_row_col(10, 4), (0, 1))
         self.assertEqual(p.next_char_row_col(10, 5), (0, 3))
@@ -273,11 +273,11 @@ parse\t\t\tz
         self.assertEqual(p.next_char_row_col(10, 25), (1, -25))
         self.assertEqual(p.next_char_row_col(11, 0), None)
 
-        # Test u"\t<tab".
+        # Test "\t<tab".
         self.assertEqual(p.prior_char_row_col(0, 0), None)
         self.assertEqual(p.prior_char_row_col(0, 1), (0, -1))
         self.assertEqual(p.prior_char_row_col(0, 7), (0, -7))
-        # Test u"\t\t<2tabs".
+        # Test "\t\t<2tabs".
         self.assertEqual(p.prior_char_row_col(6, 1), (0, -1))
         self.assertEqual(p.prior_char_row_col(6, 5), (0, -5))
         self.assertEqual(p.prior_char_row_col(6, 8), (0, -8))
@@ -288,12 +288,12 @@ parse\t\t\tz
         self.assertEqual(p.prior_char_row_col(6, 18), (0, -1))
         self.assertEqual(p.prior_char_row_col(6, 19), (0, -1))
         self.assertEqual(p.prior_char_row_col(6, 20), (0, -1))
-        # Test u"\t".
+        # Test "\t".
         self.assertEqual(p.prior_char_row_col(9, 1), (0, -1))
         self.assertEqual(p.prior_char_row_col(9, 5), (0, -5))
         self.assertEqual(p.prior_char_row_col(9, 8), (0, -8))
 
-        # Test u"\t<tab".
+        # Test "\t<tab".
         self.assertEqual(p.data_offset(0, 0), 0)
         self.assertEqual(p.data_offset_row_col(0), (0, 0))
         self.assertEqual(p.data_offset(0, 1), 0)
@@ -308,7 +308,7 @@ parse\t\t\tz
         self.assertEqual(p.data_offset_row_col(5), (0, 12))
         self.assertEqual(p.data_offset(0, 13), None)
         self.assertEqual(p.data_offset(0, 99), None)
-        # Test u"\t <tab+space".
+        # Test "\t <tab+space".
         self.assertEqual(p.data_offset(1, 0), 6)
         self.assertEqual(p.data_offset_row_col(6), (1, 0))
         self.assertEqual(p.data_offset(1, 1), 6)
@@ -322,7 +322,7 @@ parse\t\t\tz
         self.assertEqual(p.data_offset(1, 19), 18)
         self.assertEqual(p.data_offset_row_col(18), (1, 19))
         self.assertEqual(p.data_offset(1, 29), None)
-        # Test u" \t<space+tab".
+        # Test " \t<space+tab".
         self.assertEqual(p.data_offset(2, 0), 19)
         self.assertEqual(p.data_offset_row_col(19), (2, 0))
         self.assertEqual(p.data_offset(2, 1), 20)
@@ -331,24 +331,24 @@ parse\t\t\tz
         self.assertEqual(p.data_offset_row_col(20), (2, 1))
         self.assertEqual(p.data_offset_row_col(21), (2, 8))
         self.assertEqual(p.data_offset_row_col(25), (2, 12))
-        # Test u"\ta<".
-        # Test u"a\t<".
+        # Test "\ta<".
+        # Test "a\t<".
         self.assertEqual(p.data_offset(4, 0), 36)
         self.assertEqual(p.data_offset_row_col(36), (4, 0))
         self.assertEqual(p.data_offset(4, 1), 37)
         self.assertEqual(p.data_offset(4, 2), 37)
-        # Test u"some text.>\t<".
-        # Test u"\t\t<2tabs".
+        # Test "some text.>\t<".
+        # Test "\t\t<2tabs".
         self.assertEqual(p.data_offset(6, 0), 54)
         self.assertEqual(p.data_offset(6, 7), 54)
         self.assertEqual(p.data_offset(6, 8), 55)
         self.assertEqual(p.data_offset(6, 15), 55)
         self.assertEqual(p.data_offset(6, 16), 56)
         self.assertEqual(p.data_offset(6, 17), 57)
-        # Test u"line\twith\ttabs".
-        # Test u"ends with tab>\t".
-        # Test u"\t".
-        # Test u"parse\t\t\tz".
+        # Test "line\twith\ttabs".
+        # Test "ends with tab>\t".
+        # Test "\t".
+        # Test "parse\t\t\tz".
         self.assertEqual(p.data_offset(10, 0), 96)
         self.assertEqual(p.data_offset(10, 4), 100)
         self.assertEqual(p.data_offset(10, 5), 101)
@@ -366,12 +366,12 @@ parse\t\t\tz
         self.assertEqual(p.data_offset_row_col(106), None)
         self.assertEqual(p.data_offset_row_col(107), None)
 
-        self.assertEqual(p.row_text(10, 5), u"\t\t\tz")
-        self.assertEqual(p.row_text(10, 7), u"\t\t\tz")
-        self.assertEqual(p.row_text(10, 8), u"\t\tz")
+        self.assertEqual(p.row_text(10, 5), "\t\t\tz")
+        self.assertEqual(p.row_text(10, 7), "\t\t\tz")
+        self.assertEqual(p.row_text(10, 8), "\t\tz")
 
     def test_parse_mixed(self):
-        test = u"""ち\t<tab
+        test = """ち\t<tab
 \tち<
 \t<ち
 sちome text.>\t<
@@ -383,7 +383,7 @@ line\tち\ttabs
 """
         self.prefs = app.prefs.Prefs()
         p = self.parser
-        self.parser.parse(None, test, self.prefs.grammars[u"rs"], 0, 99999)
+        self.parser.parse(None, test, self.prefs.grammars["rs"], 0, 99999)
         if 0:
             print("")
             for i, t in enumerate(test.splitlines()):
@@ -392,48 +392,48 @@ line\tち\ttabs
 
         self.assertEqual(p.row_count(), 10)
 
-        self.assertEqual(p.row_text(0), u"ち\t<tab")
-        self.assertEqual(p.row_text(1), u"\tち<")
-        self.assertEqual(p.row_text(2), u"\t<ち")
-        self.assertEqual(p.row_text(3), u"sちome text.>\t<")
-        self.assertEqual(p.row_text(4), u"line\tち\ttabs")
-        self.assertEqual(p.row_text(5), u"\tち")
-        self.assertEqual(p.row_text(6), u"ち\t\t\tz")
-        self.assertEqual(p.row_text(7), u"Здравствуйте")
-        self.assertEqual(p.row_text(8), u"こんにちはtranslate")
-        self.assertEqual(p.row_text(9), u"")
+        self.assertEqual(p.row_text(0), "ち\t<tab")
+        self.assertEqual(p.row_text(1), "\tち<")
+        self.assertEqual(p.row_text(2), "\t<ち")
+        self.assertEqual(p.row_text(3), "sちome text.>\t<")
+        self.assertEqual(p.row_text(4), "line\tち\ttabs")
+        self.assertEqual(p.row_text(5), "\tち")
+        self.assertEqual(p.row_text(6), "ち\t\t\tz")
+        self.assertEqual(p.row_text(7), "Здравствуйте")
+        self.assertEqual(p.row_text(8), "こんにちはtranslate")
+        self.assertEqual(p.row_text(9), "")
 
-        self.assertEqual(app.curses_util.char_width(u"З", 0), 1)
-        self.assertEqual(app.curses_util.char_width(u"こ", 0), 2)
-        self.assertEqual(app.curses_util.char_width(u"ん", 0), 2)
-        self.assertEqual(app.curses_util.char_width(u"に", 0), 2)
+        self.assertEqual(app.curses_util.char_width("З", 0), 1)
+        self.assertEqual(app.curses_util.char_width("こ", 0), 2)
+        self.assertEqual(app.curses_util.char_width("ん", 0), 2)
+        self.assertEqual(app.curses_util.char_width("に", 0), 2)
         self.assertEqual(p.data_offset(7, 0), 51)
         self.assertEqual(p.data_offset(7, 1), 52)
         self.assertEqual(p.data_offset(7, 2), 53)
-        self.assertEqual(p.row_text(7, 0), u"Здравствуйте")
-        self.assertEqual(p.row_text(7, 1), u"дравствуйте")
-        self.assertEqual(p.row_text(7, 2), u"равствуйте")
-        self.assertEqual(p.row_text(7, 3), u"авствуйте")
-        self.assertEqual(p.row_text(7, 0, -1), u"Здравствуйт")
-        self.assertEqual(p.row_text(7, 1, -3), u"дравству")
-        self.assertEqual(p.row_text(7, 2, -5), u"равст")
-        self.assertEqual(p.row_text(7, 3, -7), u"ав")
-        self.assertEqual(p.row_text(8, 0), u"こんにちはtranslate")
-        self.assertEqual(p.row_text(8, 2), u"んにちはtranslate")
-        self.assertEqual(p.row_text(8, 4), u"にちはtranslate")
-        self.assertEqual(p.row_text(8, 6), u"ちはtranslate")
-        self.assertEqual(p.row_text(8, 8), u"はtranslate")
+        self.assertEqual(p.row_text(7, 0), "Здравствуйте")
+        self.assertEqual(p.row_text(7, 1), "дравствуйте")
+        self.assertEqual(p.row_text(7, 2), "равствуйте")
+        self.assertEqual(p.row_text(7, 3), "авствуйте")
+        self.assertEqual(p.row_text(7, 0, -1), "Здравствуйт")
+        self.assertEqual(p.row_text(7, 1, -3), "дравству")
+        self.assertEqual(p.row_text(7, 2, -5), "равст")
+        self.assertEqual(p.row_text(7, 3, -7), "ав")
+        self.assertEqual(p.row_text(8, 0), "こんにちはtranslate")
+        self.assertEqual(p.row_text(8, 2), "んにちはtranslate")
+        self.assertEqual(p.row_text(8, 4), "にちはtranslate")
+        self.assertEqual(p.row_text(8, 6), "ちはtranslate")
+        self.assertEqual(p.row_text(8, 8), "はtranslate")
 
-        self.assertEqual(p.row_text_and_width(0), (u"ち\t<tab", 12))
-        self.assertEqual(p.row_text_and_width(1), (u"\tち<", 11))
-        self.assertEqual(p.row_text_and_width(2), (u"\t<ち", 11))
-        self.assertEqual(p.row_text_and_width(3), (u"sちome text.>\t<", 17))
-        self.assertEqual(p.row_text_and_width(4), (u"line\tち\ttabs", 20))
-        self.assertEqual(p.row_text_and_width(5), (u"\tち", 10))
-        self.assertEqual(p.row_text_and_width(6), (u"ち\t\t\tz", 25))
-        self.assertEqual(p.row_text_and_width(7), (u"Здравствуйте", 12))
-        self.assertEqual(p.row_text_and_width(8), (u"こんにちはtranslate", 19))
-        self.assertEqual(p.row_text_and_width(9), (u"", 0))
+        self.assertEqual(p.row_text_and_width(0), ("ち\t<tab", 12))
+        self.assertEqual(p.row_text_and_width(1), ("\tち<", 11))
+        self.assertEqual(p.row_text_and_width(2), ("\t<ち", 11))
+        self.assertEqual(p.row_text_and_width(3), ("sちome text.>\t<", 17))
+        self.assertEqual(p.row_text_and_width(4), ("line\tち\ttabs", 20))
+        self.assertEqual(p.row_text_and_width(5), ("\tち", 10))
+        self.assertEqual(p.row_text_and_width(6), ("ち\t\t\tz", 25))
+        self.assertEqual(p.row_text_and_width(7), ("Здравствуйте", 12))
+        self.assertEqual(p.row_text_and_width(8), ("こんにちはtranslate", 19))
+        self.assertEqual(p.row_text_and_width(9), ("", 0))
 
         self.assertEqual(p.row_width(0), 12)
         self.assertEqual(p.row_width(1), 11)
@@ -452,28 +452,28 @@ line\tち\ttabs
         self.assertEqual(p.grammar_index_from_row_col(1, 0), 1)
 
         self.assertEqual(p.next_char_row_col(999999, 0), None)
-        # Test u"ち\t<tab".
+        # Test "ち\t<tab".
         self.assertEqual(p.next_char_row_col(0, 0), (0, 2))
         self.assertEqual(p.next_char_row_col(0, 1), (0, 2))
         self.assertEqual(p.next_char_row_col(0, 2), (0, 6))
         self.assertEqual(p.next_char_row_col(0, 8), (0, 1))
         self.assertEqual(p.next_char_row_col(0, 11), (0, 1))
         self.assertEqual(p.next_char_row_col(0, 12), (1, -12))
-        # Test u"ち\t\t\tz".
+        # Test "ち\t\t\tz".
         self.assertEqual(p.next_char_row_col(6, 0), (0, 2))
         self.assertEqual(p.next_char_row_col(6, 8), (0, 8))
         self.assertEqual(p.next_char_row_col(6, 16), (0, 8))
         self.assertEqual(p.next_char_row_col(6, 25), (1, -25))
-        # Test u"".
+        # Test "".
         self.assertEqual(p.next_char_row_col(9, 0), None)
 
-        # Test u"ち\t<tab".
+        # Test "ち\t<tab".
         self.assertEqual(p.prior_char_row_col(0, 0), None)
         self.assertEqual(p.prior_char_row_col(0, 1), (0, -1))
         self.assertEqual(p.prior_char_row_col(0, 2), (0, -2))
         self.assertEqual(p.prior_char_row_col(0, 3), (0, -1))
         self.assertEqual(p.prior_char_row_col(0, 7), (0, -5))
-        # Test u"ち\t\t\tz".
+        # Test "ち\t\t\tz".
         self.assertEqual(p.prior_char_row_col(6, 1), (0, -1))
         self.assertEqual(p.prior_char_row_col(6, 5), (0, -3))
         self.assertEqual(p.prior_char_row_col(6, 8), (0, -6))
@@ -485,7 +485,7 @@ line\tち\ttabs
         self.assertEqual(p.prior_char_row_col(6, 19), (0, -3))
         self.assertEqual(p.prior_char_row_col(6, 20), (0, -4))
 
-        # Test u"ち\t<tab".
+        # Test "ち\t<tab".
         self.assertEqual(p.data_offset(0, 0), 0)
         self.assertEqual(p.data_offset(0, 1), 0)
         self.assertEqual(p.data_offset(0, 2), 1)
@@ -496,7 +496,7 @@ line\tち\ttabs
         self.assertEqual(p.data_offset(0, 12), 6)
         self.assertEqual(p.data_offset(0, 13), None)
         self.assertEqual(p.data_offset(0, 99), None)
-        # Test u"\tち<".
+        # Test "\tち<".
         self.assertEqual(p.data_offset(1, 0), 7)
         self.assertEqual(p.data_offset(1, 1), 7)
         self.assertEqual(p.data_offset(1, 2), 7)
@@ -505,35 +505,35 @@ line\tち\ttabs
         self.assertEqual(p.data_offset(1, 8), 8)
         self.assertEqual(p.data_offset(1, 12), None)
         self.assertEqual(p.data_offset(1, 14), None)
-        # Test u"\t<ち".
+        # Test "\t<ち".
         self.assertEqual(p.data_offset(2, 0), 11)
         self.assertEqual(p.data_offset(2, 1), 11)
         self.assertEqual(p.data_offset(2, 2), 11)
         self.assertEqual(p.data_offset(2, 11), 14)
         self.assertEqual(p.data_offset(2, 12), None)
-        # Test u"sちome text.>\t<".
-        # Test u"line\tち\ttabs".
+        # Test "sちome text.>\t<".
+        # Test "line\tち\ttabs".
         self.assertEqual(p.data_offset(4, 0), 30)
         self.assertEqual(p.data_offset(4, 1), 31)
         self.assertEqual(p.data_offset(4, 2), 32)
-        # Test u"\tち".
+        # Test "\tち".
         self.assertEqual(p.data_offset(5, 0), 42)
         self.assertEqual(p.data_offset(5, 1), 42)
         self.assertEqual(p.data_offset(5, 7), 42)
         self.assertEqual(p.data_offset(5, 8), 43)
-        # Test u"ち\t\t\tz".
+        # Test "ち\t\t\tz".
         self.assertEqual(p.data_offset(6, 0), 45)
         self.assertEqual(p.data_offset(6, 7), 46)
         self.assertEqual(p.data_offset(6, 8), 47)
         self.assertEqual(p.data_offset(6, 15), 47)
         self.assertEqual(p.data_offset(6, 16), 48)
         self.assertEqual(p.data_offset(6, 17), 48)
-        # Test u"Здравствуйте".
-        # Test u"こんにちはtranslate".
-        # Test u"".
+        # Test "Здравствуйте".
+        # Test "こんにちはtranslate".
+        # Test "".
 
     def test_backspace(self):
-        test = u"""ち\t<tab
+        test = """ち\t<tab
 \tち<
 \t<ち
 sちome text.>\t<
@@ -546,7 +546,7 @@ line\tち\ttabs
         self.prefs = app.prefs.Prefs()
         p = self.parser
         self.assertEqual(p.resumeAtRow, 0)
-        self.parser.parse(None, test, self.prefs.grammars[u"rs"], 0, 99999)
+        self.parser.parse(None, test, self.prefs.grammars["rs"], 0, 99999)
         self.assertEqual(p.resumeAtRow, 10)
         if 0:
             print("")
@@ -556,18 +556,18 @@ line\tち\ttabs
         self.assertEqual(p.data_offset(4, 5), 34)
 
         self.assertEqual(p.data_offset(4, 5), 34)
-        self.assertEqual(p.row_text_and_width(0), (u"ち\t<tab", 12))
+        self.assertEqual(p.row_text_and_width(0), ("ち\t<tab", 12))
         self.assertEqual(p.backspace(0, 0), (0, 0))
         self.assertEqual(p.data_offset(4, 5), 34)
-        self.assertEqual(p.row_text_and_width(0), (u"ち\t<tab", 12))
+        self.assertEqual(p.row_text_and_width(0), ("ち\t<tab", 12))
         self.assertEqual(p.backspace(0, 1), (0, 1))
         self.assertEqual(p.data_offset(4, 5), 34)
-        self.assertEqual(p.row_text_and_width(0), (u"ち\t<tab", 12))
+        self.assertEqual(p.row_text_and_width(0), ("ち\t<tab", 12))
         self.assertEqual(p.backspace(0, 2), (0, 0))
         self.assertEqual(p.data_offset(4, 5), 33)
-        self.assertEqual(p.row_text(0), u"\t<tab")
+        self.assertEqual(p.row_text(0), "\t<tab")
         self.assertEqual(p.row_width(0), 12)
-        self.assertEqual(p.row_text_and_width(0), (u"\t<tab", 12))
+        self.assertEqual(p.row_text_and_width(0), ("\t<tab", 12))
         self.assertEqual(p.prior_char_row_col(0, 0), None)
         self.assertEqual(p.prior_char_row_col(0, 1), (0, -1))
         self.assertEqual(p.prior_char_row_col(0, 2), (0, -2))
@@ -576,11 +576,11 @@ line\tち\ttabs
         self.assertEqual(p.prior_char_row_col(0, 8), (0, -8))
         self.assertEqual(p.prior_char_row_col(0, 9), (0, -1))
         self.assertEqual(p.backspace(0, 8), (0, 0))
-        self.assertEqual(p.row_text(0), u"<tab")
+        self.assertEqual(p.row_text(0), "<tab")
         self.assertEqual(p.backspace(0, 2), (0, 1))
-        self.assertEqual(p.row_text(0), u"<ab")
+        self.assertEqual(p.row_text(0), "<ab")
 
-        self.assertEqual(p.row_text(4), u"line\tち\ttabs")
+        self.assertEqual(p.row_text(4), "line\tち\ttabs")
         self.assertEqual(p.prior_char_row_col(4, 20), (0, -1))
         p.data_offset(4, 19)
         self.assertEqual(p.data_offset(0, 0), 0)
@@ -594,30 +594,30 @@ line\tち\ttabs
         self.assertEqual(p.data_offset(4, 10), 33)
         self.assertEqual(p.data_offset(4, 16), 34)
         self.assertEqual(p.data_offset(4, 19), 37)
-        self.assertEqual(p.data[p.data_offset(4, 19)], u"s")
+        self.assertEqual(p.data[p.data_offset(4, 19)], "s")
         self.assertEqual(p.data_offset(4, 20), 38)
         self.assertEqual(p.backspace(4, 20), (4, 19))
-        self.assertEqual(p.row_text(4), u"line\tち\ttab")
+        self.assertEqual(p.row_text(4), "line\tち\ttab")
         self.assertEqual(p.backspace(4, 19), (4, 18))
-        self.assertEqual(p.row_text(4), u"line\tち\tta")
+        self.assertEqual(p.row_text(4), "line\tち\tta")
         self.assertEqual(p.backspace(4, 16), (4, 10))
-        self.assertEqual(p.row_text(4), u"line\tちta")
+        self.assertEqual(p.row_text(4), "line\tちta")
         self.assertEqual(p.backspace(4, 10), (4, 8))
-        self.assertEqual(p.row_text(4), u"line\tta")
+        self.assertEqual(p.row_text(4), "line\tta")
         self.assertEqual(p.backspace(4, 8), (4, 4))
-        self.assertEqual(p.row_text(4), u"lineta")
+        self.assertEqual(p.row_text(4), "lineta")
         self.assertEqual(p.backspace(4, 4), (4, 3))
-        self.assertEqual(p.row_text(4), u"linta")
+        self.assertEqual(p.row_text(4), "linta")
 
-        self.assertEqual(p.row_text_and_width(3), (u"sちome text.>\t<", 17))
+        self.assertEqual(p.row_text_and_width(3), ("sちome text.>\t<", 17))
         self.assertEqual(p.row_width(3), 17)
-        self.assertEqual(p.row_text(5), u"\tち")
+        self.assertEqual(p.row_text(5), "\tち")
         self.assertEqual(p.backspace(4, 0), (3, 17))
-        self.assertEqual(p.row_text(3), u"sちome text.>\t<linta")
-        self.assertEqual(p.row_text(4), u"\tち")
+        self.assertEqual(p.row_text(3), "sちome text.>\t<linta")
+        self.assertEqual(p.row_text(4), "\tち")
 
     def test_delete_char(self):
-        test = u"""ち\t<tab
+        test = """ち\t<tab
 \tち<
 \t<ち
 sちome text.>\t<
@@ -630,7 +630,7 @@ line\tち\ttabs
         self.prefs = app.prefs.Prefs()
         p = self.parser
         self.assertEqual(p.resumeAtRow, 0)
-        self.parser.parse(None, test, self.prefs.grammars[u"rs"], 0, 99999)
+        self.parser.parse(None, test, self.prefs.grammars["rs"], 0, 99999)
         self.assertEqual(p.resumeAtRow, 10)
         if 0:
             print("")
@@ -639,49 +639,49 @@ line\tち\ttabs
             p.debug_log(print, test)
 
         self.assertEqual(p.data_offset(4, 5), 34)
-        self.assertEqual(p.row_text_and_width(0), (u"ち\t<tab", 12))
+        self.assertEqual(p.row_text_and_width(0), ("ち\t<tab", 12))
         p.delete_char(0, 0)
         self.assertEqual(p.data_offset(4, 5), 33)
-        self.assertEqual(p.row_text_and_width(0), (u"\t<tab", 12))
+        self.assertEqual(p.row_text_and_width(0), ("\t<tab", 12))
         p.delete_char(0, 1)
         self.assertEqual(p.data_offset(4, 5), 32)
-        self.assertEqual(p.row_text_and_width(0), (u"<tab", 4))
+        self.assertEqual(p.row_text_and_width(0), ("<tab", 4))
         p.delete_char(0, 2)
         self.assertEqual(p.data_offset(4, 5), 31)
-        self.assertEqual(p.row_text(0), u"<tb")
+        self.assertEqual(p.row_text(0), "<tb")
         self.assertEqual(p.row_width(0), 3)
-        self.assertEqual(p.row_text_and_width(0), (u"<tb", 3))
+        self.assertEqual(p.row_text_and_width(0), ("<tb", 3))
         p.delete_char(0, 8)
-        self.assertEqual(p.row_text(0), u"<tb")
+        self.assertEqual(p.row_text(0), "<tb")
         p.delete_char(0, 2)
-        self.assertEqual(p.row_text(0), u"<t")
+        self.assertEqual(p.row_text(0), "<t")
 
-        self.assertEqual(p.row_text(4), u"line\tち\ttabs")
+        self.assertEqual(p.row_text(4), "line\tち\ttabs")
         self.assertEqual(p.prior_char_row_col(4, 20), (0, -1))
-        self.assertEqual(p.data[p.data_offset(4, 19)], u"s")
+        self.assertEqual(p.data[p.data_offset(4, 19)], "s")
         self.assertEqual(p.data_offset(4, 20), 37)
         p.delete_char(4, 19)
-        self.assertEqual(p.row_text(4), u"line\tち\ttab")
+        self.assertEqual(p.row_text(4), "line\tち\ttab")
         p.delete_char(4, 18)
-        self.assertEqual(p.row_text(4), u"line\tち\tta")
+        self.assertEqual(p.row_text(4), "line\tち\tta")
         p.delete_char(4, 15)
-        self.assertEqual(p.row_text(4), u"line\tちta")
+        self.assertEqual(p.row_text(4), "line\tちta")
         p.delete_char(4, 9)
-        self.assertEqual(p.row_text(4), u"line\tta")
+        self.assertEqual(p.row_text(4), "line\tta")
         p.delete_char(4, 7)
-        self.assertEqual(p.row_text(4), u"lineta")
+        self.assertEqual(p.row_text(4), "lineta")
         p.delete_char(4, 3)
-        self.assertEqual(p.row_text(4), u"linta")
+        self.assertEqual(p.row_text(4), "linta")
 
-        self.assertEqual(p.row_text_and_width(3), (u"sちome text.>\t<", 17))
+        self.assertEqual(p.row_text_and_width(3), ("sちome text.>\t<", 17))
         self.assertEqual(p.row_width(3), 17)
-        self.assertEqual(p.row_text(5), u"\tち")
+        self.assertEqual(p.row_text(5), "\tち")
         p.delete_char(3, 17)
-        self.assertEqual(p.row_text(3), u"sちome text.>\t<linta")
-        self.assertEqual(p.row_text(4), u"\tち")
+        self.assertEqual(p.row_text(3), "sちome text.>\t<linta")
+        self.assertEqual(p.row_text(4), "\tち")
 
     def test_delete_range(self):
-        test = u"""ち\t<tab
+        test = """ち\t<tab
 \tち<
 \t<ち
 sちome text.>\t<
@@ -694,7 +694,7 @@ line\tち\ttabs
         self.prefs = app.prefs.Prefs()
         p = self.parser
         self.assertEqual(p.resumeAtRow, 0)
-        self.parser.parse(None, test, self.prefs.grammars[u"rs"], 0, 99999)
+        self.parser.parse(None, test, self.prefs.grammars["rs"], 0, 99999)
         self.assertEqual(p.resumeAtRow, 10)
         if 0:
             print("")
@@ -703,29 +703,29 @@ line\tち\ttabs
             p.debug_log(print, test)
 
         self.assertEqual(p.data_offset(4, 5), 34)
-        self.assertEqual(p.row_text_and_width(0), (u"ち\t<tab", 12))
-        self.assertEqual(p.row_text_and_width(3), (u"sちome text.>\t<", 17))
-        self.assertEqual(p.row_text_and_width(4), (u"line\tち\ttabs", 20))
+        self.assertEqual(p.row_text_and_width(0), ("ち\t<tab", 12))
+        self.assertEqual(p.row_text_and_width(3), ("sちome text.>\t<", 17))
+        self.assertEqual(p.row_text_and_width(4), ("line\tち\ttabs", 20))
         p.delete_range(3, 0, 3, 1)
         self.assertEqual(p.data_offset(4, 5), 33)
-        self.assertEqual(p.row_text_and_width(3), (u"ちome text.>\t<", 17))
+        self.assertEqual(p.row_text_and_width(3), ("ちome text.>\t<", 17))
 
     def test_reparse_short(self):
-        test = u"""a⏰
+        test = """a⏰
 e
 """
         expectedNodes = [
             # (NodeName, begin, prior, visual).
-            (u"rs", 0, None, 0),
-            (u"rs", 0, None, 0),
-            (u"rs", 1, None, 1),
-            (u"rs", 3, None, 4),
-            (u"rs", 5, None, 6),
+            ("rs", 0, None, 0),
+            ("rs", 0, None, 0),
+            ("rs", 1, None, 1),
+            ("rs", 3, None, 4),
+            ("rs", 5, None, 6),
         ]
         expectedRows = [0, 3, 4]
         self.prefs = app.prefs.Prefs()
         p = self.parser
-        self.parser.parse(None, test, self.prefs.grammars[u"rs"], 0, 99999)
+        self.parser.parse(None, test, self.prefs.grammars["rs"], 0, 99999)
         if 0:
             print("")
             for i, t in enumerate(test.splitlines()):
@@ -735,20 +735,20 @@ e
         self.check_parser_nodes(expectedNodes, p.parserNodes)
         self.check_parser_rows(expectedRows, p.rows)
         # Regression test: a reparse should not add nodes.
-        self.parser.parse(None, test, self.prefs.grammars[u"rs"], 3, 4)
-        self.parser.parse(None, test, self.prefs.grammars[u"rs"], 3, 4)
-        self.parser.parse(None, test, self.prefs.grammars[u"rs"], 3, 4)
-        self.parser.parse(None, test, self.prefs.grammars[u"rs"], 3, 4)
+        self.parser.parse(None, test, self.prefs.grammars["rs"], 3, 4)
+        self.parser.parse(None, test, self.prefs.grammars["rs"], 3, 4)
+        self.parser.parse(None, test, self.prefs.grammars["rs"], 3, 4)
+        self.parser.parse(None, test, self.prefs.grammars["rs"], 3, 4)
         self.check_parser_nodes(expectedNodes, p.parserNodes)
         self.check_parser_rows(expectedRows, p.rows)
 
     def test_parse_short(self):
-        test = u"""a⏰
+        test = """a⏰
 e
 """
         self.prefs = app.prefs.Prefs()
         p = self.parser
-        self.parser.parse(None, test, self.prefs.grammars[u"rs"], 0, 99999)
+        self.parser.parse(None, test, self.prefs.grammars["rs"], 0, 99999)
         if 0:
             print("")
             for i, t in enumerate(test.splitlines()):
@@ -757,21 +757,21 @@ e
 
         self.assertEqual(p.row_count(), 3)
 
-        self.assertEqual(p.row_text(0), u"a⏰")
+        self.assertEqual(p.row_text(0), "a⏰")
         self.assertEqual(p.row_width(0), 3)
-        self.assertEqual(p.row_text(1), u"e")
+        self.assertEqual(p.row_text(1), "e")
         self.assertEqual(p.data_offset(0, 0), 0)
-        self.assertEqual(test[p.data_offset(0, 0)], u"a")
+        self.assertEqual(test[p.data_offset(0, 0)], "a")
         self.assertEqual(p.data_offset(0, 1), 1)
-        self.assertEqual(test[p.data_offset(0, 1)], u"⏰")
+        self.assertEqual(test[p.data_offset(0, 1)], "⏰")
         self.assertEqual(p.data_offset(0, 2), 1)
         self.assertEqual(p.data_offset(0, 3), 2)
-        self.assertEqual(test[p.data_offset(0, 3)], u"\n")
+        self.assertEqual(test[p.data_offset(0, 3)], "\n")
         self.assertEqual(p.data_offset(0, 4), None)
         self.assertEqual(p.data_offset(1, 0), 3)
-        self.assertEqual(test[p.data_offset(1, 0)], u"e")
+        self.assertEqual(test[p.data_offset(1, 0)], "e")
         self.assertEqual(p.data_offset(1, 1), 4)
-        self.assertEqual(test[p.data_offset(1, 1)], u"\n")
+        self.assertEqual(test[p.data_offset(1, 1)], "\n")
         self.assertEqual(p.data_offset(1, 2), None)
         self.assertEqual(p.data_offset(1, 3), None)
         self.assertEqual(p.data_offset(2, 0), None)
@@ -780,7 +780,7 @@ e
         self.prefs = app.prefs.Prefs()
         p = self.parser
         self.assertEqual(p.resumeAtRow, 0)
-        self.parser.parse(None, u"", self.prefs.grammars[u"rs"], 0, 99999)
+        self.parser.parse(None, "", self.prefs.grammars["rs"], 0, 99999)
         self.assertEqual(p.resumeAtRow, 1)
         if 0:
             print("")
@@ -790,138 +790,138 @@ e
 
         self.check_parser_nodes(
             [
-                (u"rs", 0, None, 0),
+                ("rs", 0, None, 0),
             ],
             p.parserNodes,
         )
         self.assertEqual(p.data_offset(4, 5), None)
-        p.insert(0, 0, u"a")
+        p.insert(0, 0, "a")
         self.check_parser_nodes(
             [
-                (u"rs", 0, None, 0),
+                ("rs", 0, None, 0),
             ],
             p.parserNodes,
         )
-        self.assertEqual(p.row_text_and_width(0), (u"a", 1))
+        self.assertEqual(p.row_text_and_width(0), ("a", 1))
         self.check_parser_nodes(
             [
-                (u"rs", 0, None, 0),
-                (u"rs", 0, None, 0),
-                (u"rs", 1, None, 1),
+                ("rs", 0, None, 0),
+                ("rs", 0, None, 0),
+                ("rs", 1, None, 1),
             ],
             p.parserNodes,
         )
         # An insert to an invalid row, col will append to the end.
-        p.insert(2, 2, u"z")
+        p.insert(2, 2, "z")
         self.assertEqual(p.row_count(), 1)
-        self.assertEqual(p.row_text_and_width(0), (u"az", 2))
+        self.assertEqual(p.row_text_and_width(0), ("az", 2))
         self.check_parser_nodes(
             [
-                (u"rs", 0, None, 0),
-                (u"rs", 0, None, 0),
-                (u"rs", 2, None, 2),
+                ("rs", 0, None, 0),
+                ("rs", 0, None, 0),
+                ("rs", 2, None, 2),
             ],
             p.parserNodes,
         )
-        p.insert(0, 0, u"ち")
-        self.assertEqual(p.row_text_and_width(0), (u"ちaz", 4))
+        p.insert(0, 0, "ち")
+        self.assertEqual(p.row_text_and_width(0), ("ちaz", 4))
         self.check_parser_nodes(
             [
-                (u"rs", 0, None, 0),
-                (u"rs", 0, None, 0),
-                (u"rs", 1, None, 2),
-                (u"rs", 3, None, 4),
+                ("rs", 0, None, 0),
+                ("rs", 0, None, 0),
+                ("rs", 1, None, 2),
+                ("rs", 3, None, 4),
             ],
             p.parserNodes,
         )
-        p.insert(0, 2, u"b")
-        self.assertEqual(p.row_text_and_width(0), (u"ちbaz", 5))
+        p.insert(0, 2, "b")
+        self.assertEqual(p.row_text_and_width(0), ("ちbaz", 5))
         self.check_parser_nodes(
             [
-                (u"rs", 0, None, 0),
-                (u"rs", 0, None, 0),
-                (u"rs", 1, None, 2),
-                (u"rs", 4, None, 5),
+                ("rs", 0, None, 0),
+                ("rs", 0, None, 0),
+                ("rs", 1, None, 2),
+                ("rs", 4, None, 5),
             ],
             p.parserNodes,
         )
-        p.insert(0, 0, u"x")
-        self.assertEqual(p.row_text_and_width(0), (u"xちbaz", 6))
+        p.insert(0, 0, "x")
+        self.assertEqual(p.row_text_and_width(0), ("xちbaz", 6))
         # p.debug_log(print, p.data)
         # self.print_parser_nodes(p.parserNodes)
 
     def test_data_offset(self):
-        test = u"xちbaz"
+        test = "xちbaz"
         self.prefs = app.prefs.Prefs()
         p = self.parser
         self.assertEqual(p.resumeAtRow, 0)
-        self.parser.parse(None, test, self.prefs.grammars[u"rs"], 0, 99999)
+        self.parser.parse(None, test, self.prefs.grammars["rs"], 0, 99999)
         self.assertEqual(p.resumeAtRow, 1)
 
         self.check_parser_nodes(
             [
-                (u"rs", 0, None, 0),
-                (u"rs", 0, None, 0),
-                (u"rs", 1, None, 1),
-                (u"rs", 2, None, 3),
-                (u"rs", 5, None, 6),
+                ("rs", 0, None, 0),
+                ("rs", 0, None, 0),
+                ("rs", 1, None, 1),
+                ("rs", 2, None, 3),
+                ("rs", 5, None, 6),
             ],
             p.parserNodes,
         )
-        self.assertEqual(p.data[p.data_offset(0, 0)], u"x")
-        self.assertEqual(p.data[p.data_offset(0, 1)], u"ち")
-        self.assertEqual(p.data[p.data_offset(0, 2)], u"ち")
-        self.assertEqual(p.data[p.data_offset(0, 3)], u"b")
-        self.assertEqual(p.data[p.data_offset(0, 4)], u"a")
-        self.assertEqual(p.data[p.data_offset(0, 5)], u"z")
+        self.assertEqual(p.data[p.data_offset(0, 0)], "x")
+        self.assertEqual(p.data[p.data_offset(0, 1)], "ち")
+        self.assertEqual(p.data[p.data_offset(0, 2)], "ち")
+        self.assertEqual(p.data[p.data_offset(0, 3)], "b")
+        self.assertEqual(p.data[p.data_offset(0, 4)], "a")
+        self.assertEqual(p.data[p.data_offset(0, 5)], "z")
 
-        test = u"xちbちaz"
-        self.parser.parse(None, test, self.prefs.grammars[u"rs"], 0, 99999)
+        test = "xちbちaz"
+        self.parser.parse(None, test, self.prefs.grammars["rs"], 0, 99999)
         self.check_parser_nodes(
             [
-                (u"rs", 0, None, 0),
-                (u"rs", 0, None, 0),
-                (u"rs", 1, None, 1),
-                (u"rs", 2, None, 3),
-                (u"rs", 3, None, 4),
-                (u"rs", 4, None, 6),
-                (u"rs", 6, None, 8),
+                ("rs", 0, None, 0),
+                ("rs", 0, None, 0),
+                ("rs", 1, None, 1),
+                ("rs", 2, None, 3),
+                ("rs", 3, None, 4),
+                ("rs", 4, None, 6),
+                ("rs", 6, None, 8),
             ],
             p.parserNodes,
         )
-        self.assertEqual(p.data[p.data_offset(0, 0)], u"x")
-        self.assertEqual(p.data[p.data_offset(0, 1)], u"ち")
-        self.assertEqual(p.data[p.data_offset(0, 2)], u"ち")
-        self.assertEqual(p.data[p.data_offset(0, 3)], u"b")
-        self.assertEqual(p.data[p.data_offset(0, 4)], u"ち")
-        self.assertEqual(p.data[p.data_offset(0, 5)], u"ち")
-        self.assertEqual(p.data[p.data_offset(0, 6)], u"a")
-        self.assertEqual(p.data[p.data_offset(0, 7)], u"z")
+        self.assertEqual(p.data[p.data_offset(0, 0)], "x")
+        self.assertEqual(p.data[p.data_offset(0, 1)], "ち")
+        self.assertEqual(p.data[p.data_offset(0, 2)], "ち")
+        self.assertEqual(p.data[p.data_offset(0, 3)], "b")
+        self.assertEqual(p.data[p.data_offset(0, 4)], "ち")
+        self.assertEqual(p.data[p.data_offset(0, 5)], "ち")
+        self.assertEqual(p.data[p.data_offset(0, 6)], "a")
+        self.assertEqual(p.data[p.data_offset(0, 7)], "z")
 
-        test = u"ちbち"
-        self.parser.parse(None, test, self.prefs.grammars[u"rs"], 0, 99999)
+        test = "ちbち"
+        self.parser.parse(None, test, self.prefs.grammars["rs"], 0, 99999)
         self.check_parser_nodes(
             [
-                (u"rs", 0, None, 0),
-                (u"rs", 0, None, 0),
-                (u"rs", 1, None, 2),
-                (u"rs", 2, None, 3),
-                (u"rs", 3, None, 5),
+                ("rs", 0, None, 0),
+                ("rs", 0, None, 0),
+                ("rs", 1, None, 2),
+                ("rs", 2, None, 3),
+                ("rs", 3, None, 5),
             ],
             p.parserNodes,
         )
-        self.assertEqual(p.data[p.data_offset(0, 0)], u"ち")
-        self.assertEqual(p.data[p.data_offset(0, 1)], u"ち")
-        self.assertEqual(p.data[p.data_offset(0, 2)], u"b")
-        self.assertEqual(p.data[p.data_offset(0, 3)], u"ち")
-        self.assertEqual(p.data[p.data_offset(0, 4)], u"ち")
+        self.assertEqual(p.data[p.data_offset(0, 0)], "ち")
+        self.assertEqual(p.data[p.data_offset(0, 1)], "ち")
+        self.assertEqual(p.data[p.data_offset(0, 2)], "b")
+        self.assertEqual(p.data[p.data_offset(0, 3)], "ち")
+        self.assertEqual(p.data[p.data_offset(0, 4)], "ち")
 
     if 0:
 
         def test_profile_parse(self):
             profile = cProfile.Profile()
             parser = app.parser.Parser()
-            path = u"app/actions.py"
+            path = "app/actions.py"
             data = open(path).read()
             fileType = self.prefs.get_file_type(path)
             grammar = self.prefs.get_grammar(fileType)
@@ -931,6 +931,6 @@ e
             profile.disable()
 
             output = io.StringIO()
-            stats = pstats.Stats(profile, stream=output).sort_stats(u"cumulative")
+            stats = pstats.Stats(profile, stream=output).sort_stats("cumulative")
             stats.print_stats()
             print(output.getvalue())

@@ -26,7 +26,7 @@ kReNonMatching = re.compile(kNonMatchingRegex)
 # Beware, to include a ] in a set, it should be the first character in the set.
 # So, the first ] does not close the set and the second [ does not open a set.
 # The set of characters is ]{}()[.
-kBracketsRegex = u"[]{}()[]"
+kBracketsRegex = "[]{}()[]"
 kReBrackets = re.compile(kBracketsRegex)
 
 kReComments = re.compile("(?:#|//).*$|/\*.*?\*/|<!--.*?-->")

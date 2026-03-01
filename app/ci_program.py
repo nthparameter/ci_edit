@@ -28,7 +28,7 @@ except NameError:
     def bytes_to_unicode(values):
         return bytes(values).decode("utf-8")
 
-assert bytes_to_unicode((226, 143, 176)) == u"⏰"
+assert bytes_to_unicode((226, 143, 176)) == "⏰"
 
 import cProfile
 import pstats
@@ -68,7 +68,7 @@ def user_message(*args):
     if not userConsoleMessage:
         userConsoleMessage = ""
     args = [str(i) for i in args]
-    userConsoleMessage += u" ".join(args) + u"\n"
+    userConsoleMessage += " ".join(args) + "\n"
 
 class CiProgram:
     """This is the main editor program. It holds top level information and runs
@@ -76,11 +76,11 @@ class CiProgram:
     The program interacts with a single top-level ProgramWindow."""
 
     def __init__(self):
-        app.log.startup(u"Python version ", sys.version)
+        app.log.startup("Python version ", sys.version)
         self.prefs = app.prefs.Prefs()
         self.color = app.color.Colors(self.prefs.color)
         self.dictionary = app.spelling.Dictionary(
-            self.prefs.dictionaries[u"base"], self.prefs.dictionaries[u"path_match"]
+            self.prefs.dictionaries["base"], self.prefs.dictionaries["path_match"]
         )
         self.clipboard = app.clipboard.Clipboard()
         # There is a background frame that is being build up/created. Once it's
@@ -121,7 +121,7 @@ class CiProgram:
                 curses.use_default_colors()
         except curses.error as e:
             app.log.error(e)
-        app.log.startup(u"curses.COLORS", curses.COLORS)
+        app.log.startup("curses.COLORS", curses.COLORS)
         if 0:
             assert curses.COLORS == 256
             assert curses.can_change_color() == 1
@@ -160,7 +160,7 @@ class CiProgram:
         start = time.time()
         # The first render, to get something on the screen.
         if useBgThread:
-            self.bg.put(u"cmdList", [])
+            self.bg.put("cmdList", [])
         else:
             self.programWindow.short_time_slice()
             self.programWindow.render()
@@ -230,7 +230,7 @@ class CiProgram:
                             keySequence = keySequence[: -(len(paste_end))]
                             eventInfo = struct.pack(
                                 "B" * len(keySequence), *keySequence
-                            ).decode(u"utf-8")
+                            ).decode("utf-8")
                         else:
                             ch = tuple(keySequence)
                         if not ch:
@@ -274,7 +274,7 @@ class CiProgram:
             start = time.time()
             if len(cmdList):
                 if useBgThread:
-                    self.bg.put(u"cmdList", cmdList)
+                    self.bg.put("cmdList", cmdList)
                 else:
                     self.programWindow.execute_command_list(cmdList)
                     self.programWindow.short_time_slice()
@@ -285,12 +285,12 @@ class CiProgram:
     def process_background_messages(self):
         while self.bg.has_message():
             instruction, message = self.bg.get()
-            if instruction == u"exception":
+            if instruction == "exception":
                 for line in message:
                     user_message(line[:-1])
                 self.quit_now()
                 return
-            elif instruction == u"render":
+            elif instruction == "render":
                 # It's unlikely that more than one frame would be present in the
                 # queue. If/when it happens, only the las/most recent frame
                 # matters.
@@ -337,7 +337,7 @@ class CiProgram:
         takeAll = False  # Take all args as file paths.
         timeStartup = False
         numColors = min(curses.COLORS, 256)
-        if os.getenv(u"CI_EDIT_SINGLE_THREAD"):
+        if os.getenv("CI_EDIT_SINGLE_THREAD"):
             self.prefs.editor["useBgThread"] = False
         for i in sys.argv[1:]:
             if not takeAll and i[:1] == "+":
@@ -397,7 +397,7 @@ class CiProgram:
             decodedPaths = []
             for file in cliFiles:
                 path, openToRow, openToColumn = app.buffer_file.path_row_column(
-                    file[u"path"], self.prefs.editor[u"baseDirEnv"]
+                    file["path"], self.prefs.editor["baseDirEnv"]
                 )
                 decodedPaths.append(
                     {"path": path, "row": openToRow, "col": openToColumn}
@@ -488,7 +488,7 @@ class CiProgram:
         else:
             self.command_loop()
         if self.prefs.editor["useBgThread"]:
-            self.bg.put(u"quit", None)
+            self.bg.put("quit", None)
             self.bg.join()
 
     def set_up_palette(self):
@@ -502,13 +502,13 @@ class CiProgram:
         def two_tries(primary, fallback):
             try:
                 apply_palette(primary)
-                app.log.startup(u"Primary color scheme applied")
+                app.log.startup("Primary color scheme applied")
             except curses.error:
                 try:
                     apply_palette(fallback)
-                    app.log.startup(u"Fallback color scheme applied")
+                    app.log.startup("Fallback color scheme applied")
                 except curses.error:
-                    app.log.startup(u"No color scheme applied")
+                    app.log.startup("No color scheme applied")
 
         self.color.colors = self.prefs.startup["numColors"]
         if self.prefs.startup["numColors"] == 0:
