@@ -59,11 +59,7 @@ class FakeCursesTestCase(unittest.TestCase):
         def create_event(display, cmd_index):
             row, col = self.find_text(screen_text)
             if row < 0:
-                output = "%s at index %d, did not find %r" % (
-                    caller_text,
-                    cmd_index,
-                    screen_text,
-                )
+                output = f"{caller_text} at index {cmd_index}, did not find {screen_text!r}"
                 if self.curses_screen.movie:
                     print(output)
                 else:
@@ -268,12 +264,7 @@ class FakeCursesTestCase(unittest.TestCase):
         def pref_checker(display, cmd_index):
             result = self.prg.prefs.category(args[0])[args[1]]
             if result != args[2]:
-                output = "%s at index %s, expected %r, found %r" % (
-                    caller_text,
-                    unicode(cmd_index),
-                    args[2],
-                    result,
-                )
+                output = f"{caller_text} at index {cmd_index}, expected {args[2]!r}, found {result!r}"
                 if self.curses_screen.movie:
                     print(output)
                 else:

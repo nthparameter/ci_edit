@@ -21,18 +21,15 @@ def join_re_word_list(re_list):
     return r"(\b" + r"\b)|(\b".join(re_list) + r"\b)"
 
 RE_NON_MATCHING = r"^\b$"
-RE_NON_MATCHING = re.compile(RE_NON_MATCHING)
 
 # Beware, to include a ] in a set, it should be the first character in the set.
 # So, the first ] does not close the set and the second [ does not open a set.
 # The set of characters is ]{}()[.
-RE_BRACKETS = "[]{}()[]"
-RE_BRACKETS = re.compile(RE_BRACKETS)
+RE_BRACKETS = re.compile("[]{}()[]")
 
 RE_COMMENTS = re.compile("(?:#|//).*$|/\*.*?\*/|<!--.*?-->")
 
-RE_END_SPACES = r"\s+$"
-RE_END_SPACES = re.compile(RE_END_SPACES)
+RE_END_SPACES = re.compile(r"\s+$")
 
 RE_STRINGS = re.compile(
     r"(\"\"\".*?(?<!\\)\"\"\")|('''.*?(?<!\\)''')|(\".*?(?<!\\)\")" r"|('.*?(?<!\\)')"

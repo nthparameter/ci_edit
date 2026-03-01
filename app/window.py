@@ -629,7 +629,7 @@ class LineNumbers(ViewWindow):
                         )
                 if current_row + 1 > current_bookmark.end:
                     current_bookmark_index += 1
-            self.add_str(i, 0, " %5d " % (current_row + 1), color)
+            self.add_str(i, 0, f" {current_row + 1:5d} ", color)
         # Draw indicators for text off of the left edge.
         if self.host.scroll_col > 0:
             color = colorPrefs.get("line_overflow")
@@ -650,7 +650,7 @@ class LineNumbers(ViewWindow):
                     color = colorPrefs.get(cursor_bookmark_color_index % 32 + 128)
             else:
                 color = colorPrefs.get("line_number_current")
-            self.add_str(cursor_at, 1, "%5d" % (self.host.text_buffer.pen_row + 1), color)
+            self.add_str(cursor_at, 1, f"{self.host.text_buffer.pen_row + 1:5d}", color)
 
     def get_visible_bookmarks(self, begin_row, end_row):
         """
@@ -983,12 +983,8 @@ class StatusLine(ViewWindow):
             right_side += " |"
         if self.program.prefs.startup.get("show_log_window"):
             right_side += f" {tb.cursor_grammar_name()} | {tb.selection_mode_name()} |"
-        right_side += " %4d,%2d | %3d%%,%3d%%" % (
-            self.host.text_buffer.pen_row + 1,
-            self.host.text_buffer.pen_col + 1,
-            row_percentage,
-            col_percentage,
-        )
+        tb = self.host.text_buffer
+        right_side += f" {tb.pen_row + 1:4d},{tb.pen_col + 1:2d} | {row_percentage:3d}%,{col_percentage:3d}%"
         status_line += " " * (self.cols - len(status_line) - len(right_side)) + right_side
         self.add_str(self.rows - 1, 0, status_line[: self.cols], color)
 
@@ -1687,7 +1683,7 @@ class PaletteWindow(Window):
         for i in range(width):
             for k in range(rows):
                 self.add_str(
-                    k, i * 5, " %3d " % (i + k * width,), colorPrefs.get(i + k * width)
+                    k, i * 5, f" {i + k * width:3d} ", colorPrefs.get(i + k * width)
                 )
 
     def set_text_buffer(self, text_buffer):

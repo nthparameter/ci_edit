@@ -1074,9 +1074,7 @@ class Parser:
         assert len(lines) == self.row_count()
         for i, line in enumerate(lines):
             parsed_line, column_width = self.row_text_and_width(i)
-            assert line == parsed_line, "\nexpected:{}\n  actual:{}".format(
-                repr(line), repr(parsed_line)
-            )
+            assert line == parsed_line, f"\nexpected:{repr(line)}\n  actual:{repr(parsed_line)}"
             parsed_line = self.row_text(i)
             assert line == parsed_line, f"\nexpected:{line}\n  actual:{parsed_line}"
 
@@ -1094,8 +1092,6 @@ class Parser:
                 if out is not None:
                     out(i, preceding, remaining, i, k, pieced_line)
                 if eol:
-                    assert pieced_line == line, "\nexpected:{}\n  actual:{}".format(
-                        repr(line), repr(pieced_line)
-                    )
+                    assert pieced_line == line, f"\nexpected:{repr(line)}\n  actual:{repr(pieced_line)}"
                     break
                 k += remaining
