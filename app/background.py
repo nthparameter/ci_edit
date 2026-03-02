@@ -33,7 +33,7 @@ import time
 import traceback
 
 import app.config
-import app.profile
+import app.perf_profile
 import app.render
 
 class InstructionQueue(queue.Queue):
@@ -87,7 +87,7 @@ class BackgroundThread(threading.Thread):
             try:
                 try:
                     instruction, message = self._toBackground.get(block)
-                    # profile = app.profile.begin_python_profile()
+                    # profile = app.perf_profile.begin_python_profile()
                     if instruction == "quit":
                         app.log.info("bg received quit message")
                         return
@@ -105,7 +105,7 @@ class BackgroundThread(threading.Thread):
                         "render", program_window.program.background_frame.grab_frame()
                     )
                     os.kill(pid, signal_number)
-                    # app.profile.end_python_profile(profile)
+                    # app.perf_profile.end_python_profile(profile)
                     time.sleep(0)  # See note in has_message().
                     if block or not self._toBackground.empty():
                         continue
