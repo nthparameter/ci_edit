@@ -392,17 +392,16 @@ class CiProgram:
                 read_stdin = True
             else:
                 cli_files.append({"path": unicode(i)})
-        # If there's no line specified, try to reinterpret the paths.
-        if open_to_line is None:
-            decoded_paths = []
-            for file in cli_files:
-                path, open_to_row, open_to_column = app.buffer_file.path_row_column(
-                    file["path"], self.prefs.editor["base_dir_env"]
-                )
-                decoded_paths.append(
-                    {"path": path, "row": open_to_row, "col": open_to_column}
-                )
-            cli_files = decoded_paths
+        # Decode the paths (handle git diff prefixes, embedded line:col, etc.).
+        decoded_paths = []
+        for file in cli_files:
+            path, open_to_row, open_to_column = app.buffer_file.path_row_column(
+                file["path"], self.prefs.editor["base_dir_env"]
+            )
+            decoded_paths.append(
+                {"path": path, "row": open_to_row, "col": open_to_column}
+            )
+        cli_files = decoded_paths
         self.prefs.startup = {
             "debug_redo": debug_redo,
             "show_log_window": show_log_window,
