@@ -356,11 +356,7 @@ class TextBuffer(app.actions.Actions):
                         ):
                             line = self.parser.row_text(start_row + i)
                             line += " "  # Maybe do: "\\n".
-                            # TODO(dschuyler): This is essentially
-                            # left + (upper_col or (scroll_col + left)) -
-                            #    scroll_col - left
-                            # which seems like it could be simplified.
-                            pane_col = left + sel_start_col - start_col
+                            pane_col = sel_start_col - self.view.scroll_col
                             if i == lower_row - start_row and i == upper_row - start_row:
                                 # Selection entirely on one line.
                                 text = app.curses_util.rendered_sub_str(
