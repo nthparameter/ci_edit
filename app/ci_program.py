@@ -467,13 +467,20 @@ class CiProgram:
             app.log.exception(e)
 
     def run(self):
+        app.log.startup("parse_args")
         self.parse_args()
+        app.log.startup("set_up_palette")
         self.set_up_palette()
         home_path = self.prefs.user_data.get("home_path")
+        app.log.startup("make_home_dirs")
         self.make_home_dirs(home_path)
+        app.log.startup("load_user_history")
         self.history.load_user_history()
+        app.log.startup("hack_curses_fixes")
         app.curses_util.hack_curses_fixes()
+        app.log.startup("startup")
         self.startup()
+        app.log.startup("startup completed")
         if self.prefs.editor["useBgThread"]:
             self.bg = app.background.startup_background(self.program_window)
         if self.prefs.startup.get("profile"):

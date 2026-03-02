@@ -12,11 +12,18 @@ text_type = unicode if PY2 else str
 def init_osx_clipboard():
     def copy_osx(text):
         p = subprocess.Popen(["pbcopy", "w"], stdin=subprocess.PIPE, close_fds=True)
-        p.communicate(input=text.encode("utf-8"))
+        try:
+            p.communicate(input=text.encode("utf-8"), timeout=3)
+        except subprocess.TimeoutExpired:
+            p.kill()
 
     def paste_osx():
         p = subprocess.Popen(["pbpaste", "r"], stdout=subprocess.PIPE, close_fds=True)
-        stdout, stderr = p.communicate()
+        try:
+            stdout, stderr = p.communicate(timeout=3)
+        except subprocess.TimeoutExpired:
+            p.kill()
+            return ""
         return stdout.decode("utf-8")
 
     return copy_osx, paste_osx
@@ -61,7 +68,10 @@ def init_xclip_clipboard():
         p = subprocess.Popen(
             ["xclip", "-selection", "c"], stdin=subprocess.PIPE, close_fds=True
         )
-        p.communicate(input=text.encode("utf-8"))
+        try:
+            p.communicate(input=text.encode("utf-8"), timeout=3)
+        except subprocess.TimeoutExpired:
+            p.kill()
 
     def paste_xclip():
         with open(os.devnull, "w") as devnull:
@@ -71,7 +81,11 @@ def init_xclip_clipboard():
                 stderr=devnull,
                 close_fds=True,
             )
-        stdout, stderr = p.communicate()
+        try:
+            stdout, stderr = p.communicate(timeout=3)
+        except subprocess.TimeoutExpired:
+            p.kill()
+            return ""
         return stdout.decode("utf-8")
 
     return copy_xclip, paste_xclip
@@ -81,13 +95,20 @@ def init_xsel_clipboard():
         p = subprocess.Popen(
             ["xsel", "-b", "-i"], stdin=subprocess.PIPE, close_fds=True
         )
-        p.communicate(input=text.encode("utf-8"))
+        try:
+            p.communicate(input=text.encode("utf-8"), timeout=3)
+        except subprocess.TimeoutExpired:
+            p.kill()
 
     def paste_xsel():
         p = subprocess.Popen(
             ["xsel", "-b", "-o"], stdout=subprocess.PIPE, close_fds=True
         )
-        stdout, stderr = p.communicate()
+        try:
+            stdout, stderr = p.communicate(timeout=3)
+        except subprocess.TimeoutExpired:
+            p.kill()
+            return ""
         return stdout.decode("utf-8")
 
     return copy_xsel, paste_xsel

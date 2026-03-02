@@ -21,6 +21,7 @@ except NameError:
     unichr = chr
 
 import os
+import select
 import sys
 
 import app.buffer_file
@@ -127,13 +128,26 @@ class BufferManager:
 
     def read_stdin(self):
         app.log.info("reading from stdin")
+        # Check whether stdin actually has data available before doing a
+        # blocking read.  On some macOS versions sys.stdin.isatty() can
+        # return False even when no data is being piped, which would cause
+        # fileInput.read() below to block forever.
+        ready, _, _ = select.select([sys.stdin], [], [], 0)
+        if not ready:
+            app.log.info("stdin not ready, skipping read")
+            return None
         # Create a new input stream for the file data.
         # Fd is short for file descriptor. os.dup and os.dup2 will duplicate
         # file descriptors.
         stdin_fd = sys.stdin.fileno()
         new_fd = os.dup(stdin_fd)
-        new_stdin = open("/dev/tty")
-        os.dup2(new_stdin.fileno(), stdin_fd)
+        try:
+            new_stdin = open("/dev/tty")
+            os.dup2(new_stdin.fileno(), stdin_fd)
+        except OSError as e:
+            app.log.info("could not open /dev/tty, skipping stdin read:", e)
+            os.close(new_fd)
+            return None
         # Create a text buffer to read from alternate stream.
         text_buffer = self.new_text_buffer()
         try:
