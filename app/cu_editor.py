@@ -462,6 +462,44 @@ class CuaPlusEdit(CuaEdit):
         self.command_set = command_set
         self.command_default = self.text_buffer.insert_printable_with_pairing
 
+class ContextMenuController(app.controller.Controller):
+    """Controller for the right-click context menu."""
+
+    def __init__(self, view):
+        app.controller.Controller.__init__(self, view, "context_menu")
+
+        def no_op(ch, meta):
+            pass
+
+        self.command_default = no_op
+        self.command_set = {
+            KEY_ESCAPE: self.dismiss,
+            curses.KEY_UP: self.move_up,
+            curses.KEY_DOWN: self.move_down,
+            CTRL_J: self.execute,
+            CTRL_Q: self.dismiss,
+        }
+
+    def set_text_buffer(self, text_buffer):
+        self.text_buffer = text_buffer
+
+    def dismiss(self):
+        self.view.dismiss()
+
+    def move_up(self):
+        menu = self.view
+        if menu.selected_index > 0:
+            menu.selected_index -= 1
+
+    def move_down(self):
+        menu = self.view
+        if menu.selected_index < len(menu.lines) - 1:
+            menu.selected_index += 1
+
+    def execute(self):
+        self.view.execute_selected()
+        self.view.dismiss()
+
 class PopupController(app.controller.Controller):
     """
     A controller for pop up boxes to notify the user.

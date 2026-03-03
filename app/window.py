@@ -163,6 +163,9 @@ class ViewWindow:
     def mouse_click(self, pane_row, pane_col, shift, ctrl, alt):
         pass
 
+    def mouse_right_click(self, pane_row, pane_col, shift, ctrl, alt):
+        pass
+
     def mouse_double_click(self, pane_row, pane_col, shift, ctrl, alt):
         pass
 
@@ -401,6 +404,10 @@ class Window(ActiveWindow):
         if self.text_buffer:
             self.text_buffer.mouse_click(pane_row, pane_col, shift, ctrl, alt)
 
+    def mouse_right_click(self, pane_row, pane_col, shift, ctrl, alt):
+        if self.text_buffer:
+            self.text_buffer.mouse_right_click(pane_row, pane_col, shift, ctrl, alt)
+
     def mouse_double_click(self, pane_row, pane_col, shift, ctrl, alt):
         if self.text_buffer:
             self.text_buffer.mouse_double_click(pane_row, pane_col, shift, ctrl, alt)
@@ -549,18 +556,20 @@ class LabeledLine(Window):
         self.label = label
         self.reshape(self.top, self.left, self.rows, self.cols)
 
-class Menu(ViewWindow):
-    """Work in progress on a context menu."""
+class Menu(Window):
+    """A right-click context menu."""
 
     def __init__(self, program, host):
         if app.config.strict_debug:
             assert issubclass(self.__class__, Menu), self
             assert issubclass(host.__class__, ActiveWindow)
-        ViewWindow.__init__(self, program, host)
+        Window.__init__(self, program, host)
         self.host = host
-        self.label = ""
+        self.controller = app.cu_editor.ContextMenuController(self)
+        self.set_text_buffer(app.text_buffer.TextBuffer(self.program))
         self.lines = []
         self.commands = []
+        self.selected_index = 0
 
     def add_item(self, label, command):
         self.lines.append(label)
@@ -569,25 +578,69 @@ class Menu(ViewWindow):
     def clear(self):
         self.lines = []
         self.commands = []
+        self.selected_index = 0
 
-    def move_size_to_fit(self, left, top):
+    def _build_items(self):
         self.clear()
-        self.add_item("some menu", None)
-        # self.add_item('sort', self.host.text_buffer.sortSelection)
-        self.add_item("cut", self.host.text_buffer.edit_cut)
-        self.add_item("paste", self.host.text_buffer.edit_paste)
+        tb = self.host.text_buffer
+        has_selection = tb.selection_mode != 0
+        self.add_item("Cut", tb.edit_cut if has_selection else None)
+        self.add_item("Copy", tb.edit_copy if has_selection else None)
+        self.add_item("Paste", tb.edit_paste)
+        self.add_item("Select All", tb.selection_all)
+        self.add_item("Undo", tb.edit_undo)
+        self.add_item("Redo", tb.edit_redo)
+
+    def move_size_to_fit(self, top, left):
+        self._build_items()
         longest = 0
         for i in self.lines:
             if len(i) > longest:
                 longest = len(i)
-        self.reshape(left, top, len(self.lines), longest + 2)
+        menu_rows = len(self.lines)
+        menu_cols = longest + 4
+        # Clamp to screen edges.
+        max_rows, max_cols = main_curses_window.getmaxyx()
+        if top + menu_rows > max_rows:
+            top = max(0, max_rows - menu_rows)
+        if left + menu_cols > max_cols:
+            left = max(0, max_cols - menu_cols)
+        self.reshape(top, left, menu_rows, menu_cols)
+
+    def hide(self):
+        self.detach()
+
+    def execute_selected(self):
+        if 0 <= self.selected_index < len(self.commands):
+            cmd = self.commands[self.selected_index]
+            if cmd is not None:
+                cmd()
+
+    def mouse_click(self, pane_row, pane_col, shift, ctrl, alt):
+        if 0 <= pane_row < len(self.lines):
+            self.selected_index = pane_row
+            self.execute_selected()
+        self.dismiss()
+
+    def dismiss(self):
+        self.change_focus_to(self.host)
+        top_window = self.host
+        while top_window.parent:
+            top_window = top_window.parent
+        top_window.normalize()
 
     def render(self):
         color = self.program.color.get("context_menu")
+        highlight = self.program.color.get("context_menu_highlight")
         self.writeLineRow = 0
-        for i in self.lines[: self.rows]:
-            self.write_line(" " + i, color)
-        ViewWindow.render(self)
+        for i, label in enumerate(self.lines[: self.rows]):
+            is_disabled = (i < len(self.commands) and self.commands[i] is None)
+            if i == self.selected_index:
+                c = highlight
+            else:
+                c = color
+            self.write_line("  " + label, c)
+        ViewWindow.render(self)  # Skip Window.render, use ViewWindow directly.
 
 class LineNumbers(ViewWindow):
     def __init__(self, program, host):

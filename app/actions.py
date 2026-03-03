@@ -1565,12 +1565,16 @@ class Actions(app.mutator.Mutator):
         )
         self.redo()
 
+    def mouse_right_click(self, pane_row, pane_col, shift, ctrl, alt):
+        app.log.info("right click at", pane_row, pane_col)
+        screen_row = self.view.top + pane_row
+        screen_col = self.view.left + pane_col
+        self.view.present_modal(
+            self.view.context_menu, screen_row, screen_col
+        )
+        self.view.change_focus_to(self.view.context_menu)
+
     def mouse_click(self, pane_row, pane_col, shift, ctrl, alt):
-        if 0:
-            if ctrl:
-                app.log.info("click at", pane_row, pane_col)
-                self.view.present_modal(self.view.context_menu, pane_row, pane_col)
-                return
         if shift:
             if alt:
                 self.selection_block()
