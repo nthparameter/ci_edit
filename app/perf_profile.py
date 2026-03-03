@@ -44,7 +44,6 @@ def results():
     return "one\ntwo\nthree"
 
 # ----------------------------
-# TODO(dschuyler): consider moving this python profile code out of this file.
 import app.log
 import cProfile
 import pstats

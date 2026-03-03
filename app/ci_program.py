@@ -392,17 +392,16 @@ class CiProgram:
                 read_stdin = True
             else:
                 cli_files.append({"path": unicode(i)})
-        # If there's no line specified, try to reinterpret the paths.
-        if open_to_line is None:
-            decoded_paths = []
-            for file in cli_files:
-                path, open_to_row, open_to_column = app.buffer_file.path_row_column(
-                    file["path"], self.prefs.editor["base_dir_env"]
-                )
-                decoded_paths.append(
-                    {"path": path, "row": open_to_row, "col": open_to_column}
-                )
-            cli_files = decoded_paths
+        # Decode the paths (handle git diff prefixes, embedded line:col, etc.).
+        decoded_paths = []
+        for file in cli_files:
+            path, open_to_row, open_to_column = app.buffer_file.path_row_column(
+                file["path"], self.prefs.editor["base_dir_env"]
+            )
+            decoded_paths.append(
+                {"path": path, "row": open_to_row, "col": open_to_column}
+            )
+        cli_files = decoded_paths
         self.prefs.startup = {
             "debug_redo": debug_redo,
             "show_log_window": show_log_window,
@@ -467,13 +466,20 @@ class CiProgram:
             app.log.exception(e)
 
     def run(self):
+        app.log.startup("parse_args")
         self.parse_args()
+        app.log.startup("set_up_palette")
         self.set_up_palette()
         home_path = self.prefs.user_data.get("home_path")
+        app.log.startup("make_home_dirs")
         self.make_home_dirs(home_path)
+        app.log.startup("load_user_history")
         self.history.load_user_history()
+        app.log.startup("hack_curses_fixes")
         app.curses_util.hack_curses_fixes()
+        app.log.startup("startup")
         self.startup()
+        app.log.startup("startup completed")
         if self.prefs.editor["useBgThread"]:
             self.bg = app.background.startup_background(self.program_window)
         if self.prefs.startup.get("profile"):
