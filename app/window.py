@@ -642,6 +642,32 @@ class Menu(Window):
             self.write_line("  " + label, c)
         ViewWindow.render(self)  # Skip Window.render, use ViewWindow directly.
 
+class AppMenu(Menu):
+    """A dropdown menu for the app logo corner."""
+
+    def _build_items(self):
+        self.clear()
+        ctrl = self.host.controller.controller  # active sub-controller
+        self.add_item("New File     Ctrl+N", ctrl.create_new_text_buffer)
+        self.add_item("Open File    Ctrl+O", ctrl.change_to_file_manager_window)
+        self.add_item("Save         Ctrl+S", ctrl.initiate_save)
+        self.add_item("Close        Ctrl+W", ctrl.initiate_close)
+        self.add_item("Quit         Ctrl+Q", ctrl.initiate_quit)
+
+class LogoCorner(ViewWindow):
+    """The 'ci' logo in the upper-left corner. Clicking it opens the app menu."""
+
+    def __init__(self, program, host):
+        ViewWindow.__init__(self, program, host)
+        self.host = host
+
+    def mouse_click(self, pane_row, pane_col, shift, ctrl, alt):
+        menu = self.host.app_menu
+        menu_top = self.top + self.rows
+        menu_left = self.left
+        self.host.present_modal(menu, menu_top, menu_left)
+        self.host.change_focus_to(menu)
+
 class LineNumbers(ViewWindow):
     def __init__(self, program, host):
         ViewWindow.__init__(self, program, host)
@@ -1195,9 +1221,10 @@ class InputWindow(Window):
             if not self.show_line_numbers:
                 self.line_number_column.detach()
         if 1:
-            self.logo_corner = ViewWindow(self.program, self)
+            self.logo_corner = LogoCorner(self.program, self)
             self.logo_corner.name = "Logo"
             self.logo_corner.set_parent(self, 0)
+        self.app_menu = AppMenu(self.program, self)
         if 1:
             self.right_column = ViewWindow(self.program, self)
             self.right_column.name = "Right"
