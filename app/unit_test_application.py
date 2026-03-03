@@ -593,3 +593,40 @@ class ApplicationTestCases(app.fake_curses_testing.FakeCursesTestCase):
                 "n",
             ],
         )
+
+    def test_page_down_deselects(self):
+        """Issue #59: plain PageDown should deselect; Shift+PageDown extends."""
+        self.run_with_fake_inputs(
+            [
+                # Start at top of file.
+                self.cursor_check(2, 7),
+                self.selection_check(0, 0, 0, 0, 0),
+                # Select two lines with Shift+Down.
+                KEY_SHIFT_DOWN,
+                self.selection_check(1, 0, 0, 0, 3),
+                KEY_SHIFT_DOWN,
+                self.selection_check(2, 0, 0, 0, 3),
+                # Plain PageDown should deselect (selection mode -> 0).
+                KEY_PAGE_DOWN,
+                self.selection_check(2 + 18, 0, 2, 0, 0),
+                CTRL_Q,
+            ],
+            [sys.argv[0], self.path_to_sample("sample.cc")],
+        )
+
+    def test_shift_page_down_extends_selection(self):
+        """Issue #59: Shift+PageDown should extend character selection."""
+        self.run_with_fake_inputs(
+            [
+                self.cursor_check(2, 7),
+                self.selection_check(0, 0, 0, 0, 0),
+                # Select one line.
+                KEY_SHIFT_DOWN,
+                self.selection_check(1, 0, 0, 0, 3),
+                # Shift+PageDown should extend selection (mode stays 3).
+                KEY_SHIFT_PAGE_DOWN,
+                self.selection_check(1 + 18, 0, 0, 0, 3),
+                CTRL_Q,
+            ],
+            [sys.argv[0], self.path_to_sample("sample.cc")],
+        )

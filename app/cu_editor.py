@@ -71,7 +71,9 @@ def main_window_commands(controller, text_buffer):
             KEY_PAGE_UP: text_buffer.cursor_select_none_page_up,
             KEY_PAGE_DOWN: text_buffer.cursor_select_none_page_down,
             KEY_SHIFT_PAGE_UP: text_buffer.cursor_select_character_page_up,
+            KEY_SHIFT_PAGE_UP_STR: text_buffer.cursor_select_character_page_up,
             KEY_SHIFT_PAGE_DOWN: text_buffer.cursor_select_character_page_down,
+            KEY_SHIFT_PAGE_DOWN_STR: text_buffer.cursor_select_character_page_down,
             KEY_ALT_SHIFT_PAGE_UP: text_buffer.cursor_select_block_page_up,
             KEY_ALT_SHIFT_PAGE_DOWN: text_buffer.cursor_select_block_page_down,
             # CTRL_B:
