@@ -648,11 +648,12 @@ class AppMenu(Menu):
     def _build_items(self):
         self.clear()
         ctrl = self.host.controller.controller  # active sub-controller
-        self.add_item("New File     Ctrl+N", ctrl.create_new_text_buffer)
-        self.add_item("Open File    Ctrl+O", ctrl.change_to_file_manager_window)
-        self.add_item("Save         Ctrl+S", ctrl.initiate_save)
-        self.add_item("Close        Ctrl+W", ctrl.initiate_close)
-        self.add_item("Quit         Ctrl+Q", ctrl.initiate_quit)
+        self.add_item("New File      Ctrl+N", ctrl.create_new_text_buffer)
+        self.add_item("Open File     Ctrl+O", ctrl.change_to_file_manager_window)
+        self.add_item("Save          Ctrl+S", ctrl.initiate_save)
+        self.add_item("Close         Ctrl+W", ctrl.initiate_close)
+        self.add_item("Preferences", ctrl.open_preferences)
+        self.add_item("Quit          Ctrl+Q", ctrl.initiate_quit)
 
 class LogoCorner(ViewWindow):
     """The 'ci' logo in the upper-left corner. Clicking it opens the app menu."""
