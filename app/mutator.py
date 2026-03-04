@@ -47,6 +47,7 @@ class Mutator(app.selectable.Selectable):
         self.file_extension = None
         self.full_path = ""
         self.file_stat = None
+        self.file_change_notified = False
         self.goal_col = 0
         self.is_read_only = False
         self.pen_grammar = None

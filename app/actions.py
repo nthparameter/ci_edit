@@ -956,6 +956,7 @@ class Actions(app.mutator.Mutator):
                     self.set_message("error opening file", self.full_path)
                     return
             self.file_stat = os.stat(self.full_path)
+            self.file_change_notified = False
         self.relative_path = os.path.relpath(self.full_path, os.getcwd())
         app.log.info("full_path", self.full_path)
         app.log.info("cwd", os.getcwd())
