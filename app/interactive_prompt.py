@@ -210,6 +210,12 @@ class InteractivePrompt(app.controller.Controller):
         if not tb.full_path:
             return {}, "No file to reload"
         tb.file_load()
+        tb.redo_chain = []
+        tb.redo_index = 0
+        tb.saved_at_redo_index = 0
+        tb.old_redo_index = 0
+        tb.temp_change = None
+        tb.process_temp_change = False
         return {}, "Reloaded file from disk"
 
     def split_command(self, cmd_line, view):
