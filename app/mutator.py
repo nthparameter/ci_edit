@@ -145,6 +145,25 @@ class Mutator(app.selectable.Selectable):
         )
         return not clean
 
+    def has_file_changed(self):
+        """Check whether the file on disk has changed since it was last read
+        or written by this buffer. Compares st_mtime, st_size, and st_ino
+        which is sufficient to detect modifications and save-by-rename.
+
+        Returns True if the file appears to have been modified externally.
+        """
+        if self.file_stat is None or not self.full_path:
+            return False
+        try:
+            s = os.stat(self.full_path)
+        except OSError:
+            return False
+        return (
+            s.st_mtime != self.file_stat.st_mtime
+            or s.st_size != self.file_stat.st_size
+            or s.st_ino != self.file_stat.st_ino
+        )
+
     def is_safe_to_write(self):
         """Determine whether writing the file to self.full_path is likely to
         overwrite data.

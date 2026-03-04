@@ -106,6 +106,7 @@ class InteractivePrompt(app.controller.Controller):
             "emacs": self.change_to_emacs_mode,
             "make": self.make_command,
             "open": self.open_command,
+            "reload": self.reload_command,
             # 'split': self.split_command,  # Experimental wip.
             "vim": self.change_to_vim_normal_mode,
         }
@@ -203,6 +204,13 @@ class InteractivePrompt(app.controller.Controller):
         input_window.set_text_buffer(text_buffer)
         self.change_to(input_window)
         input_window.set_message(f"Opened file {path}")
+
+    def reload_command(self, cmd_line, view):
+        tb = view.text_buffer
+        if not tb.full_path:
+            return {}, "No file to reload"
+        tb.file_load()
+        return {}, "Reloaded file from disk"
 
     def split_command(self, cmd_line, view):
         view.split_window()

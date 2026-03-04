@@ -15,6 +15,8 @@
 
 import curses
 import curses.ascii
+import json
+import os
 
 import app.config
 import app.curses_util
@@ -102,6 +104,27 @@ class Controller:
     def create_new_text_buffer(self):
         buffer_manager = self.view.program.buffer_manager
         self.view.set_text_buffer(buffer_manager.new_text_buffer())
+
+    def open_preferences(self):
+        prefs_dir = os.path.expanduser("~/.ci_edit/prefs")
+        prefs_path = os.path.join(prefs_dir, "editor.json")
+        if not os.path.isdir(prefs_dir):
+            os.makedirs(prefs_dir)
+        if not os.path.isfile(prefs_path):
+            with open(prefs_path, "w") as f:
+                f.write(json.dumps(
+                    {
+                        "color_scheme": "default",
+                        "show_line_numbers": True,
+                        "tabs_to_spaces": True,
+                        "tab_width": 4,
+                    },
+                    indent=4,
+                ) + "\n")
+        text_buffer = self.view.program.buffer_manager.load_text_buffer(prefs_path)
+        input_window = self.current_input_window()
+        input_window.set_text_buffer(text_buffer)
+        self.find_and_change_to("input_window")
 
     def do_command(self, ch, meta):
         # Check the command_set for the input with both its string and integer

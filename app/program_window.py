@@ -191,6 +191,15 @@ class ProgramWindow(app.window.ActiveWindow):
         if window == self:
             app.log.mouse("click landed on screen")
             return
+        # Dismiss context menu if clicking outside it. Only dismiss on an
+        # explicit press (not on button release, which is the tail end of the
+        # click that opened the menu).
+        if self.modal_ui is not None and window is not self.modal_ui:
+            if b_state & (curses.BUTTON1_PRESSED | curses.BUTTON3_PRESSED):
+                self.normalize()
+                if not (b_state & curses.BUTTON3_PRESSED):
+                    # Re-find window now that modal is gone; let the click through.
+                    window = find_window(self, mouse_row, mouse_col)
         if self.focused_window != window and window.is_focusable:
             app.log.debug("before change focus")
             window.change_focus_to(window)
@@ -202,7 +211,15 @@ class ProgramWindow(app.window.ActiveWindow):
         button_1_was_down = self.saved_mouse_button_1_down
         self.saved_mouse_button_1_down = False
         # app.log.info('b_state', app.curses_util.mouse_button_name(b_state))
-        if b_state & curses.BUTTON1_RELEASED:
+        if b_state & curses.BUTTON3_PRESSED:
+            window.mouse_right_click(
+                mouse_row,
+                mouse_col,
+                b_state & curses.BUTTON_SHIFT,
+                b_state & curses.BUTTON_CTRL,
+                b_state & curses.BUTTON_ALT,
+            )
+        elif b_state & curses.BUTTON1_RELEASED:
             if button_1_was_down:
                 app.log.mouse(b_state, curses.BUTTON1_RELEASED)
                 if self.prior_click + rapid_click_timeout <= event_time:
