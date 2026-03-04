@@ -209,11 +209,14 @@ class InteractivePrompt(app.controller.Controller):
         tb = view.text_buffer
         if not tb.full_path:
             return {}, "No file to reload"
+        old_data = tb.parser.data
         tb.file_load()
-        tb.redo_chain = []
-        tb.redo_index = 0
-        tb.saved_at_redo_index = 0
-        tb.old_redo_index = 0
+        new_data = tb.parser.data
+        change = ("rl", old_data, new_data)
+        tb.redo_chain = tb.redo_chain[: tb.redo_index]
+        tb.redo_chain.append((change,))
+        tb.redo_index += 1
+        tb.old_redo_index = tb.redo_index
         tb.temp_change = None
         tb.process_temp_change = False
         return {}, "Reloaded file from disk"

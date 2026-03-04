@@ -357,6 +357,10 @@ class Mutator(app.selectable.Selectable):
             self.__do_vertical_delete(change)
         elif change[0] == "vi":  # Redo vertical insert.
             self.__do_vertical_insert(change)
+        elif change[0] == "rl":  # Redo reload.
+            self.parser.data = change[2]
+            self.pen_row = 0
+            self.pen_col = 0
         else:
             app.log.info("ERROR: unknown redo.")
         return False
@@ -540,6 +544,10 @@ class Mutator(app.selectable.Selectable):
             self.__do_vertical_insert(change)
         elif change[0] == "vi":  # Undo vertical insert
             self.__do_vertical_delete(change)
+        elif change[0] == "rl":  # Undo reload.
+            self.parser.data = change[1]
+            self.pen_row = 0
+            self.pen_col = 0
         else:
             app.log.info("ERROR: unknown undo.")
 
