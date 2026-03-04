@@ -567,6 +567,7 @@ class Menu(Window):
         self.host = host
         self.controller = app.cu_editor.ContextMenuController(self)
         self.set_text_buffer(app.text_buffer.TextBuffer(self.program))
+        self.controller.set_text_buffer(self.text_buffer)
         self.lines = []
         self.commands = []
         self.selected_index = 0
