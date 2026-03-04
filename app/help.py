@@ -118,7 +118,7 @@ Within the Goto line prompt:
         # """Please add feedback"""
         # """ to https://github.com/google/ci_edit/issues/107""",
     ],
-    "version": f"""  Version (build iteration): v51
+    "version": f"""  Version (build iteration): v52
   Within Python {sys.version}
   See LICENSE for license information
   See readme.md for an introduction
