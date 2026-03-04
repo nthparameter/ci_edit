@@ -461,6 +461,8 @@ class Window(ActiveWindow):
             # If a user event came in while parsing, the parsing will be paused
             # (to be resumed after handling the event).
             finished = tb.parser.resume_at_row >= tb.parser.row_count()
+        if tb is not None and tb.has_file_changed():
+            tb.set_message("File changed on disk")
         for child in self.z_order:
             finished = finished and child.long_time_slice()
         return finished

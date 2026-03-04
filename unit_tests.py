@@ -47,6 +47,7 @@ import app.unit_test_buffer_file
 import app.unit_test_copy_paste
 import app.unit_test_curses_util
 import app.unit_test_execute_prompt
+import app.unit_test_file_change_detection
 import app.unit_test_file_manager
 import app.unit_test_find_window
 import app.unit_test_intention
@@ -82,6 +83,7 @@ TESTS = {
     "file_manager": app.unit_test_file_manager.FileManagerTestCases,
     "find": app.unit_test_find_window.FindWindowTestCases,
     "execute": app.unit_test_execute_prompt.ExecutePromptTestCases,
+    "file_change_detection": app.unit_test_file_change_detection.FileChangeDetectionTestCases,
     "intention": app.unit_test_intention.IntentionTestCases,
     "line_buffer": app.unit_test_line_buffer.LineBufferTestCases,
     "misspellings": app.unit_test_misspellings.MisspellingsTestCases,
