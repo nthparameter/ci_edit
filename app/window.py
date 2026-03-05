@@ -1121,6 +1121,8 @@ class TopInfo(ViewWindow):
             if tb.is_read_only:
                 path_line += " [RO]"
         if 1:
+            if tb.has_file_changed():
+                path_line += " [D]"
             if tb.is_dirty():
                 path_line += " * "
             else:
