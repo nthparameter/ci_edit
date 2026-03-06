@@ -956,6 +956,7 @@ class Actions(app.mutator.Mutator):
                     self.set_message("error opening file", self.full_path)
                     return
             self.file_stat = os.stat(self.full_path)
+            self._file_changed_cache_time = 0
             self.file_change_notified = False
         self.relative_path = os.path.relpath(self.full_path, os.getcwd())
         app.log.info("full_path", self.full_path)
@@ -1210,6 +1211,7 @@ class Actions(app.mutator.Mutator):
                     self.full_path
                 )
                 self.file_stat = os.stat(self.full_path)
+                self._file_changed_cache_time = 0
                 # If we're writing this file for the first time, self.is_read_only
                 # will still be True (from when it didn't exist).
                 self.is_read_only = False

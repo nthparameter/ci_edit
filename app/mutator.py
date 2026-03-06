@@ -14,6 +14,7 @@
 
 import os
 import re
+import time
 
 import app.buffer_file
 from app.curses_util import column_width
@@ -48,6 +49,8 @@ class Mutator(app.selectable.Selectable):
         self.full_path = ""
         self.file_stat = None
         self.file_change_notified = False
+        self._file_changed_cache = False
+        self._file_changed_cache_time = 0
         self.goal_col = 0
         self.is_read_only = False
         self.pen_grammar = None
@@ -152,18 +155,27 @@ class Mutator(app.selectable.Selectable):
         which is sufficient to detect modifications and save-by-rename.
 
         Returns True if the file appears to have been modified externally.
+        Results are cached briefly to avoid repeated stat calls during
+        rendering.
         """
+        now = time.time()
+        if now - self._file_changed_cache_time < 2.0:
+            return self._file_changed_cache
+        self._file_changed_cache_time = now
         if self.file_stat is None or not self.full_path:
+            self._file_changed_cache = False
             return False
         try:
             s = os.stat(self.full_path)
         except OSError:
+            self._file_changed_cache = False
             return False
-        return (
+        self._file_changed_cache = (
             s.st_mtime != self.file_stat.st_mtime
             or s.st_size != self.file_stat.st_size
             or s.st_ino != self.file_stat.st_ino
         )
+        return self._file_changed_cache
 
     def is_safe_to_write(self):
         """Determine whether writing the file to self.full_path is likely to
